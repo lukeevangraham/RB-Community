@@ -16,6 +16,7 @@ module.exports = function (app) {
         db.Event.create({
             title: req.body.title,
             date: req.body.date,
+            month: req.body.month,
             time: req.body.time,
             location: req.body.location,
             description: req.body.description,

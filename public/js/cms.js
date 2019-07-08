@@ -25,6 +25,7 @@ $(document).ready(function() {
   // Adding an event listener for when the form is submitted
   $(cmsForm).on("submit", function handleFormSubmit(event) {
     console.log("submit clicked!!!")
+    console.log("event: ", event)
     event.preventDefault();
     // Wont submit the post if we are missing a body or a title
     // if (!titleInput.val().trim() || !descriptionInput.val().trim()) {
@@ -34,6 +35,7 @@ $(document).ready(function() {
     var newPost = {
       title: titleInput.val().trim(),
       date: moment(dateInput.val().trim()).format("D"),
+      month: moment(dateInput.val().trim()).format("MMM"),
       time: timeInput.val().trim(),
       location: locationInput.val().trim(),
       description: descriptionInput.val().trim(),

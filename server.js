@@ -1,11 +1,22 @@
 var express = require("express");
 var exphbs = require('express-handlebars');
+var app = express();
+
+
+// var MomentHandler = require("handlebars.moment")
+// MomentHandler.registerHelpers(exphbs);
+
 var db = require("./models");
 
 var PORT = process.env.PORT || 3000;
-var app = express();
 
-app.engine('handlebars', exphbs());
+app.engine('handlebars', exphbs({
+    // helpers: {
+    //     formatDate: function (date, format) {
+    //         return MomentHandler(date).format(format);
+    //     }
+    // }
+}));
 app.set('view engine', 'handlebars')
 
 // Sets up the Express app to handle data parsing
