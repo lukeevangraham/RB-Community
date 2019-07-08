@@ -1,8 +1,12 @@
 var express = require("express");
+var exphbs = require('express-handlebars');
 var db = require("./models");
 
 var PORT = process.env.PORT || 3000;
 var app = express();
+
+app.engine('handlebars', exphbs());
+app.set('view engine', 'handlebars')
 
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
