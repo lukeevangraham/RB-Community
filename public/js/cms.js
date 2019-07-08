@@ -1,3 +1,5 @@
+// import { BOOLEAN } from "sequelize/types";
+
 $(document).ready(function() {
   // Gets an optional query string from our url (i.e. ?post_id=23)
   var url = window.location.search;
@@ -22,26 +24,34 @@ $(document).ready(function() {
   var featuredInput = $("#eventFeatured");
   var publishedInput = $("#eventPublished");
   var cmsForm = $("#cms");
+  
   // Adding an event listener for when the form is submitted
   $(cmsForm).on("submit", function handleFormSubmit(event) {
-    console.log("submit clicked!!!")
-    console.log("event: ", event)
+    // console.log("submit clicked!!!")
+    // console.log("event: ", event)
+    // console.log("Featured input: ", featuredInput)
     event.preventDefault();
     // Wont submit the post if we are missing a body or a title
     // if (!titleInput.val().trim() || !descriptionInput.val().trim()) {
       // return;
-    // }
+      // }
+      
+      // console.log("LOOK HERE: ", $("#eventFeatured").is(':checked'))
+
+
     // Constructing a newPost object to hand to the database
     var newPost = {
       title: titleInput.val().trim(),
+      // date: dateInput.val().trim(),
       date: moment(dateInput.val().trim()).format("D"),
+      longdate: dateInput.val().trim(),
       month: moment(dateInput.val().trim()).format("MMM"),
       time: timeInput.val().trim(),
       location: locationInput.val().trim(),
       description: descriptionInput.val().trim(),
       imgurl: imageURLInput.val().trim(),
-      featured: featuredInput.val(),
-      published: publishedInput.val(),
+      featured: featuredInput.is(':checked'),
+      published: publishedInput.is(':checked'),
     };
 
     console.log(newPost);
@@ -60,7 +70,7 @@ $(document).ready(function() {
   // Submits a new post and brings user to blog page upon completion
   function submitPost(Post) {
     $.post("/api/posts/", Post, function() {
-      window.location.href = "/blog";
+      // window.location.href = "/events";
     });
   }
 
@@ -87,7 +97,7 @@ $(document).ready(function() {
       data: post
     })
       .then(function() {
-        window.location.href = "/blog";
+        window.location.href = "/events";
       });
   }
 });

@@ -7,16 +7,16 @@ $(document).ready(function () {
 	var events;
 
 	function getEvents() {
-		$.get("api/events", function (data) {
-			console.log("Events", data);
-			events = data;
-			if (!events || !events.length) {
-				displayEmpty();
-			}
-			else {
-				initializeRows();
-			}
-		});
+		// $.get("api/events", function (data) {
+		// 	console.log("Events", data);
+		// 	events = data;
+		// 	if (!events || !events.length) {
+		// 		displayEmpty();
+		// 	}
+		// 	else {
+		// 		initializeRows();
+		// 	}
+		// });
 	}
 
 	// This function displays a message when there are no posts
