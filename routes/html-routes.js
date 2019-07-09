@@ -19,10 +19,10 @@ module.exports = function (app) {
                     headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
         <link rel="stylesheet" type="text/css" href="styles/responsive.css">`
                 };
-            
-        res.render('home', hbsObject);
+
+                res.render('home', hbsObject);
+            })
     })
-})
 
     app.get("/cms", function (req, res) {
         res.sendFile(path.join(__dirname, "../public/cms.html"));
@@ -49,6 +49,11 @@ module.exports = function (app) {
                 return res.render("events", hbsObject)
             })
 
+    })
+
+    app.get('/about', function (req, res) {
+        res.render ('about', {headContent:`<link rel="stylesheet" type="text/css" href="styles/about.css">
+        <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`})
     })
 
 }
