@@ -5,7 +5,7 @@
     "database": "ydcgfwdm8yktl5pl",
     "host": "ocvwlym0zv3tcn68.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
     "dialect": "mysql",
-    "port": "8889",
+    "port": "3306",
     "operatorsAliases": false
   },
   "test": {
@@ -14,7 +14,7 @@
     "database": "ydcgfwdm8yktl5pl",
     "host": "ocvwlym0zv3tcn68.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
     "dialect": "mysql",
-    "port": "8889",
+    "port": "3306",
     "operatorsAliases": false
   },
   "production": {
@@ -23,7 +23,7 @@
     "database": "ydcgfwdm8yktl5pl",
     "host": "ocvwlym0zv3tcn68.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
     "dialect": "mysql",
-    "port": "8889",
+    "port": "3306",
     "operatorsAliases": false
   }
 }
