@@ -1,13 +1,12 @@
 {
   "development": {
-    "development": {
-      "username": "root",
-      "password": "root",
-      "database": "rb_db",
-      "host": "127.0.0.1",
-      "dialect": "mysql",
-      "port": "8889",
-      "operatorsAliases": false
+    "username": "root",
+    "password": "root",
+    "database": "rb_db",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "port": "8889",
+    "operatorsAliases": false
   },
   "test": {
     "username": "jlylxewu5nrsh00f",
