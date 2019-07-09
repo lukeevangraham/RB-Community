@@ -1,2 +1,603 @@
-<h1>Example App:</h1>
+<div class="super_container">
 
+    <!-- Home -->
+
+    <div class="home">
+        <div class="home_background" style="background-image:url(images/index.jpg)"></div>
+        <div class="home_content text-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="home_title">Belief in God as Father, Son and Holy Spirit is at the heart of our
+                            faith.</div>
+                        <div class="home_text">God has revealed himself through the Bible. God has revealed himself most
+                            clearly through the gift of his Son, Jesus Christ. God makes himself known personally to
+                            each believer through the work of the Holy Spirit.</div>
+                        <div class="button home_link"><a href="#">join with us</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {{#each events}}
+    {{#if featured}}
+    <!-- Event -->
+
+    <div class="event">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div
+                        class="event_container d-flex flex-lg-row flex-column align-items-center justify-content-start">
+                        <div class="event_date d-flex flex-column align-items-center justify-content-center">
+                            <div class="event_day">{{this.date}}</div>
+                            <div class="event_month">{{this.month}}</div>
+                        </div>
+                        <div class="event_content">
+                            <div class="event_title">UPCOMING EVENT: <a href="#">{{this.title}}</a></div>
+                            <ul class="event_row">
+                                <li>
+                                    <div class="event_icon"><img src="images/calendar.png" alt=""></div>
+                                    <span>{{this.time}}</span>
+                                </li>
+                                <li>
+                                    <div class="event_icon"><img src="images/location.png" alt=""></div>
+                                    <span>{{this.location}}</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="event_timer_container ml-lg-auto">
+                            <ul class="event_timer">
+                                <li>
+                                    <div id="day" class="event_num">00</div>
+                                    <div class="event_ss">day</div>
+                                </li>
+                                <li>
+                                    <div id="hour" class="event_num">00</div>
+                                    <div class="event_ss">hrs</div>
+                                </li>
+                                <li>
+                                    <div id="minute" class="event_num">00</div>
+                                    <div class="event_ss">min</div>
+                                </li>
+                                <li>
+                                    <div id="second" class="event_num">00</div>
+                                    <div class="event_ss">sec</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{/if}}
+    {{/each}}
+
+    <!-- About -->
+
+    <div class="about">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="section_title_container text-center">
+                        <div class="section_title">welcome to rb community church</div>
+                        <div class="section_subtitle">It's the start of an amazing journey of faith</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row about_row">
+                <div class="col-lg-6">
+                    <div class="about_image"><img src="images/about.jpg" alt=""></div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="about_content">
+                        <div class="about_text">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer gestas ant eget risus
+                                varius, euismod tellus suscipit. Aenean condimentum cond mentum ulla, vitae imperd urna
+                                varius volutpa. Mauris lobotis comodo mollis nolle. In vetib velit ifermentum empor
+                                euismod. Cras gravida maximus ligula ac posuere. Maecenas auctor interdum varius
+                                sollicitudin orci. Phasellus quis volutpat ex, id maximus magna. Sed elit posuere augue,
+                                tincid unt non ipsum sit amet, maximus sagittis lectus. Quisque tincidunt, antevis
+                                pharetra sodales, non ante magna tempus nulla, sed molestie orci magna quis tellus.
+                                Nulla facilisi sit amet libero sed condimentum.</p>
+                        </div>
+                        <div class="button about_button"><a href="#">read story</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sermons -->
+
+    <div class="sermons">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="section_title_container text-center">
+                        <div class="section_title">sermons today</div>
+                        <div class="section_subtitle">Our lives in praising God</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row sermons_row">
+                <div class="col-lg-4 sermon_col">
+                    <div class="card">
+                        <img class="card-img-top" src="images/sermon_1.jpg" alt="">
+                        <div class="card-body text-center">
+                            <div class="card-title sermon_title"><a href="sermon.html">Sermons on Prayer: Running Well,
+                                    FinIshing Strong</a></div>
+                            <div class="card-text sermon_info_container">
+                                <div class="sermon_info">
+                                    <div class="sermon_info_title">Pastor: </div>
+                                    <ul class="sermon_info_list">
+                                        <li><a href="#">Josh Brighton</a></li>
+                                    </ul>
+                                </div>
+                                <div class="sermon_info">
+                                    <div class="sermon_info_title">Categories: </div>
+                                    <ul class="sermon_info_list">
+                                        <li><a href="#">God, </a></li>
+                                        <li><a href="#">Prayer</a></li>
+                                    </ul>
+                                </div>
+                                <div class="sermon_links">
+                                    <ul>
+                                        <li><a href="#"><i class="fa fa-link" aria-hidden="true"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-download" aria-hidden="true"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 sermon_col">
+                    <div class="card">
+                        <img class="card-img-top" src="images/sermon_2.jpg" alt="">
+                        <div class="card-body text-center">
+                            <div class="card-title sermon_title"><a href="sermon.html">Sermons on Faith: A Life Worth
+                                    Living, A new purpose</a></div>
+                            <div class="card-text sermon_info_container">
+                                <div class="sermon_info">
+                                    <div class="sermon_info_title">Pastor: </div>
+                                    <ul class="sermon_info_list">
+                                        <li><a href="#">Julia Amber</a></li>
+                                    </ul>
+                                </div>
+                                <div class="sermon_info">
+                                    <div class="sermon_info_title">Categories: </div>
+                                    <ul class="sermon_info_list">
+                                        <li><a href="#">God, </a></li>
+                                        <li><a href="#">Faith</a></li>
+                                    </ul>
+                                </div>
+                                <div class="sermon_links">
+                                    <ul>
+                                        <li><a href="#"><i class="fa fa-link" aria-hidden="true"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-download" aria-hidden="true"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 sermon_col">
+                    <div class="card">
+                        <img class="card-img-top" src="images/sermon_3.jpg" alt="">
+                        <div class="card-body text-center">
+                            <div class="card-title sermon_title"><a href="sermon.html">Sermons for Communion Services:
+                                    Come to the Table</a></div>
+                            <div class="card-text sermon_info_container">
+                                <div class="sermon_info">
+                                    <div class="sermon_info_title">Pastor: </div>
+                                    <ul class="sermon_info_list">
+                                        <li><a href="#">Ashley Young</a></li>
+                                    </ul>
+                                </div>
+                                <div class="sermon_info">
+                                    <div class="sermon_info_title">Categories: </div>
+                                    <ul class="sermon_info_list">
+                                        <li><a href="#">God, </a></li>
+                                        <li><a href="#">Communion</a></li>
+                                    </ul>
+                                </div>
+                                <div class="sermon_links">
+                                    <ul>
+                                        <li><a href="#"><i class="fa fa-link" aria-hidden="true"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-download" aria-hidden="true"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Mission -->
+
+    <div class="mission">
+        <div class="mission_background parallax-window" data-parallax="scroll" data-image-src="images/mission.jpg"
+            data-speed="0.8"></div>
+        <div class="mission_items d-flex flex-row flex-wrap align-items-start justify-content-start">
+
+            <div class="mission_item text-center">
+                <div class="mission_icon"><i class="fa fa-bell-o" aria-hidden="true"></i></div>
+                <div class="mission_title">our mission</div>
+                <div class="mission_text">Lorem ipsum dolor amet, consectet adipiscing doelit. Sed a mauri suscipita
+                    utrum arcu , gravida nisl. Interdum mante ipsum.</div>
+            </div>
+
+            <div class="mission_item text-center">
+                <div class="mission_icon"><i class="fa fa-flag-o" aria-hidden="true"></i></div>
+                <div class="mission_title">our community</div>
+                <div class="mission_text">Lorem ipsum dolor amet, consectet adipiscing doelit. Sed a mauri suscipita
+                    utrum arcu , gravida nisl. Interdum mante ipsum.</div>
+            </div>
+
+            <div class="mission_item text-center">
+                <div class="mission_icon"><i class="fa fa-heart-o" aria-hidden="true"></i></div>
+                <div class="mission_title">our belief</div>
+                <div class="mission_text">Lorem ipsum dolor amet, consectet adipiscing doelit. Sed a mauri suscipita
+                    utrum arcu , gravida nisl. Interdum mante ipsum.</div>
+            </div>
+
+            <div class="mission_item text-center">
+                <div class="mission_icon"><i class="fa fa-moon-o" aria-hidden="true"></i></div>
+                <div class="mission_title">our faith</div>
+                <div class="mission_text">Lorem ipsum dolor amet, consectet adipiscing doelit. Sed a mauri suscipita
+                    utrum arcu , gravida nisl. Interdum mante ipsum.</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Events -->
+
+    <div class="events">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="section_title_container text-center">
+                        <div class="section_title">upcoming events</div>
+                        <div class="section_subtitle">Experience God's Presence</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div
+            class="events_items d-flex flex-lg-row flex-column align-items-lg-start align-items-center justify-content-lg-between justify-content-center">
+            {{#each events}}
+            {{#unless featured}}
+
+
+            <!-- Event -->
+            <div class="events_item">
+                <div class="events_item_image"><img src="images/event_1.jpg" alt=""></div>
+                <div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
+                    <div class="event_date d-flex flex-column align-items-center justify-content-center">
+                        <div class="event_day">{{this.date}}</div>
+                        <div class="event_month">{{this.month}}</div>
+                    </div>
+                    <div class="event_content">
+                        <div class="event_title"><a href="#">{{this.title}}</a></div>
+                        <ul class="event_row">
+                            <li>
+                                <div class="event_icon"><img src="images/calendar.png" alt=""></div>
+                                <span>{{this.time}}</span>
+                            </li>
+                            <li>
+                                <div class="event_icon"><img src="images/location.png" alt=""></div>
+                                <span>{{this.location}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {{/unless}}
+            {{/each}}
+
+            {{!-- <!-- Event -->
+            <div class="events_item">
+                <div class="events_item_image"><img src="images/event_2.jpg" alt=""></div>
+                <div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
+                    <div class="event_date d-flex flex-column align-items-center justify-content-center">
+                        <div class="event_day">18</div>
+                        <div class="event_month">mar</div>
+                    </div>
+                    <div class="event_content">
+                        <div class="event_title"><a href="#">To Love and to Cherish, The Wedding</a></div>
+                        <ul class="event_row">
+                            <li>
+                                <div class="event_icon"><img src="images/calendar.png" alt=""></div>
+                                <span>08:00 AM - 11:00 AM</span>
+                            </li>
+                            <li>
+                                <div class="event_icon"><img src="images/location.png" alt=""></div>
+                                <span>1195 Lobortis Rd, New Orleans, New Hampshire</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event -->
+            <div class="events_item">
+                <div class="events_item_image"><img src="images/event_3.jpg" alt=""></div>
+                <div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
+                    <div class="event_date d-flex flex-column align-items-center justify-content-center">
+                        <div class="event_day">18</div>
+                        <div class="event_month">mar</div>
+                    </div>
+                    <div class="event_content">
+                        <div class="event_title"><a href="#">The Christian Community in America</a></div>
+                        <ul class="event_row">
+                            <li>
+                                <div class="event_icon"><img src="images/calendar.png" alt=""></div>
+                                <span>08:00 AM - 11:00 AM</span>
+                            </li>
+                            <li>
+                                <div class="event_icon"><img src="images/location.png" alt=""></div>
+                                <span>1195 Lobortis Rd, New Orleans, New Hampshire</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div> --}}
+
+        </div>
+    </div>
+
+
+
+    <!-- Donations -->
+
+    <div class="donations">
+        <div class="donations_background parallax-window" data-parallax="scroll" data-image-src="images/donation.jpg"
+            data-speed="0.8"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="donations_content">
+                        <div class="donation_title">help children get an education</div>
+                        <div class="donation_info_container">
+                            <div class="donation_info">
+                                <div class="donation_info_title">Donation Caller: </div>
+                                <ul class="donation_info_list">
+                                    <li><a href="#">John Connor</a></li>
+                                </ul>
+                            </div>
+                            <div class="donation_info">
+                                <div class="donation_info_title">Categories: </div>
+                                <ul class="donation_info_list">
+                                    <li><a href="#">Education, </a></li>
+                                    <li><a href="#">Children</a></li>
+                                </ul>
+                            </div>
+                            <div class="donation_info">
+                                <div class="donation_info_title">On: </div>
+                                <ul class="donation_info_list">
+                                    <li><a href="#">Friday 16 MAR, 2018</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="donation_text">
+                            <p>Mauris eleifend dolor ante, at fringilla magna dignissim et. Maecenas imperdiet quam quis
+                                erat molestie facilisis. Ut in condimentum ipsum. Aenean ac congue turpis. Nunc luctus
+                                ligula tellus, in pellentesque leo ullamcorper in.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="donation_details_container">
+                        <div class="donation_details">
+                            <div class="donation_funds">
+                                <div class="donation_funds_title">Remaining: </div>
+                                <div class="donations_funds_value">$2,100</div>
+                            </div>
+                            <div class="donation_progress_container">
+                                <div class="donation_progress_outer">
+                                    <div class="donation_progress" style="width: 70%;">
+                                        <div class="donation_progress_value">70%</div>
+                                    </div>
+                                </div>
+                                <div class="donation_info d-flex flex-row align-items-center justify-content-start">
+                                    <div class="donation_current">Raised: <span>$5,000</span></div>
+                                    <div class="donation_goal ml-auto">Goal: <span>$7,100</span></div>
+                                </div>
+                                <div class="button donation_button"><a href="#">donate now</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quote -->
+
+    <div class="quote">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="quote_container text-center">
+                        <div class="quote_quote">“Wherever the bishop appears, there let the people be, even as
+                            wheresoever Christ Jesus is, there is the catholic church.”</div>
+                        <div class="quote_icon"><img src="images/quote.png" alt=""></div>
+                        <div class="quote_source">Ignatius of Antioch</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gallery -->
+
+    <div class="gallery d-flex flex-row flex-wrap align-items-start justify-content-start">
+        <div class="gallery_item">
+            <a class="colorbox" href="images/gallery_1.jpg">
+                <img src="images/gallery_1.jpg" alt="https://unsplash.com/@mantashesthaven">
+            </a>
+        </div>
+        <div class="gallery_item">
+            <a class="colorbox" href="images/gallery_2.jpg">
+                <img src="images/gallery_2.jpg" alt="https://unsplash.com/@mantashesthaven">
+            </a>
+        </div>
+        <div class="gallery_item">
+            <a class="colorbox" href="images/gallery_3.jpg">
+                <img src="images/gallery_3.jpg" alt="https://unsplash.com/@mantashesthaven">
+            </a>
+        </div>
+        <div class="gallery_item">
+            <a class="colorbox" href="images/gallery_4.jpg">
+                <img src="images/gallery_4.jpg" alt="https://unsplash.com/@mantashesthaven">
+            </a>
+        </div>
+        <div class="gallery_item">
+            <a class="colorbox" href="images/gallery_5.jpg">
+                <img src="images/gallery_5.jpg" alt="https://unsplash.com/@mantashesthaven">
+            </a>
+        </div>
+        <div class="gallery_item">
+            <a class="colorbox" href="images/gallery_6.jpg">
+                <img src="images/gallery_6.jpg" alt="https://unsplash.com/@mantashesthaven">
+            </a>
+        </div>
+        <div class="gallery_item">
+            <a class="colorbox" href="images/gallery_7.jpg">
+                <img src="images/gallery_7.jpg" alt="https://unsplash.com/@mantashesthaven">
+            </a>
+        </div>
+        <div class="gallery_item">
+            <a class="colorbox" href="images/gallery_8.jpg">
+                <img src="images/gallery_8.jpg" alt="https://unsplash.com/@mantashesthaven">
+            </a>
+        </div>
+        <div class="gallery_item">
+            <a class="colorbox" href="images/gallery_9.jpg">
+                <img src="images/gallery_9.jpg" alt="https://unsplash.com/@mantashesthaven">
+            </a>
+        </div>
+        <div class="gallery_item">
+            <a class="colorbox" href="images/gallery_10.jpg">
+                <img src="images/gallery_10.jpg" alt="https://unsplash.com/@mantashesthaven">
+            </a>
+        </div>
+    </div>
+
+    <!-- Latest News -->
+
+    <div class="latest_news">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="section_title_container text-center">
+                        <div class="section_title">latest news</div>
+                        <div class="section_subtitle">Be part of a community of people experiencing God together.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row news_row">
+
+                <!-- News Post -->
+                <div class="col-xl-4 col-lg-6 news_post_col">
+                    <div class="news_post">
+                        <div class="news_image"><img src="images/news_1.jpg" alt=""></div>
+                        <div class="news_post_content">
+                            <div class="news_post_title">
+                                <a href="blog_single.html">Find out why a priest prays around her hometown</a>
+                            </div>
+                            <div class="news_post_meta">
+                                <ul>
+                                    <li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
+                                    <li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">08 MAR, 2018</a>
+                                    </li>
+                                    <li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">15</a></li>
+                                </ul>
+                            </div>
+                            <div class="news_post_text">
+                                <p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet.
+                                    Aenean interdus mid vitae blandit porta. Quisque dignissim commodo congue
+                                    efficitur...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- News Post -->
+                <div class="col-xl-4 col-lg-6 news_post_col">
+                    <div class="news_post">
+                        <div class="news_image"><img src="images/news_2.jpg" alt=""></div>
+                        <div class="news_post_content">
+                            <div class="news_post_title">
+                                <a href="blog_single.html">Moderator joins Pope Francis in call to prayer for peace</a>
+                            </div>
+                            <div class="news_post_meta">
+                                <ul>
+                                    <li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Ashley Young</a></li>
+                                    <li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">08 MAR, 2018</a>
+                                    </li>
+                                    <li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">12</a></li>
+                                </ul>
+                            </div>
+                            <div class="news_post_text">
+                                <p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet.
+                                    Aenean interdus mid vitae blandit porta. Quisque dignissim commodo congue
+                                    efficitur...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- News Post -->
+                <div class="col-xl-4 col-lg-6 news_post_col">
+                    <div class="news_post">
+                        <div class="news_image"><img src="images/news_3.jpg" alt=""></div>
+                        <div class="news_post_content">
+                            <div class="news_post_title">
+                                <a href="blog_single.html">Church plays a major role in tackling loneliness</a>
+                            </div>
+                            <div class="news_post_meta">
+                                <ul>
+                                    <li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
+                                    <li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">07 MAR, 2018</a>
+                                    </li>
+                                    <li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">10</a></li>
+                                </ul>
+                            </div>
+                            <div class="news_post_text">
+                                <p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet.
+                                    Aenean interdus mid vitae blandit porta. Quisque dignissim commodo congue
+                                    efficitur...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="/js/jquery-3.2.1.min.js"></script>
+<script src="plugins/OwlCarousel2-2.2.1/owl.carousel.js"></script>
+<script src="js/custom.js"></script>

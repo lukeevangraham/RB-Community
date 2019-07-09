@@ -44,7 +44,7 @@ $(document).ready(function() {
       title: titleInput.val().trim(),
       // date: dateInput.val().trim(),
       date: moment(dateInput.val().trim()).format("D"),
-      longdate: dateInput.val().trim(),
+      longdate: moment(dateInput.val().trim()).format("MMMM D, YYYY"),
       month: moment(dateInput.val().trim()).format("MMM"),
       time: timeInput.val().trim(),
       location: locationInput.val().trim(),
@@ -71,6 +71,7 @@ $(document).ready(function() {
   function submitPost(Post) {
     $.post("/api/posts/", Post, function() {
       // window.location.href = "/events";
+      alert("Event Posted!")
     });
   }
 

@@ -11,11 +11,16 @@ var db = require("./models");
 var PORT = process.env.PORT || 3000;
 
 app.engine('handlebars', exphbs({
-    // helpers: {
-    //     formatDate: function (date, format) {
-    //         return MomentHandler(date).format(format);
-    //     }
-    // }
+    helpers: {
+        // formatDate: function(date, format) {
+        //     return MomentHandler(date).format(format);
+        // }
+        // function(name, options) {
+        //     if(!this._sections) this._section = {};
+        //     this._sections[name] = options.fn(this);
+        //     return null
+        // }
+    }
 }));
 app.set('view engine', 'handlebars')
 
