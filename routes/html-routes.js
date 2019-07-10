@@ -56,4 +56,19 @@ module.exports = function (app) {
         <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`})
     })
 
+    app.get('/blog', function (req, res) {
+        res.render ('blog', {headContent:`<link rel="stylesheet" type="text/css" href="styles/blog.css">
+        <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`})
+    })
+
+    app.get('/sermons', function (req, res) {
+        res.render ('sermons', {headContent:`<link rel="stylesheet" type="text/css" href="styles/sermons.css">
+        <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`})
+    })
+
+
+    app.get('/contact', function (req, res) {
+        res.render ('contact', {headContent:`<link rel="stylesheet" type="text/css" href="styles/contact.css">
+        <link rel="stylesheet" type="text/css" href="styles/contact_responsive.css">`})
+    })
 }

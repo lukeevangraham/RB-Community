@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes) {
         description: DataTypes.STRING(500),
         imgurl: DataTypes.STRING,
         featured: DataTypes.BOOLEAN,
-        published: DataTypes.STRING(5)
+        published: DataTypes.BOOLEAN
     })
     console.log("Event is: ", Event)
     return Event;
