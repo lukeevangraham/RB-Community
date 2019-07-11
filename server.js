@@ -1,5 +1,8 @@
 var express = require("express");
 var exphbs = require('express-handlebars');
+// var MomentHandler = require("handlebars.moment")
+// MomentHandler.registerHelpers(exphbs)
+
 var app = express();
 
 
@@ -12,9 +15,9 @@ var PORT = process.env.PORT || 3000;
 
 app.engine('handlebars', exphbs({
     helpers: {
-        // formatDate: function(date, format) {
-        //     return MomentHandler(date).format(format);
-        // }
+        formatDate: function(date, format) {
+            return moment(date).format(format);
+        }
         // function(name, options) {
         //     if(!this._sections) this._section = {};
         //     this._sections[name] = options.fn(this);

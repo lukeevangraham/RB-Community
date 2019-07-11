@@ -45,7 +45,7 @@ $(document).ready(function() {
       imgurl: imageURLInput.val().trim(),
       // date: dateInput.val().trim(),
       date: moment(dateInput.val().trim()).format("D"),
-      longdate: moment(dateInput.val().trim()).format("MMMM D, YYYY"),
+      longdate: moment(dateInput.val().trim()).format("DD MMM, YYYY"),
       month: moment(dateInput.val().trim()).format("MMM"),
       maincontent: mainContentInput.val(),
       featured: featuredInput.is(':checked'),

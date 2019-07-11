@@ -16,10 +16,16 @@ module.exports = function (app) {
             ]
         })
             .then(function (dbBlog) {
+
+                let str = dbBlog.maincontent;
+
+                let newTrimmedString = str.split('.')[0] + ".";
+
                 var hbsObject = {
                     blogpost: dbBlog,
                     headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
-                <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`
+                <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`,
+                    shortenedMain: newTrimmedString
                 }
                 res.render('blog', hbsObject)
             })
@@ -30,17 +36,18 @@ module.exports = function (app) {
         // console.log(req.params)
         db.Blog.findAll({
             limit: 1,
-            where: {id: req.params.id},
+            where: { id: req.params.id },
             raw: true
         }).then(function (dbBlog) {
-                var bloghbsObject = {
-                    article: dbBlog,
-                    headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
+            var bloghbsObject = {
+                article: dbBlog,
+                headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
                     <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`
-                }
-                console.log("hbsObject:  ", bloghbsObject.article)
-                res.render('blog_single', bloghbsObject)
-            })
+
+            }
+            console.log("hbsObject:  ", bloghbsObject.article)
+            res.render('blog_single', bloghbsObject)
+        })
     })
 
     app.get('/', function (req, res) {

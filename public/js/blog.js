@@ -42,6 +42,8 @@ $(document).ready(function()
 	initHeaderSearch();
 	initMenu();
 
+	initDate();
+
 	/* 
 
 	2. Set Header
@@ -130,5 +132,9 @@ $(document).ready(function()
 		menu.addClass('active');
 		menuActive = true;
 	}
+
+
+
+
 
 });
