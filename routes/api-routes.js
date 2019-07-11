@@ -51,13 +51,14 @@ module.exports = function (app) {
           console.log(req.body);
           db.Blog.create({
               title: req.body.title,
-              author: req.body.date,
+              author: req.body.author,
               imgurl: req.body.imgurl,
               date: req.body.date,
               longdate: req.body.longdate,
               month: req.body.month,
               time: req.body.time,
               maincontent: req.body.maincontent,
+              shortenedmain: req.body.shortenedmain,
               featured: req.body.featured,
               published: req.body.featured,
           })

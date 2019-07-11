@@ -9,7 +9,8 @@ module.exports = function(sequelize, DataTypes) {
         date: DataTypes.STRING,
         longdate: DataTypes.STRING,
         month: DataTypes.STRING,
-        maincontent: DataTypes.STRING,
+        maincontent: DataTypes.STRING(2000),
+        shortenedmain: DataTypes.STRING(500),
         featured: DataTypes.BOOLEAN,
         published: DataTypes.BOOLEAN
     })

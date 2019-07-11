@@ -17,16 +17,18 @@ module.exports = function (app) {
         })
             .then(function (dbBlog) {
 
-                let str = dbBlog.maincontent;
+                // let str = dbBlog[0].dataValues.maincontent
 
-                let newTrimmedString = str.split('.')[0] + ".";
+                // let newTrimmedString = str.split('.')[0] + ".";
+                // dbBlog['shortenedMain'] = newTrimmedString;
 
                 var hbsObject = {
                     blogpost: dbBlog,
                     headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
                 <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`,
-                    shortenedMain: newTrimmedString
+                    // shortenedMain: newTrimmedString
                 }
+                console.log("dbBLog: ", dbBlog)
                 res.render('blog', hbsObject)
             })
     })

@@ -1,6 +1,6 @@
 // import { BOOLEAN } from "sequelize/types";
 
-$(document).ready(function() {
+$(document).ready(function () {
   // Gets an optional query string from our url (i.e. ?post_id=23)
   var url = window.location.search;
   var postId;
@@ -23,19 +23,23 @@ $(document).ready(function() {
   var featuredInput = $("#eventFeatured");
   var publishedInput = $("#eventPublished");
   var cmsForm = $("#cms-post");
-  
+
   // Adding an event listener for when the form is submitted
   $(cmsForm).on("submit", function handleFormSubmit(event) {
-    // console.log("submit clicked!!!")
+    console.log("submit clicked!!!")
     // console.log("event: ", event)
     // console.log("Featured input: ", featuredInput)
     event.preventDefault();
     // Wont submit the post if we are missing a body or a title
     // if (!titleInput.val().trim() || !descriptionInput.val().trim()) {
-      // return;
-      // }
-      
-      // console.log("LOOK HERE: ", $("#eventFeatured").is(':checked'))
+    // return;
+    // }
+
+    // console.log("LOOK HERE: ", $("#eventFeatured").is(':checked'))
+
+    let newTrimmedString = mainContentInput.val().split('.')[0];
+
+    console.log('newTrimmedString:  ', newTrimmedString);
 
 
     // Constructing a newPost object to hand to the database
@@ -48,6 +52,7 @@ $(document).ready(function() {
       longdate: moment(dateInput.val().trim()).format("DD MMM, YYYY"),
       month: moment(dateInput.val().trim()).format("MMM"),
       maincontent: mainContentInput.val(),
+      shortenedmain: newTrimmedString,
       featured: featuredInput.is(':checked'),
       published: publishedInput.is(':checked'),
     };
@@ -67,7 +72,7 @@ $(document).ready(function() {
 
   // Submits a new post and brings user to blog page upon completion
   function submitPost(Post) {
-    $.post("/api/postblog", Post, function() {
+    $.post("/api/postblog", Post, function () {
       // window.location.href = "/events";
       alert("Event Posted!")
     });
@@ -75,7 +80,7 @@ $(document).ready(function() {
 
   // Gets post data for a post if we're editing
   function getPostData(id) {
-    $.get("/api/posts/" + id, function(data) {
+    $.get("/api/posts/" + id, function (data) {
       if (data) {
         // If this post exists, prefill our cms forms with its data
         titleInput.val(data.title);
@@ -95,7 +100,7 @@ $(document).ready(function() {
       url: "/api/posts",
       data: post
     })
-      .then(function() {
+      .then(function () {
         window.location.href = "/events";
       });
   }
