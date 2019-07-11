@@ -33,7 +33,7 @@
         </div>
         <div class="row news_row">
 
-            {{#each blog-post}}
+            {{#each blogpost}}
 
             <!-- News Post -->
             <div class="col-xl-4 col-lg-6 news_post_col">
@@ -41,7 +41,7 @@
                     <div class="news_image"><img src="{{this.imgurl}}" alt=""></div>
                     <div class="news_post_content">
                         <div class="news_post_title">
-                            <a href="blog_single.html">{{this.title}}</a>
+                            <a href="blog_single:{{this.id}}">{{this.title}}</a>
                         </div>
                         <div class="news_post_meta">
                             <ul>

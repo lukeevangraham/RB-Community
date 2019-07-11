@@ -9,6 +9,40 @@ module.exports = function (app) {
     //     res.sendFile(path.join(__dirname, "../public.blog.html"));
     // });
 
+    app.get('/blog', function (req, res) {
+        db.Blog.findAll({
+            order: [
+                ['longdate', 'DESC']
+            ]
+        })
+            .then(function (dbBlog) {
+                var hbsObject = {
+                    blogpost: dbBlog,
+                    headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
+                <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`
+                }
+                res.render('blog', hbsObject)
+            })
+    })
+
+    app.get('/blog_single:id', function (req, res) {
+        req.params.id = req.params.id.substring(1)
+        // console.log(req.params)
+        db.Blog.findAll({
+            limit: 1,
+            where: {id: req.params.id},
+            raw: true
+        }).then(function (dbBlog) {
+                var bloghbsObject = {
+                    article: dbBlog,
+                    headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
+                    <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`
+                }
+                console.log("hbsObject:  ", bloghbsObject.article)
+                res.render('blog_single', bloghbsObject)
+            })
+    })
+
     app.get('/', function (req, res) {
         db.Event.findAll({
             raw: true,
@@ -27,6 +61,10 @@ module.exports = function (app) {
     app.get("/cms", function (req, res) {
         res.sendFile(path.join(__dirname, "../public/cms.html"));
     });
+
+    app.get("/cms-post", function (req, res) {
+        res.sendFile(path.join(__dirname, "../public/cms-post.html"))
+    })
 
     // app.get("/events", function (req, res) {
     //     res.sendFile(path.join(__dirname, "../public/events.html"));
@@ -52,23 +90,21 @@ module.exports = function (app) {
     })
 
     app.get('/about', function (req, res) {
-        res.render ('about', {headContent:`<link rel="stylesheet" type="text/css" href="styles/about.css">
+        res.render('about', {
+            headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
         <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`})
     })
 
-    app.get('/blog', function (req, res) {
-        res.render ('blog', {headContent:`<link rel="stylesheet" type="text/css" href="styles/blog.css">
-        <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`})
-    })
-
     app.get('/sermons', function (req, res) {
-        res.render ('sermons', {headContent:`<link rel="stylesheet" type="text/css" href="styles/sermons.css">
+        res.render('sermons', {
+            headContent: `<link rel="stylesheet" type="text/css" href="styles/sermons.css">
         <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`})
     })
 
 
     app.get('/contact', function (req, res) {
-        res.render ('contact', {headContent:`<link rel="stylesheet" type="text/css" href="styles/contact.css">
+        res.render('contact', {
+            headContent: `<link rel="stylesheet" type="text/css" href="styles/contact.css">
         <link rel="stylesheet" type="text/css" href="styles/contact_responsive.css">`})
     })
 }

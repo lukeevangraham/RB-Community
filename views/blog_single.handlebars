@@ -1,0 +1,169 @@
+<!-- Home -->
+
+	<div class="home">
+		<div class="home_background" style="background-image:url(images/events.jpg)"></div>
+		<div class="home_content">
+			<div class="container">
+				<div class="row">
+					<div class="col d-flex flex-row align-items-center justify-content-start">
+						<div class="home_title">Blog</div>
+						<div class="breadcrumbs ml-auto">
+							<ul>
+								<li><a href="/home">Home</a></li>
+								<li><a href="/blog">Blog</a></li>
+
+								{{#each article}}
+								<li>{{this.title}}</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Blog Single -->
+
+	<div class="blog">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="blog_image"><img src="{{this.imgurl}}" alt=""></div>
+
+					<!-- Blog Post Title -->
+					<div class="blog_post_title_container d-flex flex-row align-items-lg-center align-items-start justify-content-start">
+						<div class="blog_post_date">
+							<div class="d-flex flex-column align-items-center justify-content-center">
+								<div class="blog_post_day">{{this.date}}</div>
+								<div class="blog_post_month">mar</div>
+							</div>
+						</div>
+						<div class="blog_post_title_content">
+							<div class="blog_post_title">{{this.title}}</div>
+							<div class="blog_post_meta">
+								<ul>
+									<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">{{this.author}}</a></li>
+									{{!-- <li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">12</a></li> --}}
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="blog_post_text">
+						<p>{{this.maincontent}}</p>
+					</div>
+					<div class="social_and_tags d-flex flex-lg-row flex-column align-items-start justify-content-start">
+						<div class="blog_social">
+							<ul>
+								<li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+								<li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+								<li><a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a></li>
+								<li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+								<li><a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li>
+							</ul>
+						</div>
+						<div class="blog_post_tags ml-lg-auto">
+							<ul>
+								<li><a href="#">faithful</a></li>
+								<li><a href="#">sermon</a></li>
+								<li><a href="#">news</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{{/each}}
+			
+			<!-- Comments -->
+
+			{{!-- <div class="row comments_row">
+				<div class="col">
+					<div class="comments">
+						<div class="comments_title"><span>3</span> comments</div>
+						<div class="comments_container">
+							<ul class="comments_list">
+
+								<!-- Comment -->
+								<li class="comment">
+									<div class="comment_container d-flex flex-row align-items-start justify-content-start">
+										<div class="avatar"><div><img src="images/avatar_1.jpg" alt=""></div></div>
+										<div class="comment_content">
+											<div class="comment_name"><a href="#">Daniel Craig</a></div>
+											<div class="comment_time"><i class="fa fa-clock-o" aria-hidden="true"></i><span>08 MAR 2018</span></div>
+											<div class="comment_text">
+												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas interdum odio lorem, non ultricies est interdum id. Integer alim potquet augue vitae risus convallis.</p>
+											</div>
+											<div class="reply"><a href="#">reply</a></div>
+										</div>
+									</div>
+									<ul>
+
+										<!-- Comment -->
+										<li class="comment">
+											<div class="comment_container d-flex flex-row align-items-start justify-content-start">
+												<div class="avatar"><div><img src="images/avatar_2.jpg" alt=""></div></div>
+												<div class="comment_content">
+													<div class="comment_name"><a href="#">Ginny Weasley</a></div>
+													<div class="comment_time"><i class="fa fa-clock-o" aria-hidden="true"></i><span>08 MAR 2018</span></div>
+													<div class="comment_text">
+														<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas interdum odio lorem, non ultricies est interdum id. Integer alim potquet augue vitae risus convallis.</p>
+													</div>
+													<div class="reply"><a href="#">reply</a></div>
+												</div>
+											</div>
+										</li>
+									</ul>
+								</li>
+
+								<!-- Comment -->
+								<li class="comment">
+									<div class="comment_container d-flex flex-row align-items-start justify-content-start">
+										<div class="avatar"><div><img src="images/avatar_1.jpg" alt=""></div></div>
+										<div class="comment_content">
+											<div class="comment_name"><a href="#">Daniel Craig</a></div>
+											<div class="comment_time"><i class="fa fa-clock-o" aria-hidden="true"></i><span>08 MAR 2018</span></div>
+											<div class="comment_text">
+												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas interdum odio lorem, non ultricies est interdum id. Integer alim potquet augue vitae risus convallis.</p>
+											</div>
+											<div class="reply"><a href="#">reply</a></div>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Leave your comment -->
+
+			<div class="row leave_comment_row">
+				<div class="col">
+					<div class="leave_comment">
+						<div class="leave_comment_title">leave your comment</div>
+						<div class="leave_comment_form_container">
+							<form action="#">
+								<div class="row">
+									<div class="col-lg-6">
+										<input type="text" class="form_input" placeholder="Your Name" required="required">
+									</div>
+									<div class="col-lg-6">
+										<input type="email" class="form_input email_input" placeholder="Your Email" required="required">
+									</div>
+									<div class="col-12">
+										<textarea class="form_text" placeholder="Your Message" required="required"></textarea>
+										<button type="submit" class="form_submit_button">send comment</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div> --}}
+
+		</div>
+	</div>
+
+
+
+	<script src="js/blog_single.js"></script>

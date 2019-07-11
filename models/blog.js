@@ -7,6 +7,8 @@ module.exports = function(sequelize, DataTypes) {
         author: DataTypes.STRING,
         imgurl: DataTypes.STRING,
         date: DataTypes.STRING,
+        longdate: DataTypes.DATEONLY,
+        month: DataTypes.STRING,
         maincontent: DataTypes.STRING,
         featured: DataTypes.BOOLEAN,
         published: DataTypes.BOOLEAN
