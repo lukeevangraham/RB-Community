@@ -14,8 +14,19 @@ module.exports = function (app) {
     //   console.log(body);
     // })
 
+app.get("/api/blog/", function (req, res) {
+    db.Blog.findAll({
+        limit: 3,
+        order: [
+            ['longdate', 'DESC']
+        ]
+    }).then(function (dbBlog) {
+        res.json(dbBlog)
+    })
+})
 
-    // GET route for getting all of the posts
+
+    // GET route for getting all of the events
     app.get("/api/events/", function (req, res) {
         db.Event.findAll({})
             .then(function (dbPost) {
