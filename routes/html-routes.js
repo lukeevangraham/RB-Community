@@ -1,7 +1,30 @@
+require("dotenv").config();
+let keys = require("../keys.js")
+var request = require("request");
+
 var path = require("path");
 
 // Import the model (event.js) to use its database functions
 var db = require("../models/");
+
+let vimeoPass = process.env.VIMEO_TOKEN
+
+
+
+
+var options = { method: 'GET',
+  url: 'https://api.vimeo.com/users/14320074/videos',
+  qs: 
+  { query: 'Sermon',
+    fields: 'name, link, pictures.sizes.link, pictures.sizes.link_with_play_button',
+    sizes: '960',
+    per_page: '7',
+    page: '1' },
+  headers: 
+   { 
+     Authorization: 'Bearer ' + vimeoPass } };
+
+
 
 // Routes
 module.exports = function (app) {
@@ -105,10 +128,25 @@ module.exports = function (app) {
     })
 
     app.get('/sermons', function (req, res) {
-        res.render('sermons', {
-            headContent: `<link rel="stylesheet" type="text/css" href="styles/sermons.css">
-        <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`})
+        request(options, function (error, response, body) {
+            if (error) throw new Error(error);
+          
+            // console.log("BODY IS: ", body);
+
+            var vimeo = JSON.parse(body)
+            var vimeoPictures = JSON.parse(body).data
+            // vimeoPictures = vimeoPictures.pictures.sizes[0].
+            // console.log("vimeo is: ", vimeoPictures )
+            
+            var hbsObject = {
+                vimeo: vimeo,
+                headContent: `<link rel="stylesheet" type="text/css" href="styles/sermons.css">
+                <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`
+            };
+            
+            return res.render("sermons", hbsObject)
     })
+})
 
 
     app.get('/contact', function (req, res) {
