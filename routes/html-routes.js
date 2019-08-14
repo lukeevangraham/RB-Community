@@ -18,7 +18,7 @@ var options = { method: 'GET',
   { query: 'Sermon',
     fields: 'name, link, pictures.sizes.link, pictures.sizes.link_with_play_button',
     sizes: '960',
-    per_page: '7',
+    per_page: '6',
     page: '1' },
   headers: 
    { 
@@ -134,9 +134,9 @@ module.exports = function (app) {
             // console.log("BODY IS: ", body);
 
             var vimeo = JSON.parse(body)
-            var vimeoPictures = JSON.parse(body).data
-            // vimeoPictures = vimeoPictures.pictures.sizes[0].
-            // console.log("vimeo is: ", vimeoPictures )
+
+            var latestSermon = JSON.parse(body).data[0]
+            console.log(latestSermon)
             
             var hbsObject = {
                 vimeo: vimeo,

@@ -24,6 +24,10 @@
 
 <!-- Latest Sermon -->
 
+{{#each vimeo.data}}
+
+{{#if @first}}
+
 <div class="latest">
 	<div class="container">
 		<div class="row">
@@ -37,7 +41,7 @@
 		<div class="row latest_row">
 			<div class="col-lg-10 offset-lg-1">
 				<div class="latest_play d-flex flex-column align-items-center justify-content-center">
-					<div class="latest_play_background" style="background-image:url(images/latest.jpg)"></div>
+					<div class="latest_play_background" style="background-image:url({{this.pictures.sizes.[0].link}}); background-position:center top;"></div>
 					<a class="vimeo latest_play_button" href="https://player.vimeo.com/video/99340873?title=0"
 						title="OH, PORTUGAL - IN 4K - Basti Hansen - Stock Footage">
 						<div
@@ -53,7 +57,7 @@
 		</div>
 		<div class="row latest_content_row">
 			<div class="col-lg-8 offset-lg-2 text-center">
-				<div class="latest_content_title">what jesus sees in you</div>
+				<div class="latest_content_title">{{this.name}}</div>
 				<div class="latest_sermon_info_container">
 					<div class="sermon_info">
 						<div class="sermon_info_title">Pastor: </div>
@@ -96,6 +100,10 @@
 	</div>
 </div>
 
+{{/if}}
+
+{{/each}}
+
 <!-- Sermons -->
 
 <div class="sermons">
@@ -115,7 +123,6 @@
 
 			{{#each vimeo.data}}
 
-{{ log this.pictures }}
 
 
 			<div class="col-lg-4 sermon_col">
@@ -143,7 +150,7 @@
 
 
 			{{/each}}
-{{!-- 
+
 			<div class="col-lg-4 sermon_col">
 				<div class="card">
 					<div class="event_date d-flex flex-column align-items-center justify-content-center">
@@ -369,7 +376,7 @@
 						</div>
 					</div>
 				</div>
-			</div> --}}
+			</div>
 
 		</div>
 
