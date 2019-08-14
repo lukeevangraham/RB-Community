@@ -1,7 +1,7 @@
 var moment = require('moment')
 
 module.exports = function(sequelize, DataTypes) {
-    console.log("model functioning!")
+    // console.log("model functioning!")
     var Sermon = sequelize.define("Sermon", {
         title: DataTypes.STRING,
         author: DataTypes.STRING,
@@ -14,6 +14,6 @@ module.exports = function(sequelize, DataTypes) {
         featured: DataTypes.BOOLEAN,
         published: DataTypes.BOOLEAN
     })
-    console.log("Sermon is: ", Sermon)
+    // console.log("Sermon is: ", Sermon)
     return Sermon;
 }

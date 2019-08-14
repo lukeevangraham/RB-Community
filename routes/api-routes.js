@@ -51,7 +51,7 @@ app.get("/api/blog/", function (req, res) {
             published: req.body.featured,
         })
             .then(function (dbPost) {
-                console.log("dbPost: ", dbPost)
+                // console.log("dbPost: ", dbPost)
                 res.json(dbPost);
             });
     });
@@ -59,7 +59,7 @@ app.get("/api/blog/", function (req, res) {
 
         // POST route for saving a new event post
         app.post("/api/postblog", function (req, res) {
-          console.log(req.body);
+        //   console.log(req.body);
           db.Blog.create({
               title: req.body.title,
               author: req.body.author,
@@ -74,7 +74,7 @@ app.get("/api/blog/", function (req, res) {
               published: req.body.featured,
           })
               .then(function (dbPost) {
-                  console.log("dbPost: ", dbPost)
+                //   console.log("dbPost: ", dbPost)
                   res.json(dbPost);
               });
       });

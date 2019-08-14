@@ -130,7 +130,7 @@ $(document).ready(function () {
 				url: "/api/events/",
 				method: "GET"
 			}).then(function (response) {
-				console.log(response[0].longdate);
+				// console.log(response[0].longdate);
 				for (let i = 0; i < response.length; i++) {
 					console.log("FEATRUED? ", response[i].featured)
 					if (response[i].featured === true) {
@@ -228,7 +228,7 @@ $(document).ready(function () {
 	}
 
 	function createPanel(article) {
-		console.log(article)
+		// console.log(article)
 		let panel =
 			$([`<div class="col-xl-4 col-lg-6 news_post_col">
 		<div class="news_post">
