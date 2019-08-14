@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/lukeevangraham/RB-Community-Sequelize#readme",
   "dependencies": {
+    "contentful": "^7.9.1",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "express-handlebars": "^3.1.0",

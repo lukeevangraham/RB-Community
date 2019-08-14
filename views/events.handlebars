@@ -24,7 +24,9 @@
 	</div>
 
 	{{#each events}}
-	{{#if featured}}
+	{{#if this.fields.featured}}
+
+
 
 
 	<!-- Upcoming Event -->
@@ -47,26 +49,26 @@
 					<div class="event_container d-flex flex-md-row flex-column align-items-start justify-content-start">
 						<div class="event_date">
 							<div class="d-flex flex-column align-items-center justify-content-center">
-								<div class="event_day">{{this.date}}</div>
-								<div class="event_month">{{this.month}}</div>
+								<div class="event_day">{{this.fields.shortDay}}</div>
+								<div class="event_month">{{this.fields.shortMonth}}</div>
 							</div>
 						</div>
 						<div class="event_content">
-							<div class="event_title"><a href="#">{{this.title}}</a></div>
+							<div class="event_title"><a href="#">{{this.fields.title}}</a></div>
 							<ul class="event_row">
 								<li>
 									<div class="event_icon"><img src="images/calendar.png" alt=""></div>
-									<span>{{this.time}}</span>
+									<span>{{this.fields.time}}</span>
 								</li>
 								<li>
 									<div class="event_icon"><img src="images/location.png" alt=""></div>
-									<span>{{this.location}}</span>
+									<span>{{this.fields.location}}</span>
 								</li>
 							</ul>
 						</div>
 					</div>
 					<div class="event_text">
-						<p>{{this.description}}</p>
+						<p>{{this.fields.description}}</p>
 					</div>
 
 
@@ -120,29 +122,32 @@
 
 
 			{{#each events}}
-			{{#unless featured}}
+			{{#unless this.fields.featured}}
+
+
+
 
 			<!-- Event -->
 
 			<div class="events_item">
-				<div class="events_item_image"><img src="images/event_2.jpg" alt=""></div>
+				<div class="events_item_image"><img src="{{this.fields.eventImage.fields.file.url}}" alt=""></div>
 				<div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
 					<div class="event_date">
 						<div class="d-flex flex-column align-items-center justify-content-center">
-							<div class="event_day">{{this.date}}</div>
-							<div class="event_month">{{this.month}}</div>
+							<div class="event_day">{{this.fields.shortDay}}</div>
+							<div class="event_month">{{this.fields.shortMonth}}</div>
 						</div>
 					</div>
 					<div class="event_content">
-						<div class="event_title"><a href="#">{{this.title}}</a></div>
+						<div class="event_title"><a href="#">{{this.fields.title}}</a></div>
 						<ul class="event_row">
 							<li>
 								<div class="event_icon"><img src="images/calendar.png" alt=""></div>
-								<span>{{this.time}}</span>
+								<span>{{this.fields.time}}</span>
 							</li>
 							<li>
 								<div class="event_icon"><img src="images/location.png" alt=""></div>
-								<span>{{this.location}}</span>
+								<span>{{this.fields.location}}</span>
 							</li>
 						</ul>
 					</div>
