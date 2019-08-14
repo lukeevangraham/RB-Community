@@ -109,92 +109,8 @@
         </div>
     </div>
 
-    <!-- Sermons -->
 
-
-
-
-
-    <div class="sermons">
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <div class="section_title_container text-center">
-                        <div class="section_title">sermons today</div>
-                        <div class="section_subtitle">Our lives in praising God</div>
-                    </div>
-                </div>
-            </div>
-            <div class="row sermons_row">
-
-{{#each vimeo.data}}
-
-
-
-                <div class="col-lg-4 sermon_col">
-                    <div class="card">
-                        <a href="{{this.link}}"><img class="card-img-top" src="{{this.pictures.sizes.[0].link}}" alt=""></a>
-                        <div class="card-body text-center">
-                            <div class="card-title sermon_title"><a href="{{this.link}}">{{this.name}}</a></div>
-                            <div class="card-text sermon_info_container">
-                                <div class="sermon_links">
-                                    <ul>
-                                        <li><a href="#"><i class="fa fa-link" aria-hidden="true"></i></a></li>
-                                        {{!-- <li><a href="#"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a></li> --}}
-                                        <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-download" aria-hidden="true"></i></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{/each}}
-
-
-            </div>
-        </div>
-    </div>
-
-    <!-- Mission -->
-
-	<div class="mission">
-        <div class="mission_background parallax-window" data-parallax="scroll" data-image-src="images/mission.jpg"
-            data-speed="0.8"></div>
-        <div class="mission_items d-flex flex-row flex-wrap align-items-start justify-content-start">
-
-            <div class="mission_item text-center">
-					<div class="mission_icon"><i class="fa fa-flag-o" aria-hidden="true"></i></div>
-					<div class="mission_title">our community</div>
-					<div class="mission_text">RB Community Church cares about one thing more than anything else, Jesus.
-						RB Community Church is a family of individuals who find hope in Jesus, and want as many people
-						as posible to experience that same freedom.</div>
-				</div>
-
-				<div class="mission_item text-center">
-					<div class="mission_icon"><i class="fa fa-bell-o" aria-hidden="true"></i></div>
-					<div class="mission_title">our story</div>
-					<div class="mission_text">RB Community Church began in 1964</div>
-				</div>
-
-				<div class="mission_item text-center">
-					<div class="mission_icon"><i class="fa fa-moon-o" aria-hidden="true"></i></div>
-					<div class="mission_title">our future</div>
-					<div class="mission_text">More than ever RB Community Church is committed </div>
-				</div>
-
-            <div class="mission_item text-center">
-                <div class="mission_icon"><i class="fa fa-moon-o" aria-hidden="true"></i></div>
-                <div class="mission_title">you</div>
-                <div class="mission_text">Wherever you're at in your faith journey, you'll always be accepted as part of the RB Community family.  We're saving a seat for you.
-				</div>
-            </div>
-
-		</div>
-	</div>
-
-    <!-- Events -->
+     <!-- Events -->
 
     <div class="events">
         <div class="container">
@@ -293,6 +209,93 @@
         </div>
     </div>
 
+  
+
+    <!-- Mission -->
+
+	<div class="mission">
+        <div class="mission_background parallax-window" data-parallax="scroll" data-image-src="images/mission.jpg"
+            data-speed="0.8"></div>
+        <div class="mission_items d-flex flex-row flex-wrap align-items-start justify-content-start">
+
+            <div class="mission_item text-center">
+					<div class="mission_icon"><i class="fa fa-flag-o" aria-hidden="true"></i></div>
+					<div class="mission_title">our community</div>
+					<div class="mission_text">RB Community Church cares about one thing more than anything else, Jesus.
+						RB Community Church is a family of individuals who find hope in Jesus, and want as many people
+						as posible to experience that same freedom.</div>
+				</div>
+
+				<div class="mission_item text-center">
+					<div class="mission_icon"><i class="fa fa-bell-o" aria-hidden="true"></i></div>
+					<div class="mission_title">our story</div>
+					<div class="mission_text">RB Community Church began in 1964</div>
+				</div>
+
+				<div class="mission_item text-center">
+					<div class="mission_icon"><i class="fa fa-moon-o" aria-hidden="true"></i></div>
+					<div class="mission_title">our future</div>
+					<div class="mission_text">More than ever RB Community Church is committed </div>
+				</div>
+
+            <div class="mission_item text-center">
+                <div class="mission_icon"><i class="fa fa-moon-o" aria-hidden="true"></i></div>
+                <div class="mission_title">you</div>
+                <div class="mission_text">Wherever you're at in your faith journey, you'll always be accepted as part of the RB Community family.  We're saving a seat for you.
+				</div>
+            </div>
+
+		</div>
+	</div>
+
+   
+  <!-- Sermons -->
+
+
+
+
+
+    <div class="sermons">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="section_title_container text-center">
+                        <div class="section_title">sermons today</div>
+                        <div class="section_subtitle">Our lives in praising God</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row sermons_row">
+
+{{#each vimeo.data}}
+
+
+
+                <div class="col-lg-4 sermon_col">
+                    <div class="card">
+                        <a href="{{this.link}}"><img class="card-img-top" src="{{this.pictures.sizes.[0].link}}" alt=""></a>
+                        <div class="card-body text-center">
+                            <div class="card-title sermon_title"><a href="{{this.link}}">{{this.name}}</a></div>
+                            <div class="card-text sermon_info_container">
+                                <div class="sermon_links">
+                                    <ul>
+                                        <li><a href="#"><i class="fa fa-link" aria-hidden="true"></i></a></li>
+                                        {{!-- <li><a href="#"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a></li> --}}
+                                        <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-download" aria-hidden="true"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{/each}}
+
+
+            </div>
+        </div>
+    </div>
 
 
     <!-- Donations -->
