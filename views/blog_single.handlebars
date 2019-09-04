@@ -62,13 +62,14 @@
 								{{!-- <li><a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li> --}}
 							</ul>
 						</div>
-						{{!-- <div class="blog_post_tags ml-lg-auto">
-							<ul>
-								<li><a href="#">faithful</a></li>
-								<li><a href="#">sermon</a></li>
-								<li><a href="#">news</a></li>
+						<div class="blog_post_tags ml-lg-auto">
+							<ul>{{#each ministry}}
+								{{!-- <li><a href="#">faithful</a></li> --}}
+								<li><a href="#">{{this}}</a></li>
+								{{!-- <li><a href="#">news</a></li> --}}
+								{{/each}}
 							</ul>
-						</div> --}}
+						</div>
 					</div>
 				</div>
 			</div>
