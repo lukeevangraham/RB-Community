@@ -92,23 +92,20 @@ module.exports = function(app) {
         // Converting times for template
         items.forEach(item => {
           Object.assign(item.fields, {
-            formattedDate: moment(item.sys.updatedAt).format('DD MMM, YYYY')
+            formattedDate: moment(item.fields.datePosted).format('DD MMM, YYYY')
           });
 
           var truncatedString = JSON.stringify(item.fields.body.content[0].content[0].value.replace(/^(.{165}[^\s]*).*/, "$1"))
           var truncatedLength = truncatedString.length
           truncatedString = truncatedString.substring(1, truncatedLength - 1);
- 
-            console.log(truncatedLength)
 
 
-          console.log(truncatedString, "LOOK HERE: ")
+          // console.log("LOOK HERE: ", )
 
           Object.assign(item.fields, {
             excerpt: truncatedString
           })
         });
-
 
         // console.log(dbBlog);
         // let str = dbBlog[0].dataValues.maincontent
