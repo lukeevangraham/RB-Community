@@ -12,6 +12,9 @@ var contentful = require("contentful");
 let spaceId = process.env.SPACE_ID;
 let contentfulAccessToken = process.env.ACCESS_TOKEN;
 
+const HtmlRenderer = require('@contentful/rich-text-html-renderer');
+let { documentToHtmlString} = HtmlRenderer;
+
 let vimeoPass = process.env.VIMEO_TOKEN;
 
 var client = contentful.createClient({
@@ -127,7 +130,6 @@ module.exports = function(app) {
     // console.log("LOOK HERE: ", req.params)
     client.getEntry(req.params.id)
     .then(function(entry) {
-      
       // Converting times for template
       Object.assign(entry.fields, {
         shortMonth: moment(entry.fields.date).format("MMM")
@@ -135,18 +137,25 @@ module.exports = function(app) {
       Object.assign(entry.fields, {
         shortDay: moment(entry.fields.date).format("DD")
       });
-      
-      // console.log("LOOK HERE: ", entry.fields.image.fields.file.url)
+
+      const rawRichTextField = entry.fields.body;
+          return documentToHtmlString(rawRichTextField);
+        })
+        .then(renderedHtml => {
+          // do something with html, like write to a file
+          console.log(renderedHtml);
+        // })
+
 
       var bloghbsObject = {
         article: entry,
         headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
                     <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`
       };
-      console.log("hbsObject:  ", bloghbsObject.article);
+      // console.log("hbsObject:  ", bloghbsObject.article);
       res.render("blog_single", bloghbsObject);
     })
-    .catch(console.error)
+    // .catch(console.error)
 
 
 
@@ -164,7 +173,7 @@ module.exports = function(app) {
     //   // console.log("hbsObject:  ", bloghbsObject.article);
     //   res.render("blog_single", bloghbsObject);
     // });
-  });
+  // });
 
   app.get("/", function(req, res) {
     var vimeoRecord = null;
