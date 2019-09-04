@@ -52,22 +52,25 @@ var vimeoOptionsHome = {
 
 function doReq(url, what) {
   return new Promise(function(resolve, reject) {
-      request({
-          url: url,
-          headers: {
-              'Bearer': 'sampleapitoken'
-          }
-      }, function(error, response) {
-          if(error || response.statusCode !== 200) {
-              reject(error);
-          } else {
-              var data = {};
-              (Array.isArray(what) ? what : [what]).forEach(function(item, index) {
-                  data[item] = JSON.parse(arguments[index + 2]);
-              });
-              resolve( data );
-          }
-      });
+    request(
+      {
+        url: url,
+        headers: {
+          Bearer: "sampleapitoken"
+        }
+      },
+      function(error, response) {
+        if (error || response.statusCode !== 200) {
+          reject(error);
+        } else {
+          var data = {};
+          (Array.isArray(what) ? what : [what]).forEach(function(item, index) {
+            data[item] = JSON.parse(arguments[index + 2]);
+          });
+          resolve(data);
+        }
+      }
+    );
   });
 }
 
@@ -78,23 +81,50 @@ module.exports = function(app) {
   // });
 
   app.get("/blog", function(req, res) {
-    db.Blog.findAll({
-      order: [["longdate", "DESC"]]
-    }).then(function(dbBlog) {
-      // let str = dbBlog[0].dataValues.maincontent
+    client
+      .getEntries({
+        content_type: 'blog'
+      })
+      .then(function(dbBlog) {
 
-      // let newTrimmedString = str.split('.')[0] + ".";
-      // dbBlog['shortenedMain'] = newTrimmedString;
+        var items = dbBlog.items;
 
-      var hbsObject = {
-        blogpost: dbBlog,
-        headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
+        // Converting times for template
+        items.forEach(item => {
+          Object.assign(item.fields, {
+            formattedDate: moment(item.sys.updatedAt).format('DD MMM, YYYY')
+          });
+
+          var truncatedString = JSON.stringify(item.fields.body.content[0].content[0].value.replace(/^(.{165}[^\s]*).*/, "$1"))
+          var truncatedLength = truncatedString.length
+          truncatedString = truncatedString.substring(1, truncatedLength - 1);
+ 
+            console.log(truncatedLength)
+
+
+          console.log(truncatedString, "LOOK HERE: ")
+
+          Object.assign(item.fields, {
+            excerpt: truncatedString
+          })
+        });
+
+
+        // console.log(dbBlog);
+        // let str = dbBlog[0].dataValues.maincontent
+
+        // let newTrimmedString = str.split('.')[0] + ".";
+        // dbBlog['shortenedMain'] = newTrimmedString;
+
+        var hbsObject = {
+          blogpost: dbBlog.items,
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
                 <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`
-        // shortenedMain: newTrimmedString
-      };
-    //   console.log("dbBLog: ", dbBlog);
-      res.render("blog", hbsObject);
-    });
+          // shortenedMain: newTrimmedString
+        };
+          // console.log("dbBLog: ", dbBlog.items[0]);
+        res.render("blog", hbsObject);
+      });
   });
 
   app.get("/blog_single:id", function(req, res) {
@@ -116,59 +146,53 @@ module.exports = function(app) {
   });
 
   app.get("/", function(req, res) {
-  
-var vimeoRecord = null;
-let secondRecord = null;
+    var vimeoRecord = null;
+    let secondRecord = null;
 
     request(vimeoOptionsHome, function(error, response, body) {
       if (error) throw new Error(error);
 
       vimeoRecord = JSON.parse(body);
-    
-    
 
-    client
-      .getEntries({
-        content_type: "events"
-      })
-      .then(function(dbEvent) {
-
-        var items = dbEvent.items;
-
-        // Converting times for template
-        items.forEach(item => {
-          Object.assign(item.fields, {
-            shortMonth: moment(item.fields.date).format("MMM")
-          });
-          Object.assign(item.fields, {
-            shortDay: moment(item.fields.date).format("DD")
-          });
-        });
-
-        secondRecord = dbEvent
-        return request(vimeoOptions, function(error, response, body) {
-      if (error) throw new Error(error);
-
-      
-
-      return ;
+      client
+        .getEntries({
+          content_type: "events"
         })
-      }).then(function (body) {
+        .then(function(dbEvent) {
+          var items = dbEvent.items;
 
-        // console.log(body)
-          console.log("VIMEO SAYS: ", vimeoRecord)
+          // Converting times for template
+          items.forEach(item => {
+            Object.assign(item.fields, {
+              shortMonth: moment(item.fields.date).format("MMM")
+            });
+            Object.assign(item.fields, {
+              shortDay: moment(item.fields.date).format("DD")
+            });
+          });
+
+          secondRecord = dbEvent;
+          return request(vimeoOptions, function(error, response, body) {
+            if (error) throw new Error(error);
+
+            return;
+          });
+        })
+        .then(function(body) {
+          // console.log(body)
+          console.log("VIMEO SAYS: ", vimeoRecord);
           // console.log("CONTENTFUL SAYS: ", secondRecord)
-          
+
           var hbsObject = {
-              events: secondRecord.items,
-              vimeo: vimeoRecord,
-              headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
+            events: secondRecord.items,
+            vimeo: vimeoRecord,
+            headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
               <link rel="stylesheet" type="text/css" href="styles/responsive.css">`
-            };
-            
-            res.render("home", hbsObject);
-        })
-      })
+          };
+
+          res.render("home", hbsObject);
+        });
+    });
   });
 
   app.get("/cms", function(req, res) {
@@ -184,7 +208,6 @@ let secondRecord = null;
   // })
 
   app.get("/events", function(req, res) {
-
     client
       .getEntries({
         content_type: "events"
