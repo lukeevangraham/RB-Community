@@ -99,9 +99,6 @@ module.exports = function(app) {
           var truncatedLength = truncatedString.length
           truncatedString = truncatedString.substring(1, truncatedLength - 1);
 
-
-          // console.log("LOOK HERE: ", )
-
           Object.assign(item.fields, {
             excerpt: truncatedString
           })
@@ -113,33 +110,60 @@ module.exports = function(app) {
         // let newTrimmedString = str.split('.')[0] + ".";
         // dbBlog['shortenedMain'] = newTrimmedString;
 
+        // console.log("Look Here: ", dbBlog.items[3])
+
         var hbsObject = {
           blogpost: dbBlog.items,
           headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
                 <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`
           // shortenedMain: newTrimmedString
         };
-          // console.log("dbBLog: ", dbBlog.items[0]);
         res.render("blog", hbsObject);
       });
   });
 
   app.get("/blog_single:id", function(req, res) {
     req.params.id = req.params.id.substring(1);
-    // console.log(req.params)
-    db.Blog.findAll({
-      limit: 1,
-      where: { id: req.params.id },
-      raw: true
-    }).then(function(dbBlog) {
+    // console.log("LOOK HERE: ", req.params)
+    client.getEntry(req.params.id)
+    .then(function(entry) {
+      
+      // Converting times for template
+      Object.assign(entry.fields, {
+        shortMonth: moment(entry.fields.date).format("MMM")
+      });
+      Object.assign(entry.fields, {
+        shortDay: moment(entry.fields.date).format("DD")
+      });
+      
+      // console.log("LOOK HERE: ", entry.fields.image.fields.file.url)
+
       var bloghbsObject = {
-        article: dbBlog,
+        article: entry,
         headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
                     <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`
       };
-      // console.log("hbsObject:  ", bloghbsObject.article);
+      console.log("hbsObject:  ", bloghbsObject.article);
       res.render("blog_single", bloghbsObject);
-    });
+    })
+    .catch(console.error)
+
+
+
+
+    // db.Blog.findAll({
+    //   limit: 1,
+    //   where: { id: req.params.id },
+    //   raw: true
+    // }).then(function(dbBlog) {
+    //   var bloghbsObject = {
+    //     article: dbBlog,
+    //     headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
+    //                 <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`
+    //   };
+    //   // console.log("hbsObject:  ", bloghbsObject.article);
+    //   res.render("blog_single", bloghbsObject);
+    // });
   });
 
   app.get("/", function(req, res) {
