@@ -139,11 +139,14 @@ module.exports = function(app) {
       });
 
       const rawRichTextField = entry.fields.body;
-          return documentToHtmlString(rawRichTextField);
-        })
-        .then(renderedHtml => {
+          let renderedHtml = documentToHtmlString(rawRichTextField);
+        // })
+        // .then(renderedHtml => {
           // do something with html, like write to a file
-          console.log(renderedHtml);
+          // console.log(renderedHtml);
+          Object.assign(entry.fields, {
+            renderedHtml: documentToHtmlString(rawRichTextField)
+          })
         // })
 
 
@@ -152,7 +155,7 @@ module.exports = function(app) {
         headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
                     <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`
       };
-      // console.log("hbsObject:  ", bloghbsObject.article);
+      console.log("hbsObject:  ", bloghbsObject.article);
       res.render("blog_single", bloghbsObject);
     })
     // .catch(console.error)
@@ -173,7 +176,7 @@ module.exports = function(app) {
     //   // console.log("hbsObject:  ", bloghbsObject.article);
     //   res.render("blog_single", bloghbsObject);
     // });
-  // });
+  });
 
   app.get("/", function(req, res) {
     var vimeoRecord = null;
