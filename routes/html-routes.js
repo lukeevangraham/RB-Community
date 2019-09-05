@@ -95,7 +95,7 @@ module.exports = function(app) {
         // Converting times for template
         items.forEach(item => {
           Object.assign(item.fields, {
-            formattedDate: moment(item.fields.datePosted).format('DD MMM, YYYY')
+            formattedDate: moment(item.fields.datePosted).format('DD MMM, YYYY').toUpperCase()
           });
 
           var truncatedString = JSON.stringify(item.fields.body.content[0].content[0].value.replace(/^(.{165}[^\s]*).*/, "$1"))
@@ -132,7 +132,7 @@ module.exports = function(app) {
     .then(function(entry) {
       // Converting times for template
       Object.assign(entry.fields, {
-        shortMonth: moment(entry.fields.date).format("MMM")
+        shortMonth: moment(entry.fields.date).format("MMM").toUpperCase()
       });
       Object.assign(entry.fields, {
         shortDay: moment(entry.fields.date).format("DD")
