@@ -345,7 +345,7 @@ module.exports = function(app) {
           headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
                 <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`
         };
-        console.log("hbsObject:  ", bloghbsObject.blogpost);
+        // console.log("hbsObject:  ", bloghbsObject.blogpost);
         res.render("ministry_single", bloghbsObject);
       });
   });
