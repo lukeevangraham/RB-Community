@@ -1136,3 +1136,10 @@ section
 {
 	padding-bottom: 52px;
 }
+
+
+.ministry_link
+{
+	color: #181818 !important;
+	border-bottom: solid 1px #327091;
+}

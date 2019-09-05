@@ -140,15 +140,10 @@ module.exports = function(app) {
 
       const rawRichTextField = entry.fields.body;
           let renderedHtml = documentToHtmlString(rawRichTextField);
-        // })
-        // .then(renderedHtml => {
-          // do something with html, like write to a file
-          // console.log(renderedHtml);
           Object.assign(entry.fields, {
             renderedHtml: documentToHtmlString(rawRichTextField)
           })
         // })
-
 
       var bloghbsObject = {
         article: entry,
@@ -158,25 +153,11 @@ module.exports = function(app) {
       // console.log("hbsObject:  ", bloghbsObject.article);
       res.render("blog_single", bloghbsObject);
     })
-    // .catch(console.error)
-
-
-
-
-    // db.Blog.findAll({
-    //   limit: 1,
-    //   where: { id: req.params.id },
-    //   raw: true
-    // }).then(function(dbBlog) {
-    //   var bloghbsObject = {
-    //     article: dbBlog,
-    //     headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
-    //                 <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`
-    //   };
-    //   // console.log("hbsObject:  ", bloghbsObject.article);
-    //   res.render("blog_single", bloghbsObject);
-    // });
   });
+
+
+
+
 
   app.get("/", function(req, res) {
     var vimeoRecord = null;
@@ -306,6 +287,43 @@ module.exports = function(app) {
       headContent: `<link rel="stylesheet" type="text/css" href="styles/contact.css">
         <link rel="stylesheet" type="text/css" href="styles/contact_responsive.css">`
     });
+  });
+
+  app.get("/ministry_single:id", function(req, res) {
+    req.params.id = req.params.id.substring(1);
+    // console.log("LOOK HERE: ", req.params.id)
+    client.getEntries({
+      content_type: 'blog',
+      'fields.ministry': req.params.id
+    })
+    .then(function(entry) {
+      // console.log(entry)
+      
+      var items = entry.items;
+
+        // Converting times for template
+        items.forEach(item => {
+          Object.assign(item.fields, {
+            formattedDate: moment(item.fields.datePosted).format('DD MMM, YYYY').toUpperCase()
+          });
+
+          var truncatedString = JSON.stringify(item.fields.body.content[0].content[0].value.replace(/^(.{165}[^\s]*).*/, "$1"))
+          var truncatedLength = truncatedString.length
+          truncatedString = truncatedString.substring(1, truncatedLength - 1);
+
+          Object.assign(item.fields, {
+            excerpt: truncatedString
+          })
+        });
+
+      var bloghbsObject = {
+        blogpost: entry.items,
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
+                <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`
+      };
+      // console.log("hbsObject:  ", bloghbsObject.blogpost);
+      res.render("ministry_single", bloghbsObject);
+    })
   });
 
   
