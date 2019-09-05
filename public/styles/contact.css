@@ -1131,5 +1131,8 @@ section
 {
 	border-bottom: none !important;
 	background: none !important;
-
+}
+#filler_row
+{
+	padding-bottom: 52px;
 }
