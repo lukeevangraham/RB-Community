@@ -32,12 +32,25 @@
 				</div>
 			</div>
 		</div>
-		<div class="row news_row">
 
 			{{#each blogpost}}
-			{{#unless fields.featureOnMinistryPage}}
+
+			{{#if fields.featureOnMinistryPage}}
+		<div class="row news_row">
 
 			{{ log this }}
+
+			<div class="news_post_title">
+							<a href="blog_single:{{this.sys.id}}">{{this.fields.title}}</a>
+						</div>
+						</div>
+
+			{{/if}}
+
+<div class="row news_row">
+			{{#unless fields.featureOnMinistryPage}}
+
+
 
 
 
