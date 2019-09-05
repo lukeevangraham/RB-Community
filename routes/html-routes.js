@@ -318,6 +318,7 @@ module.exports = function(app) {
 
       var bloghbsObject = {
         blogpost: entry.items,
+        request: req.params.id,
         headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
                 <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`
       };
