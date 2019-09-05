@@ -159,7 +159,7 @@ module.exports = function(app) {
 
 
 
-  app.get(["/", "/index.html"], function(req, res) {
+  app.get(["/", "/index.html", "/home"], function(req, res) {
     var vimeoRecord = null;
     let secondRecord = null;
 
