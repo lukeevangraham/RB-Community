@@ -155,7 +155,7 @@ module.exports = function(app) {
         headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
                     <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`
       };
-      console.log("hbsObject:  ", bloghbsObject.article);
+      // console.log("hbsObject:  ", bloghbsObject.article);
       res.render("blog_single", bloghbsObject);
     })
     // .catch(console.error)
@@ -300,4 +300,13 @@ module.exports = function(app) {
         <link rel="stylesheet" type="text/css" href="styles/contact_responsive.css">`
     });
   });
+
+  app.get("/ministries", function(req, res) {
+    res.render("ministries", {
+      headContent: `<link rel="stylesheet" type="text/css" href="styles/contact.css">
+        <link rel="stylesheet" type="text/css" href="styles/contact_responsive.css">`
+    });
+  });
+
+  
 };
