@@ -95,11 +95,17 @@
                 <div class="col-lg-6">
                     <div class="about_content">
                         <div class="about_text">
-                            <p>You might be wondering, what's it really like at RB Community Church?  Simply stated, at RB Community, we're all about Jesus.  You won't be met with shame, guilt, or condemnation.  And we don't care how much you're dressed or what candidate you voted for.  Our church is made up of imperfect people with every kind of story imaginable.
+                            <p>You might be wondering, what's it really like at RB Community Church? Simply stated, at
+                                RB Community, we're all about Jesus. You won't be met with shame, guilt, or
+                                condemnation. And we don't care how much you're dressed or what candidate you voted for.
+                                Our church is made up of imperfect people with every kind of story imaginable.
 
-                                Want to know the best part?  No matter what you've been through or what questions you might have about God and faith, our church is place where you'll find the love, grace and forgiveness Jesus gives to everyone.
+                                Want to know the best part? No matter what you've been through or what questions you
+                                might have about God and faith, our church is place where you'll find the love, grace
+                                and forgiveness Jesus gives to everyone.
 
-                                What's more, we'd love to offer you a free gift.  Simply fill out the short form below and we'll send out your gift!  (NOTE: We value your privacy and would never spam you.)
+                                What's more, we'd love to offer you a free gift. Simply fill out the short form below
+                                and we'll send out your gift! (NOTE: We value your privacy and would never spam you.)
                             </p>
                         </div>
                         <div class="button about_button"><a href="#">read story</a></div>
@@ -110,7 +116,7 @@
     </div>
 
 
-     <!-- Events -->
+    <!-- Events -->
 
     <div class="events">
         <div class="container">
@@ -209,47 +215,48 @@
         </div>
     </div>
 
-  
+
 
     <!-- Mission -->
 
-	<div class="mission">
+    <div class="mission">
         <div class="mission_background parallax-window" data-parallax="scroll" data-image-src="images/mission.jpg"
             data-speed="0.8"></div>
         <div class="mission_items d-flex flex-row flex-wrap align-items-start justify-content-start">
 
             <div class="mission_item text-center">
-					<div class="mission_icon"><i class="fa fa-flag-o" aria-hidden="true"></i></div>
-					<div class="mission_title">our community</div>
-					<div class="mission_text">RB Community Church cares about one thing more than anything else, Jesus.
-						RB Community Church is a family of individuals who find hope in Jesus, and want as many people
-						as posible to experience that same freedom.</div>
-				</div>
+                <div class="mission_icon"><i class="fa fa-flag-o" aria-hidden="true"></i></div>
+                <div class="mission_title">our community</div>
+                <div class="mission_text">RB Community Church cares about one thing more than anything else, Jesus.
+                    RB Community Church is a family of individuals who find hope in Jesus, and want as many people
+                    as posible to experience that same freedom.</div>
+            </div>
 
-				<div class="mission_item text-center">
-					<div class="mission_icon"><i class="fa fa-bell-o" aria-hidden="true"></i></div>
-					<div class="mission_title">our story</div>
-					<div class="mission_text">RB Community Church began in 1964</div>
-				</div>
+            <div class="mission_item text-center">
+                <div class="mission_icon"><i class="fa fa-bell-o" aria-hidden="true"></i></div>
+                <div class="mission_title">our story</div>
+                <div class="mission_text">RB Community Church began in 1964</div>
+            </div>
 
-				<div class="mission_item text-center">
-					<div class="mission_icon"><i class="fa fa-moon-o" aria-hidden="true"></i></div>
-					<div class="mission_title">our future</div>
-					<div class="mission_text">More than ever RB Community Church is committed </div>
-				</div>
+            <div class="mission_item text-center">
+                <div class="mission_icon"><i class="fa fa-moon-o" aria-hidden="true"></i></div>
+                <div class="mission_title">our future</div>
+                <div class="mission_text">More than ever RB Community Church is committed </div>
+            </div>
 
             <div class="mission_item text-center">
                 <div class="mission_icon"><i class="fa fa-moon-o" aria-hidden="true"></i></div>
                 <div class="mission_title">you</div>
-                <div class="mission_text">Wherever you're at in your faith journey, you'll always be accepted as part of the RB Community family.  We're saving a seat for you.
-				</div>
+                <div class="mission_text">Wherever you're at in your faith journey, you'll always be accepted as part of
+                    the RB Community family. We're saving a seat for you.
+                </div>
             </div>
 
-		</div>
-	</div>
+        </div>
+    </div>
 
-   
-  <!-- Sermons -->
+
+    <!-- Sermons -->
 
 
 
@@ -267,13 +274,14 @@
             </div>
             <div class="row sermons_row">
 
-{{#each vimeo.data}}
+                {{#each vimeo.data}}
 
 
 
                 <div class="col-lg-4 sermon_col">
                     <div class="card">
-                        <a href="{{this.link}}"><img class="card-img-top" src="{{this.pictures.sizes.[0].link}}" alt=""></a>
+                        <a href="{{this.link}}"><img class="card-img-top" src="{{this.pictures.sizes.[0].link}}"
+                                alt=""></a>
                         <div class="card-body text-center">
                             <div class="card-title sermon_title"><a href="{{this.link}}">{{this.name}}</a></div>
                             <div class="card-text sermon_info_container">
@@ -446,34 +454,38 @@
                     </div>
                 </div>
             </div>
-            <div class="row news_row" id="news-container" >
-{{!-- 
+            <div class="row news_row" id="news-container">
+
+                {{#each blogpost}}
+                
+                {{log this}}
+
                 <!-- News Post -->
                 <div class="col-xl-4 col-lg-6 news_post_col">
                     <div class="news_post">
-                        <div class="news_image"><img src="images/news_1.jpg" alt=""></div>
+                        <div class="news_image"><a href="blog_single:{{this.sys.id}}"><img src="{{fields.image.fields.file.url}}" alt=""></a></div>
                         <div class="news_post_content">
                             <div class="news_post_title">
-                                <a href="blog_single.html">Find out why a priest prays around her hometown</a>
+                                <a href="blog_single:{{this.sys.id}}">{{fields.title}}</a>
                             </div>
                             <div class="news_post_meta">
                                 <ul>
-                                    <li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
-                                    <li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">08 MAR, 2018</a>
+                                    <li><i class="fa fa-user" aria-hidden="true"></i><a href="#">{{#each fields.author}}{{this}}{{/each}}</a></li>
+                                    <li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">{{fields.formattedDate}}</a>
                                     </li>
-                                    <li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">15</a></li>
+                                    {{!-- <li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">15</a></li> --}}
                                 </ul>
                             </div>
                             <div class="news_post_text">
-                                <p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet.
-                                    Aenean interdus mid vitae blandit porta. Quisque dignissim commodo congue
-                                    efficitur...</p>
+                                <p>{{this.fields.excerpt}}...</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- News Post -->
+                {{/each}}
+
+                {{!-- <!-- News Post -->
                 <div class="col-xl-4 col-lg-6 news_post_col">
                     <div class="news_post">
                         <div class="news_image"><img src="images/news_2.jpg" alt=""></div>

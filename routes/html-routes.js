@@ -166,6 +166,7 @@ module.exports = function(app) {
   app.get(["/", "/index.html", "/home"], function(req, res) {
     var vimeoRecord = null;
     let secondRecord = null;
+    let thirdRecord = null;
 
     request(vimeoOptionsHome, function(error, response, body) {
       if (error) throw new Error(error);
@@ -190,26 +191,68 @@ module.exports = function(app) {
           });
 
           secondRecord = dbEvent;
-          return request(vimeoOptions, function(error, response, body) {
-            if (error) throw new Error(error);
 
-            return;
+          client.getEntries({
+            content_type: "blog",
+            'fields.featureOnHomePage': true,
+            order: '-fields.datePosted',
+            limit: 3
+          })
+          .then(function(dbBlog) {
+            // console.log(dbBlog.items)
+            var items = dbBlog.items;
+
+            // Converting times for template
+        items.forEach(item => {
+          Object.assign(item.fields, {
+            formattedDate: moment(item.fields.datePosted)
+              .format("DD MMM, YYYY")
+              .toUpperCase()
           });
-        })
+
+          var truncatedString = JSON.stringify(
+            item.fields.body.content[0].content[0].value.replace(
+              /^(.{165}[^\s]*).*/,
+              "$1"
+            )
+          );
+          var truncatedLength = truncatedString.length;
+          truncatedString = truncatedString.substring(1, truncatedLength - 1);
+
+          Object.assign(item.fields, {
+            excerpt: truncatedString
+          });
+        });
+
+
+            thirdRecord = dbBlog;
+            // console.log("LOOK HERE: ", thirdRecord.items[0])
+          })
+          // return request(vimeoOptions, function(error, response, body) {
+          //   if (error) throw new Error(error);
+            
+          //   return;
+          // });
+        // })
         .then(function(body) {
           // console.log(body)
-          console.log("VIMEO SAYS: ", vimeoRecord);
+          // console.log("VIMEO SAYS: ", vimeoRecord);
           // console.log("CONTENTFUL SAYS: ", secondRecord)
+          // console.log("LOOK HERE: ", thirdRecord.items);
 
           var hbsObject = {
             events: secondRecord.items,
             vimeo: vimeoRecord,
+            blogpost: thirdRecord.items,
             headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
               <link rel="stylesheet" type="text/css" href="styles/responsive.css">`
           };
 
+          // console.log(hbsObject)
+
           res.render("home", hbsObject);
         });
+      })
     });
   });
 
