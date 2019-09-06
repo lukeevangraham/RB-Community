@@ -169,9 +169,12 @@ module.exports = function(app) {
 
       vimeoRecord = JSON.parse(body);
 
+      console.log(moment().format())
+
       client
         .getEntries({
           content_type: "events",
+          'fields.date[gte]': moment().format(),
           order: "fields.date"
         })
         .then(function(dbEvent) {
@@ -190,7 +193,7 @@ module.exports = function(app) {
               Object.assign(item.fields, {
                 dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
               });
-              console.log("LOOK HERE: ", item)
+              // console.log("LOOK HERE: ", item)
             }
           });
 

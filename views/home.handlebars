@@ -133,7 +133,6 @@
             {{#each events}}
             {{#unless this.fields.featured}}
             {{#if this.fields.featuredOnHome}}
-            {{log this}}
 
 
 
@@ -281,10 +280,10 @@
 
                 <div class="col-lg-4 sermon_col">
                     <div class="card">
-                        <a href="{{this.link}}"><img class="card-img-top" src="{{this.pictures.sizes.[0].link}}"
+                        <a target="blank" href="{{this.link}}" target="blank" ><img class="card-img-top" target="blank" src="{{this.pictures.sizes.[0].link}}"
                                 alt=""></a>
                         <div class="card-body text-center">
-                            <div class="card-title sermon_title"><a href="{{this.link}}">{{this.name}}</a></div>
+                            <div class="card-title sermon_title"><a target="blank" href="{{this.link}}">{{this.name}}</a></div>
                             <div class="card-text sermon_info_container">
                                 <div class="sermon_links">
                                     <ul>
