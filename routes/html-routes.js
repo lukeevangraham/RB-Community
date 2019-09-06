@@ -171,7 +171,8 @@ module.exports = function(app) {
 
       client
         .getEntries({
-          content_type: "events"
+          content_type: "events",
+          order: "fields.date"
         })
         .then(function(dbEvent) {
           // console.log("LOOK HERE: ", dbEvent.items[0].fields);
