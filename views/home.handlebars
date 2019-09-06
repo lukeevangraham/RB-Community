@@ -46,7 +46,8 @@
                             </ul>
                         </div>
                         <div class="event_timer_container ml-lg-auto">
-                            <ul class="event_timer"><div id="dateToCountTo" style="display:none" >{{this.fields.dateToCountTo}}</div>
+                            <ul class="event_timer">
+                                <div id="dateToCountTo" style="display:none">{{this.fields.dateToCountTo}}</div>
                                 <li>
                                     <div id="day" class="event_num">00</div>
                                     <div class="event_ss">day</div>
@@ -131,6 +132,8 @@
             class="events_items d-flex flex-lg-row flex-column align-items-lg-start align-items-center justify-content-lg-between justify-content-center">
             {{#each events}}
             {{#unless this.fields.featured}}
+            {{#if this.fields.featuredOnHome}}
+            {{log this}}
 
 
 
@@ -158,7 +161,7 @@
                     </div>
                 </div>
             </div>
-
+            {{/if}}
             {{/unless}}
             {{/each}}
 
@@ -459,15 +462,18 @@
                 <!-- News Post -->
                 <div class="col-xl-4 col-lg-6 news_post_col">
                     <div class="news_post">
-                        <div class="news_image"><a href="blog_single:{{this.sys.id}}"><img src="{{fields.image.fields.file.url}}" alt=""></a></div>
+                        <div class="news_image"><a href="blog_single:{{this.sys.id}}"><img
+                                    src="{{fields.image.fields.file.url}}" alt=""></a></div>
                         <div class="news_post_content">
                             <div class="news_post_title">
                                 <a href="blog_single:{{this.sys.id}}">{{fields.title}}</a>
                             </div>
                             <div class="news_post_meta">
                                 <ul>
-                                    <li><i class="fa fa-user" aria-hidden="true"></i><a href="#">{{#each fields.author}}{{this}}{{/each}}</a></li>
-                                    <li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">{{fields.formattedDate}}</a>
+                                    <li><i class="fa fa-user" aria-hidden="true"></i><a
+                                            href="#">{{#each fields.author}}{{this}}{{/each}}</a></li>
+                                    <li><i class="fa fa-calendar-o" aria-hidden="true"></i><a
+                                            href="#">{{fields.formattedDate}}</a>
                                     </li>
                                     {{!-- <li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">15</a></li> --}}
                                 </ul>
