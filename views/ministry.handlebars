@@ -46,7 +46,7 @@
 
 		{{#each blogpost}}
 
-
+{{#unless fields.featureOnMinistryPage}}
 
 		 {{#if @first}}
 
@@ -63,7 +63,7 @@
 
 		{{/if}}
 
-
+{{/unless}}
 		{{/each}}
 
 		<div class="row news_row">
