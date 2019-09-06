@@ -86,7 +86,8 @@ module.exports = function(app) {
   app.get("/blog", function(req, res) {
     client
       .getEntries({
-        content_type: "blog"
+        content_type: "blog",
+        order: '-fields.datePosted'
       })
       .then(function(dbBlog) {
         var items = dbBlog.items;
