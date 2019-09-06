@@ -339,7 +339,8 @@ module.exports = function(app) {
     });
   });
 
-  app.get("/ministry_single:id", function(req, res) {
+  app.get("/ministry:id", function(req, res) {
+    // console.log("HEY")
     req.params.id = req.params.id.substring(1);
     // console.log("LOOK HERE: ", req.params.id)
     client
@@ -351,6 +352,12 @@ module.exports = function(app) {
         // console.log(entry)
 
         var items = entry.items;
+
+        Object.assign(entry.items[0].fields, {
+          request: req.params.id
+        })
+
+        // console.log("LOOK HERE: ", entry.items)
 
         // Converting times for template
         items.forEach(item => {
@@ -386,6 +393,10 @@ module.exports = function(app) {
           }
         });
 
+        
+
+        // console.log("LOOK HERE", entry)
+
         var bloghbsObject = {
           blogpost: entry.items,
           request: req.params.id,
@@ -393,7 +404,7 @@ module.exports = function(app) {
                 <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`
         };
         // console.log("hbsObject:  ", bloghbsObject.blogpost);
-        res.render("ministry_single", bloghbsObject);
+        res.render("ministry", bloghbsObject);
       });
   });
 };

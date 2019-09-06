@@ -24,9 +24,9 @@
 
 <div class="news">
 	<div class="container">
+		<div class="row">
 			{{#each blogpost}}
 			{{#if fields.featureOnMinistryPage}}
-		<div class="row">
 			<div class="col">
 				<div class="section_title_container text-center">
 					<div class="section_title mb-4">{{fields.title}}</div>
@@ -40,6 +40,21 @@
 			{{{ fields.renderedHtml}}}
 
 			{{/if}}
+
+			{{#unless fields.featureOnMinistryPage}}
+
+<div class="col">
+				<div class="section_title_container text-center">
+					<div class="section_title mb-4">{{fields.request}}</div>
+					{{!-- <div class="section_subtitle">Be part of a community of people experiencing God together.</div> --}}
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+
+			{{/unless}}
+
 			{{/each}}
 		</div>
 

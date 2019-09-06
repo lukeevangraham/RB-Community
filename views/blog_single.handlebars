@@ -65,7 +65,8 @@
 						<div class="blog_post_tags ml-lg-auto">
 							<ul>{{#each ministry}}
 								{{!-- <li><a href="#">faithful</a></li> --}}
-								<li><a href="#">{{this}}</a></li>
+								<li><a href="/ministry:{{this}}">{{this}}</a></li>
+								{{ log this }}
 								{{!-- <li><a href="#">news</a></li> --}}
 								{{/each}}
 							</ul>
