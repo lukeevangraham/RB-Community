@@ -24,35 +24,30 @@
 
 <div class="news">
 	<div class="container">
+			{{#each blogpost}}
+			{{#if fields.featureOnMinistryPage}}
 		<div class="row">
 			<div class="col">
 				<div class="section_title_container text-center">
-					<div class="section_title">{{request}}</div>
+					<div class="section_title mb-4">{{fields.title}}</div>
 					{{!-- <div class="section_subtitle">Be part of a community of people experiencing God together.</div> --}}
 				</div>
 			</div>
 		</div>
 
-			{{#each blogpost}}
+		<div class="row">
 
-			{{#if fields.featureOnMinistryPage}}
-		<div class="row news_row">
-
-			{{ log this }}
-
-			<div class="news_post_title">
-							<a href="blog_single:{{this.sys.id}}">{{this.fields.title}}</a>
-						</div>
-						</div>
+			{{{ fields.renderedHtml}}}
 
 			{{/if}}
+			{{/each}}
+		</div>
 
-<div class="row news_row">
+
+		<div class="row news_row">
+
+			{{#each blogpost}}
 			{{#unless fields.featureOnMinistryPage}}
-
-
-
-
 
 			<!-- News Post -->
 			<div class="col-xl-4 col-lg-6 news_post_col">
