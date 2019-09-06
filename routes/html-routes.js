@@ -79,9 +79,6 @@ function doReq(url, what) {
 
 // Routes
 module.exports = function(app) {
-  // app.get("/", function (req, res) {
-  //     res.sendFile(path.join(__dirname, "../public.blog.html"));
-  // });
 
   app.get("/blog", function(req, res) {
     client
@@ -178,6 +175,7 @@ module.exports = function(app) {
           content_type: "events"
         })
         .then(function(dbEvent) {
+          console.log("LOOK HERE: ", dbEvent.items[0].fields.featured)
           var items = dbEvent.items;
 
           // Converting times for template
@@ -187,7 +185,8 @@ module.exports = function(app) {
             });
             Object.assign(item.fields, {
               shortDay: moment(item.fields.date).format("DD")
-            });
+            })
+
           });
 
           secondRecord = dbEvent;
@@ -226,18 +225,11 @@ module.exports = function(app) {
 
 
             thirdRecord = dbBlog;
-            // console.log("LOOK HERE: ", thirdRecord.items[0])
           })
-          // return request(vimeoOptions, function(error, response, body) {
-          //   if (error) throw new Error(error);
-            
-          //   return;
-          // });
-        // })
         .then(function(body) {
           // console.log(body)
           // console.log("VIMEO SAYS: ", vimeoRecord);
-          // console.log("CONTENTFUL SAYS: ", secondRecord)
+          // console.log("CONTENTFUL SAYS: ", secondRecord.items[0])
           // console.log("LOOK HERE: ", thirdRecord.items);
 
           var hbsObject = {

@@ -14,6 +14,23 @@
 
 ******************************/
 
+let contentfulAccessToken = process.env.ACCESS_TOKEN;
+
+var settings = {
+	"async": true,
+	"crossDomain": true,
+	"url": "https://cdn.contentful.com/spaces/v1a9n1zktijq/environments/master/entries?content_type=events&fields.featured=true",
+	"method": "GET",
+	"headers": {
+	  "Authorization": contentfulAccessToken,
+	  "Accept": "*/*",
+	  "Cache-Control": "no-cache",
+	  "cache-control": "no-cache"
+	}
+  }
+  
+
+
 $(document).ready(function () {
 	"use strict";
 
@@ -126,10 +143,10 @@ $(document).ready(function () {
 
 			let dateToCountTo
 
-			$.ajax({
-				url: "/api/events/",
-				method: "GET"
-			}).then(function (response) {
+			$.ajax(settings).done(function (response) {
+				console.log(response);
+			  })
+			  .then(function (response) {
 				// console.log(response[0].longdate);
 				for (let i = 0; i < response.length; i++) {
 					console.log("FEATRUED? ", response[i].featured)
@@ -175,6 +192,8 @@ $(document).ready(function () {
 							h.text(hours);
 							m.text(minutes);
 							s.text(seconds);
+
+							// console.log("d: ", days)
 
 						}, 1000);
 
