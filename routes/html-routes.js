@@ -26,7 +26,7 @@ var vimeoOptions = {
   method: "GET",
   url: "https://api.vimeo.com/users/14320074/videos",
   qs: {
-    query: 'Sermon',
+    query: "Sermon",
     fields:
       "name, link, pictures.sizes.link, pictures.sizes.link_with_play_button",
     sizes: "960",
@@ -41,7 +41,7 @@ var vimeoOptionsHome = {
   method: "GET",
   url: "https://api.vimeo.com/users/14320074/videos",
   qs: {
-    query: 'Sermon',
+    query: "Sermon",
     fields:
       "name, link, pictures.sizes.link, pictures.sizes.link_with_play_button",
     sizes: "960",
@@ -79,12 +79,11 @@ function doReq(url, what) {
 
 // Routes
 module.exports = function(app) {
-
   app.get("/blog", function(req, res) {
     client
       .getEntries({
         content_type: "blog",
-        order: '-fields.datePosted'
+        order: "-fields.datePosted"
       })
       .then(function(dbBlog) {
         var items = dbBlog.items;
@@ -175,7 +174,7 @@ module.exports = function(app) {
           content_type: "events"
         })
         .then(function(dbEvent) {
-          console.log("LOOK HERE: ", dbEvent.items[0].fields.featured)
+          // console.log("LOOK HERE: ", dbEvent.items[0].fields);
           var items = dbEvent.items;
 
           // Converting times for template
@@ -185,66 +184,74 @@ module.exports = function(app) {
             });
             Object.assign(item.fields, {
               shortDay: moment(item.fields.date).format("DD")
-            })
-
+            });
+            if (item.fields.featured) {
+              Object.assign(item.fields, {
+                dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
+              });
+              console.log("LOOK HERE: ", item)
+            }
           });
 
           secondRecord = dbEvent;
 
-          client.getEntries({
-            content_type: "blog",
-            'fields.featureOnHomePage': true,
-            order: '-fields.datePosted',
-            limit: 3
-          })
-          .then(function(dbBlog) {
-            // console.log(dbBlog.items)
-            var items = dbBlog.items;
+          client
+            .getEntries({
+              content_type: "blog",
+              "fields.featureOnHomePage": true,
+              order: "-fields.datePosted",
+              limit: 3
+            })
+            .then(function(dbBlog) {
+              // console.log(dbBlog.items)
+              var items = dbBlog.items;
 
-            // Converting times for template
-        items.forEach(item => {
-          Object.assign(item.fields, {
-            formattedDate: moment(item.fields.datePosted)
-              .format("DD MMM, YYYY")
-              .toUpperCase()
-          });
+              // Converting times for template
+              items.forEach(item => {
+                Object.assign(item.fields, {
+                  formattedDate: moment(item.fields.datePosted)
+                    .format("DD MMM, YYYY")
+                    .toUpperCase()
+                });
 
-          var truncatedString = JSON.stringify(
-            item.fields.body.content[0].content[0].value.replace(
-              /^(.{165}[^\s]*).*/,
-              "$1"
-            )
-          );
-          var truncatedLength = truncatedString.length;
-          truncatedString = truncatedString.substring(1, truncatedLength - 1);
+                var truncatedString = JSON.stringify(
+                  item.fields.body.content[0].content[0].value.replace(
+                    /^(.{165}[^\s]*).*/,
+                    "$1"
+                  )
+                );
+                var truncatedLength = truncatedString.length;
+                truncatedString = truncatedString.substring(
+                  1,
+                  truncatedLength - 1
+                );
 
-          Object.assign(item.fields, {
-            excerpt: truncatedString
-          });
-        });
+                Object.assign(item.fields, {
+                  excerpt: truncatedString
+                });
+              });
 
+              thirdRecord = dbBlog;
+            })
+            .then(function(body) {
+              // console.log(body)
+              // console.log("VIMEO SAYS: ", vimeoRecord);
+              // console.log("CONTENTFUL SAYS: ", secondRecord.items[0])
+              // console.log("LOOK HERE: ", thirdRecord.items);
 
-            thirdRecord = dbBlog;
-          })
-        .then(function(body) {
-          // console.log(body)
-          // console.log("VIMEO SAYS: ", vimeoRecord);
-          // console.log("CONTENTFUL SAYS: ", secondRecord.items[0])
-          // console.log("LOOK HERE: ", thirdRecord.items);
-
-          var hbsObject = {
-            events: secondRecord.items,
-            vimeo: vimeoRecord,
-            blogpost: thirdRecord.items,
-            headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
+              var hbsObject = {
+                events: secondRecord.items,
+                vimeo: vimeoRecord,
+                blogpost: thirdRecord.items,
+                headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
               <link rel="stylesheet" type="text/css" href="styles/responsive.css">`
-          };
+              };
 
-          // console.log(hbsObject)
+              // console.log(hbsObject)
 
-          res.render("home", hbsObject);
+              res.render("home", hbsObject);
+            });
         });
-      })
     });
   });
 
@@ -297,9 +304,9 @@ module.exports = function(app) {
   app.get("/sermons", function(req, res) {
     request(vimeoOptions, function(error, response, body) {
       if (error) throw new Error(error);
-// 
+      //
 
-      console.log("BODY HERE: ", body)
+      console.log("BODY HERE: ", body);
 
       var vimeo = JSON.parse(body);
       // console.log(vimeo)
@@ -347,7 +354,7 @@ module.exports = function(app) {
 
         Object.assign(entry.items[0].fields, {
           request: req.params.id
-        })
+        });
 
         // console.log("LOOK HERE: ", entry.items)
 
@@ -384,8 +391,6 @@ module.exports = function(app) {
             });
           }
         });
-
-        
 
         // console.log("LOOK HERE", entry)
 

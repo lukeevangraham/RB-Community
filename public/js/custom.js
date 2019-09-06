@@ -14,23 +14,6 @@
 
 ******************************/
 
-let contentfulAccessToken = process.env.ACCESS_TOKEN;
-
-var settings = {
-	"async": true,
-	"crossDomain": true,
-	"url": "https://cdn.contentful.com/spaces/v1a9n1zktijq/environments/master/entries?content_type=events&fields.featured=true",
-	"method": "GET",
-	"headers": {
-	  "Authorization": contentfulAccessToken,
-	  "Accept": "*/*",
-	  "Cache-Control": "no-cache",
-	  "cache-control": "no-cache"
-	}
-  }
-  
-
-
 $(document).ready(function () {
 	"use strict";
 
@@ -59,7 +42,8 @@ $(document).ready(function () {
 	initMenu();
 	initTimer();
 	initLightbox();
-	initNews();
+	// initNews();
+
 
 	/* 
 
@@ -143,19 +127,22 @@ $(document).ready(function () {
 
 			let dateToCountTo
 
-			$.ajax(settings).done(function (response) {
-				console.log(response);
-			  })
-			  .then(function (response) {
+			$.ajax({
+				url: "/api/events/",
+				method: "GET"
+			}).then(function (response) {
 				// console.log(response[0].longdate);
 				for (let i = 0; i < response.length; i++) {
-					console.log("FEATRUED? ", response[i].featured)
+					// console.log("FEATRUED? ", response[i].featured)
 					if (response[i].featured === true) {
 						dateToCountTo = moment(response[i].longdate).format("MMMM D, YYYY")
-						console.log("let's count event titled", response[i].title)
+						dateToCountTo = $('#dateToCountTo').text()
+						// console.log("let's count event titled", response[i].title)
+						// console.log("TYPE OF: ", typeof dateToCountTo)
+						// console.log("DATE: ", dateToCountTo)
 
 						// Uncomment line below and replace date
-						console.log("EVENT DAY: ", dateToCountTo)
+						// console.log("EVENT DAY: ", dateToCountTo)
 						var target_date = new Date(dateToCountTo).getTime();
 
 						// comment lines below

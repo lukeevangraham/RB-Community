@@ -39,7 +39,7 @@
                             <ul class="event_row">
                                 <li>
                                     <div class="event_icon"><img src="images/calendar.png" alt=""></div>
-                                    <span>{{this.fields.time}}</span>
+                                    <span id="time">{{this.fields.time}}</span>
                                 </li>
                                 <li>
                                     <div class="event_icon"><img src="images/location.png" alt=""></div>
@@ -48,7 +48,7 @@
                             </ul>
                         </div>
                         <div class="event_timer_container ml-lg-auto">
-                            <ul class="event_timer">
+                            <ul class="event_timer"><div id="dateToCountTo" style="display:none" >{{this.fields.dateToCountTo}}</div>
                                 <li>
                                     <div id="day" class="event_num">00</div>
                                     <div class="event_ss">day</div>
