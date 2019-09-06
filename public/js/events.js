@@ -241,62 +241,67 @@ $(document).ready(function () {
 				url: "/api/events/",
 				method: "GET"
 			}).then(function (response) {
-				console.log(response[0].longdate);
+				// console.log(response[0].longdate);
 				for (let i = 0; i < response.length; i++) {
-					console.log("FEATRUED? ", response[i].featured)
+					// console.log("FEATRUED? ", response[i].featured)
 					if (response[i].featured === true) {
 						dateToCountTo = moment(response[i].longdate).format("MMMM D, YYYY")
-						console.log("let's count event titled", response[i].title)
-						
+						dateToCountTo = $('#dateToCountTo').text()
+						// console.log("let's count event titled", response[i].title)
+						// console.log("TYPE OF: ", typeof dateToCountTo)
+						// console.log("DATE: ", dateToCountTo)
+
 						// Uncomment line below and replace date
-			console.log("EVENT DAY: ", dateToCountTo)
-			var target_date = new Date(dateToCountTo).getTime();
+						// console.log("EVENT DAY: ", dateToCountTo)
+						var target_date = new Date(dateToCountTo).getTime();
 
-			// comment lines below
-			// var date = new Date();
-			// date.setDate(date.getDate() + 3);
-			// var target_date = date.getTime();
-			//----------------------------------------
+						// comment lines below
+						// var date = new Date();
+						// date.setDate(date.getDate() + 3);
+						// var target_date = date.getTime();
+						//----------------------------------------
 
-			// variables for time units
-			var days, hours, minutes, seconds;
+						// variables for time units
+						var days, hours, minutes, seconds;
 
-			var d = $('#day');
-			var h = $('#hour');
-			var m = $('#minute');
-			var s = $('#second');
+						var d = $('#day');
+						var h = $('#hour');
+						var m = $('#minute');
+						var s = $('#second');
 
-			setInterval(function () {
-				// find the amount of "seconds" between now and target
-				var current_date = new Date().getTime();
-				var seconds_left = (target_date - current_date) / 1000;
+						setInterval(function () {
+							// find the amount of "seconds" between now and target
+							var current_date = new Date().getTime();
+							var seconds_left = (target_date - current_date) / 1000;
 
-				// do some time calculations
-				days = parseInt(seconds_left / 86400);
-				seconds_left = seconds_left % 86400;
+							// do some time calculations
+							days = parseInt(seconds_left / 86400);
+							seconds_left = seconds_left % 86400;
 
-				hours = parseInt(seconds_left / 3600);
-				seconds_left = seconds_left % 3600;
+							hours = parseInt(seconds_left / 3600);
+							seconds_left = seconds_left % 3600;
 
-				minutes = parseInt(seconds_left / 60);
-				seconds = parseInt(seconds_left % 60);
+							minutes = parseInt(seconds_left / 60);
+							seconds = parseInt(seconds_left % 60);
 
-				// display result
-				d.text(days);
-				h.text(hours);
-				m.text(minutes);
-				s.text(seconds);
+							// display result
+							d.text(days);
+							h.text(hours);
+							m.text(minutes);
+							s.text(seconds);
 
-			}, 1000);
+							// console.log("d: ", days)
 
-			break
+						}, 1000);
+
+						break
 					}
 
 				}
 			})
 
 
-			
+
 		}
 	}
 

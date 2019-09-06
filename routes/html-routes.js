@@ -169,12 +169,12 @@ module.exports = function(app) {
 
       vimeoRecord = JSON.parse(body);
 
-      console.log(moment().format())
+      console.log(moment().format());
 
       client
         .getEntries({
           content_type: "events",
-          'fields.date[gte]': moment().format(),
+          "fields.date[gte]": moment().format(),
           order: "fields.date"
         })
         .then(function(dbEvent) {
@@ -274,7 +274,9 @@ module.exports = function(app) {
   app.get("/events", function(req, res) {
     client
       .getEntries({
-        content_type: "events"
+        content_type: "events",
+        "fields.date[gte]": moment().format(),
+        order: "fields.date"
       })
       .then(function(dbEvent) {
         var items = dbEvent.items;
@@ -287,6 +289,12 @@ module.exports = function(app) {
           Object.assign(item.fields, {
             shortDay: moment(item.fields.date).format("DD")
           });
+          if (item.fields.featured) {
+            Object.assign(item.fields, {
+              dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
+            });
+            // console.log("LOOK HERE: ", item)
+          }
         });
 
         var hbsObject = {

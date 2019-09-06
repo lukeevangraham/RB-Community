@@ -43,7 +43,7 @@
 			</div>
 			<div class="row about_row">
 				<div class="col-lg-6">
-					<div class="upcoming_image"><img src="images/upcoming.jpg" alt=""></div>
+					<div class="upcoming_image"><img src="{{this.fields.eventImage.fields.file.url}}" alt=""></div>
 				</div>
 				<div class="col-lg-6">
 					<div class="event_container d-flex flex-md-row flex-column align-items-start justify-content-start">
@@ -76,6 +76,7 @@
 					<!-- Event Timer -->
 					<div class="event_timer_container ml-lg-auto">
 						<ul class="event_timer">
+							<div id="dateToCountTo" style="display:none">{{this.fields.dateToCountTo}}</div>
 							<li>
 								<div id="day" class="event_num">00</div>
 								<div class="event_ss">day</div>
