@@ -334,8 +334,8 @@ module.exports = function(app) {
 
   app.get("/ministries", function(req, res) {
     res.render("ministries", {
-      headContent: `<link rel="stylesheet" type="text/css" href="styles/contact.css">
-        <link rel="stylesheet" type="text/css" href="styles/contact_responsive.css">`
+      headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
+        <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">`
     });
   });
 
