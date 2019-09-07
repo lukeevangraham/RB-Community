@@ -174,6 +174,7 @@ module.exports = function(app) {
       client
         .getEntries({
           content_type: "events",
+          "fields.featuredOnHome": true,
           "fields.endDate[gte]": moment().format(),
           order: "fields.date",
           limit: 3
@@ -194,8 +195,22 @@ module.exports = function(app) {
               Object.assign(item.fields, {
                 dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
               });
-              // console.log("LOOK HERE: ", item)
             }
+            // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
+          if (item.fields.repeatsEveryDays > 0 ) {
+            if (moment(item.fields.date).isBefore(moment())) {
+              let start = moment(item.fields.date);
+              let end = moment();
+
+              while(start.isBefore(end)) {
+                start.add(item.fields.repeatsEveryDays, 'day');
+              }
+              console.log(start.format("MM DD YYYY"))
+              item.fields.date = start.format('YYYY-MM-DD')
+              item.fields.shortMonth = start.format('MMM')
+              item.fields.shortDay = start.format('DD')
+            }
+          }
           });
 
           secondRecord = dbEvent;
@@ -294,11 +309,23 @@ module.exports = function(app) {
             Object.assign(item.fields, {
               dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
             });
-            // console.log("LOOK HERE: ", item)
           }
-          // if (condition) {
-            
-          // }
+
+          // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
+          if (item.fields.repeatsEveryDays > 0 ) {
+            if (moment(item.fields.date).isBefore(moment())) {
+              let start = moment(item.fields.date);
+              let end = moment();
+
+              while(start.isBefore(end)) {
+                start.add(item.fields.repeatsEveryDays, 'day');
+              }
+              console.log(start.format("MM DD YYYY"))
+              item.fields.date = start.format('YYYY-MM-DD')
+              item.fields.shortMonth = start.format('MMM')
+              item.fields.shortDay = start.format('DD')
+            }
+          }
         });
 
         var hbsObject = {
@@ -306,6 +333,8 @@ module.exports = function(app) {
           headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
                     <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`
         };
+
+        console.log(dbEvent.items[0])
         return res.render("events", hbsObject);
       });
   });
