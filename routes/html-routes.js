@@ -175,7 +175,8 @@ module.exports = function(app) {
         .getEntries({
           content_type: "events",
           "fields.date[gte]": moment().format(),
-          order: "fields.date"
+          order: "fields.date",
+          limit: 3
         })
         .then(function(dbEvent) {
           // console.log("LOOK HERE: ", dbEvent.items[0].fields);
