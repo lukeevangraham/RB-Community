@@ -174,7 +174,7 @@ module.exports = function(app) {
       client
         .getEntries({
           content_type: "events",
-          "fields.date[gte]": moment().format(),
+          "fields.endDate[gte]": moment().format(),
           order: "fields.date",
           limit: 3
         })
@@ -276,7 +276,7 @@ module.exports = function(app) {
     client
       .getEntries({
         content_type: "events",
-        "fields.date[gte]": moment().format(),
+        "fields.endDate[gte]": moment().format(),
         order: "fields.date"
       })
       .then(function(dbEvent) {
@@ -296,6 +296,9 @@ module.exports = function(app) {
             });
             // console.log("LOOK HERE: ", item)
           }
+          // if (condition) {
+            
+          // }
         });
 
         var hbsObject = {
