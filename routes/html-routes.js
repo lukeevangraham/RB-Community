@@ -97,7 +97,7 @@ module.exports = function(app) {
         content_type: "blog",
         order: "-fields.datePosted",
         // remove about rB Community from the news feed
-        'sys.id[nin]': '3JEwFofQhW3MQcReiGLCYu'
+        "sys.id[nin]": "3JEwFofQhW3MQcReiGLCYu"
       })
       .then(function(dbBlog) {
         var items = dbBlog.items;
@@ -111,16 +111,15 @@ module.exports = function(app) {
           });
 
           if (item.fields.body) {
-            
             var truncatedString = JSON.stringify(
               item.fields.body.content[0].content[0].value.replace(
                 /^(.{165}[^\s]*).*/,
                 "$1"
-                )
-                );
-                var truncatedLength = truncatedString.length;
-                truncatedString = truncatedString.substring(1, truncatedLength - 1);
-              }
+              )
+            );
+            var truncatedLength = truncatedString.length;
+            truncatedString = truncatedString.substring(1, truncatedLength - 1);
+          }
 
           Object.assign(item.fields, {
             excerpt: truncatedString
@@ -216,7 +215,6 @@ module.exports = function(app) {
             // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
             if (item.fields.repeatsEveryDays > 0) {
               if (moment(item.fields.date).isSameOrBefore(moment())) {
-
                 // console.log("FIRST: ", item.fields.date)
                 // console.log("MOMENT: ", moment().add(1, 'days').format("YYYY-MM-DD"))
 
@@ -379,23 +377,50 @@ module.exports = function(app) {
       // console.log("BODY HERE: ", body);
 
       var vimeo = JSON.parse(body);
-      
-      console.log(getIdFromVimeoURL(vimeo.data[0].link))
-      
-      if (vimeo.data[0].link) {
-        Object.assign(vimeo.data[0], {
-          id: getIdFromVimeoURL(vimeo.data[0].link)
+
+      // console.log("VIMEO: ", vimeo);
+
+      var items = vimeo.data;
+
+      // console.log(getIdFromVimeoURL(vimeo.data[0].link))
+
+      // console.log(items)
+
+      if (items[0].link) {
+        Object.assign(items[0], {
+          id: getIdFromVimeoURL(items[0].link)
         });
       }
       
-      console.log("LOOK HERE: ", vimeo)
+      items.forEach(item => {
+        // console.log(moment(item.name.split(" ", 1), 'MM-DD-YY').format("MMM"))
+        // console.log(moment(item.name.split(" ", 1), 'MM-DD-YY').format('MMM'))
+        Object.assign(item, {
+          shortMonth: moment(item.name.split(" ", 1), 'MM-DD-YY').format('MMM')
+        });
+        Object.assign(item, {
+          shortDay: moment(item.name.split(" ", 1), 'MM-DD-YY').format('DD')
+        });
+        Object.assign(item, {
+          shortTitle: item.name.split(": ", 2)[1]
+        });
+        Object.assign(item, {
+          featureDate: moment(item.name.split(" ", 1), 'MM-DD-YY').format('DD MMM YYYY')
+        });
+      });
+      
+      console.log("ITEMS: ", items);
+      // var videoDate = vimeo.data[0].name.split(" ", 1)
+
+      // console.log("LOOK HERE: ", vimeo.data[0].name.split(" ", 1))
+      // console.log("LOOK HERE: ", vimeo.data[0].name.split(": ", 2))
 
 
       var latestSermon = JSON.parse(body).data[0];
       // console.log(latestSermon);
 
       var hbsObject = {
-        vimeo: vimeo,
+        vimeo: items,
         headContent: `<link rel="stylesheet" type="text/css" href="styles/sermons.css">
                 <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`
       };
@@ -546,16 +571,13 @@ module.exports = function(app) {
   });
 
   app.get("/services", function(req, res) {
-    
-      
-      var bloghbsObject = {
-        // article: entry.fields,
-        // request: req.params.id,
-        headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
+    var bloghbsObject = {
+      // article: entry.fields,
+      // request: req.params.id,
+      headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
         <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`
-      };
-      // console.log("hbsObject:  ", bloghbsObject.blogpost);
-      res.render("services", bloghbsObject);
-    });
-
+    };
+    // console.log("hbsObject:  ", bloghbsObject.blogpost);
+    res.render("services", bloghbsObject);
+  });
 };

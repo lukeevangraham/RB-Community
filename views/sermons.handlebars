@@ -20,11 +20,11 @@
 </div>
 
 
-
+{{log this}}
 
 <!-- Latest Sermon -->
 
-{{#each vimeo.data}}
+{{#each vimeo}}
 
 {{#if @first}}
 
@@ -61,7 +61,7 @@
 		</div>
 		<div class="row latest_content_row">
 			<div class="col-lg-8 offset-lg-2 text-center">
-				<div class="latest_content_title">{{this.name}}</div>
+				<div class="latest_content_title">{{this.shortTitle}}</div>
 				<div class="latest_sermon_info_container">
 					{{!-- <div class="sermon_info">
 						<div class="sermon_info_title">Pastor: </div>
@@ -79,18 +79,18 @@
 					<div class="sermon_info">
 						<div class="sermon_info_title">On: </div>
 						<ul class="sermon_info_list">
-							<li><a href="#">08 MAR 2018</a>,</li>
+							<li><a href="#" style="text-transform:uppercase">{{featureDate}}</a></li>
 						</ul>
 					</div>
 				</div>
 			</div>
 			<div class="col-md-8 offset-md-2 text-center">
-				<div class="latest_text">
+				{{!-- <div class="latest_text">
 					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean at convallis justo. Suspendisse
 						ut nisl diam. Sed non vehicula sem. Etiam efficitur eros a leo mollis, interdum sodales erat
 						ultricies. Pellentesque in felis sem. Phasellus nunc tellus, suscipit rutrum risus quis, aucibus
 						vel ipsumeu. </p>
-				</div>
+				</div> --}}
 				<div class="sermon_links latest_sermon_links">
 					<ul>
 						<li><a href="#"><i class="fa fa-link" aria-hidden="true"></i></a></li>
@@ -125,7 +125,7 @@
 			<!-- Sermon -->
 
 
-			{{#each vimeo.data}}
+			{{#each vimeo}}
 			{{#if @first}}
 			{{else}}
 
@@ -133,13 +133,13 @@
 
 			<div class="col-lg-4 sermon_col">
 				<div class="card">
-					{{!-- <div class="event_date d-flex flex-column align-items-center justify-content-center">
-						<div class="event_day">08</div>
-						<div class="event_month">mar</div>
-					</div> --}}
+					<div class="event_date d-flex flex-column align-items-center justify-content-center">
+						<div class="event_day">{{this.shortDay}}</div>
+						<div class="event_month">{{this.shortMonth}}</div>
+					</div>
 					<a href="{{this.link}}"><img class="card-img-top" src="{{this.pictures.sizes.[0].link}}" alt=""></a>
 					<div class="card-body text-center">
-						<div class="card-title sermon_title"><a href="{{this.link}}">{{this.name}}</a></div>
+						<div class="card-title sermon_title"><a href="{{this.link}}">{{this.shortTitle}}</a></div>
 						<div class="card-text sermon_info_container">
 							<div class="sermon_links">
 								<ul>
