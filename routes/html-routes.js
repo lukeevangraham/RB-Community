@@ -139,15 +139,17 @@ module.exports = function(app) {
   app.get("/blog_single:id", function(req, res) {
     req.params.id = req.params.id.substring(1);
     client.getEntry(req.params.id).then(function(entry) {
+
       // Converting times for template
       Object.assign(entry.fields, {
-        shortMonth: moment(entry.fields.date)
-          .format("MMM")
-          .toUpperCase()
+        shortMonth: moment(entry.fields.datePosted)
+        .format("MMM")
+        .toUpperCase()
       });
       Object.assign(entry.fields, {
-        shortDay: moment(entry.fields.date).format("DD")
+        shortDay: moment(entry.fields.datePosted).format("DD")
       });
+      // console.log(entry.fields)
 
       const rawRichTextField = entry.fields.body;
       // let renderedHtml = documentToHtmlString(rawRichTextField);
