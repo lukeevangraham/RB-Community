@@ -316,6 +316,10 @@ module.exports = function(app) {
             Object.assign(item.fields, {
               dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
             });
+            // CONVERT MARKDOWN TO HTML
+      if (item.fields.description) {
+        item.fields.description = marked(item.fields.description)
+      }
           }
 
           // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
@@ -496,7 +500,6 @@ module.exports = function(app) {
 
       // CONVERT MARKDOWN TO HTML
       if (dbEvent.fields.description) {
-        
         dbEvent.fields.description = marked(dbEvent.fields.description)
       }
       
