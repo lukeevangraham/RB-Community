@@ -28,6 +28,8 @@
 
 {{#if @first}}
 
+
+
 <div class="latest pb-0">
 	<div class="container">
 		<div class="row">
@@ -44,8 +46,8 @@
 					<div class="latest_play_background"
 						style="background-image:url({{this.pictures.sizes.[0].link}}); background-position:center top;">
 					</div>
-					<a class="vimeo latest_play_button" href="https://player.vimeo.com/video/99340873?title=0"
-						title="OH, PORTUGAL - IN 4K - Basti Hansen - Stock Footage">
+					<a class="vimeo latest_play_button" href="https://player.vimeo.com/video/{{this.id}}?title=0"
+						title="{{this.name}}">
 						<div
 							class="latest_play_button_outer d-flex flex-column align-items-center justify-content-center trans_200">
 							<div
@@ -61,12 +63,12 @@
 			<div class="col-lg-8 offset-lg-2 text-center">
 				<div class="latest_content_title">{{this.name}}</div>
 				<div class="latest_sermon_info_container">
-					<div class="sermon_info">
+					{{!-- <div class="sermon_info">
 						<div class="sermon_info_title">Pastor: </div>
 						<ul class="sermon_info_list">
 							<li><a href="#">Josh Brighton</a>,</li>
 						</ul>
-					</div>
+					</div> --}}
 					{{!-- <div class="sermon_info"> --}}
 					{{!-- <div class="sermon_info_title">Categories: </div> --}}
 					{{!-- <ul class="sermon_info_list"> --}}

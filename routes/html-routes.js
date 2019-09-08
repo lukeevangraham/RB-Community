@@ -61,6 +61,10 @@ var vimeoOptionsHome = {
   }
 };
 
+function getIdFromVimeoURL(url) {
+  return /(vimeo(pro)?\.com)\/(?:[^\d]+)?(\d+)\??(.*)?$/.exec(url)[3];
+}
+
 function doReq(url, what) {
   return new Promise(function(resolve, reject) {
     request(
@@ -372,10 +376,20 @@ module.exports = function(app) {
       if (error) throw new Error(error);
       //
 
-      console.log("BODY HERE: ", body);
+      // console.log("BODY HERE: ", body);
 
       var vimeo = JSON.parse(body);
-      // console.log(vimeo)
+      
+      console.log(getIdFromVimeoURL(vimeo.data[0].link))
+      
+      if (vimeo.data[0].link) {
+        Object.assign(vimeo.data[0], {
+          id: getIdFromVimeoURL(vimeo.data[0].link)
+        });
+      }
+      
+      console.log("LOOK HERE: ", vimeo)
+
 
       var latestSermon = JSON.parse(body).data[0];
       // console.log(latestSermon);
