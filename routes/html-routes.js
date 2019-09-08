@@ -91,7 +91,8 @@ module.exports = function(app) {
     client
       .getEntries({
         content_type: "blog",
-        order: "-fields.datePosted"
+        order: "-fields.datePosted",
+        'sys.id[nin]': '3JEwFofQhW3MQcReiGLCYu'
       })
       .then(function(dbBlog) {
         var items = dbBlog.items;
