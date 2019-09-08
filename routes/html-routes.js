@@ -493,7 +493,13 @@ module.exports = function(app) {
           dbEvent.fields.shortDay = start.format("DD");
         }
       }
-       dbEvent.fields.description = marked(dbEvent.fields.description)
+
+      // CONVERT MARKDOWN TO HTML
+      if (dbEvent.fields.description) {
+        
+        dbEvent.fields.description = marked(dbEvent.fields.description)
+      }
+      
        
        // RENDER HTML FOR DESCRIPTION
       //  const rawRichTextField = dbEvent.fields.description;
