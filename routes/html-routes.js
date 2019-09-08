@@ -3,7 +3,7 @@ let keys = require("../keys.js");
 var request = require("request");
 var moment = require("moment");
 var path = require("path");
-var marked = require('marked');
+var marked = require("marked");
 
 marked.setOptions({
   renderer: new marked.Renderer(),
@@ -139,12 +139,11 @@ module.exports = function(app) {
   app.get("/blog_single:id", function(req, res) {
     req.params.id = req.params.id.substring(1);
     client.getEntry(req.params.id).then(function(entry) {
-
       // Converting times for template
       Object.assign(entry.fields, {
         shortMonth: moment(entry.fields.datePosted)
-        .format("MMM")
-        .toUpperCase()
+          .format("MMM")
+          .toUpperCase()
       });
       Object.assign(entry.fields, {
         shortDay: moment(entry.fields.datePosted).format("DD")
@@ -185,7 +184,7 @@ module.exports = function(app) {
           content_type: "events",
           // "fields.featuredOnHome": true,
           "fields.endDate[gte]": moment().format(),
-          order: "fields.date",
+          order: "fields.date"
           // limit: 3
         })
         .then(function(dbEvent) {
@@ -319,9 +318,9 @@ module.exports = function(app) {
               dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
             });
             // CONVERT MARKDOWN TO HTML
-      if (item.fields.description) {
-        item.fields.description = marked(item.fields.description)
-      }
+            if (item.fields.description) {
+              item.fields.description = marked(item.fields.description);
+            }
           }
 
           // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
@@ -475,13 +474,12 @@ module.exports = function(app) {
         shortDay: moment(dbEvent.fields.date).format("DD")
       });
       if (moment(dbEvent.fields.date).isAfter(moment())) {
-        
         Object.assign(dbEvent.fields, {
           dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY")
         });
       }
 
-      console.log(dbEvent.fields.dateToCountTo)
+      console.log(dbEvent.fields.dateToCountTo);
 
       // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
       if (dbEvent.fields.repeatsEveryDays > 0) {
@@ -502,18 +500,17 @@ module.exports = function(app) {
 
       // CONVERT MARKDOWN TO HTML
       if (dbEvent.fields.description) {
-        dbEvent.fields.description = marked(dbEvent.fields.description)
+        dbEvent.fields.description = marked(dbEvent.fields.description);
       }
-      
-       
-       // RENDER HTML FOR DESCRIPTION
+
+      // RENDER HTML FOR DESCRIPTION
       //  const rawRichTextField = dbEvent.fields.description;
-       // let renderedHtml = documentToHtmlString(rawRichTextField);
+      // let renderedHtml = documentToHtmlString(rawRichTextField);
       //  Object.assign(dbEvent.fields, {
       //    renderedHtml: documentToHtmlString(rawRichTextField)
       //   });
-        // console.log(dbEvent.fields.renderedHtml)
-        
+      // console.log(dbEvent.fields.renderedHtml)
+
       var hbsObject = {
         events: dbEvent,
         headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
@@ -524,4 +521,18 @@ module.exports = function(app) {
       return res.render("event", hbsObject);
     });
   });
+
+  app.get("/services", function(req, res) {
+    
+      
+      var bloghbsObject = {
+        // article: entry.fields,
+        // request: req.params.id,
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
+        <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`
+      };
+      // console.log("hbsObject:  ", bloghbsObject.blogpost);
+      res.render("services", bloghbsObject);
+    });
+
 };
