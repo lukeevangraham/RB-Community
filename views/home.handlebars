@@ -18,6 +18,7 @@
     </div>
 
 
+    {{!-- {{log this.events}} --}}
     {{#each events}}
     {{#if this.fields.featured}}
     <!-- Event -->
@@ -33,7 +34,7 @@
                             <div class="event_month">{{this.fields.shortMonth}}</div>
                         </div>
                         <div class="event_content">
-                            <div class="event_title">UPCOMING EVENT: <a href="#">{{this.fields.title}}</a></div>
+                            <div class="event_title"><a href="/event:{{this.sys.id}}">UPCOMING EVENT: {{this.fields.title}}</a></div>
                             <ul class="event_row">
                                 <li>
                                     <div class="event_icon"><img src="images/calendar.png" alt=""></div>
@@ -139,14 +140,14 @@
 
             <!-- Event -->
             <div class="events_item">
-                <div class="events_item_image"><img src="{{this.fields.eventImage.fields.file.url}}" alt=""></div>
+                <div class="events_item_image"><a href="/event:{{this.sys.id}}"><img src="{{this.fields.eventImage.fields.file.url}}" alt=""></a></div>
                 <div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
                     <div class="event_date d-flex flex-column align-items-center justify-content-center">
                         <div class="event_day">{{this.fields.shortDay}}</div>
                         <div class="event_month">{{this.fields.shortMonth}}</div>
                     </div>
                     <div class="event_content">
-                        <div class="event_title"><a href="#">{{this.fields.title}}</a></div>
+                        <div class="event_title"><a href="/event:{{this.sys.id}}">{{this.fields.title}}</a></div>
                         <ul class="event_row">
                             <li>
                                 <div class="event_icon"><img src="images/calendar.png" alt=""></div>

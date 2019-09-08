@@ -181,10 +181,10 @@ module.exports = function(app) {
       client
         .getEntries({
           content_type: "events",
-          "fields.featuredOnHome": true,
+          // "fields.featuredOnHome": true,
           "fields.endDate[gte]": moment().format(),
           order: "fields.date",
-          limit: 3
+          // limit: 3
         })
         .then(function(dbEvent) {
           // console.log("LOOK HERE: ", dbEvent.items[0].fields);
