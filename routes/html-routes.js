@@ -211,14 +211,18 @@ module.exports = function(app) {
             }
             // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
             if (item.fields.repeatsEveryDays > 0) {
-              if (moment(item.fields.date).isBefore(moment())) {
+              if (moment(item.fields.date).isSameOrBefore(moment())) {
+
+                // console.log("FIRST: ", item.fields.date)
+                // console.log("MOMENT: ", moment().add(1, 'days').format("YYYY-MM-DD"))
+
                 let start = moment(item.fields.date);
-                let end = moment();
+                let end = moment().format("YYYY-MM-DD");
 
                 while (start.isBefore(end)) {
                   start.add(item.fields.repeatsEveryDays, "day");
                 }
-                console.log(start.format("MM DD YYYY"));
+                // console.log(start.format("MM DD YYYY"));
                 item.fields.date = start.format("YYYY-MM-DD");
                 item.fields.shortMonth = start.format("MMM");
                 item.fields.shortDay = start.format("DD");
