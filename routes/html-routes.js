@@ -92,6 +92,7 @@ module.exports = function(app) {
       .getEntries({
         content_type: "blog",
         order: "-fields.datePosted",
+        // remove about rB Community from the news feed
         'sys.id[nin]': '3JEwFofQhW3MQcReiGLCYu'
       })
       .then(function(dbBlog) {
