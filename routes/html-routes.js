@@ -38,7 +38,7 @@ var vimeoOptions = {
     fields:
       "name, link, pictures.sizes.link, pictures.sizes.link_with_play_button",
     sizes: "960",
-    per_page: "6",
+    per_page: "7",
     page: "1"
   },
   headers: {

@@ -28,7 +28,7 @@
 
 {{#if @first}}
 
-<div class="latest">
+<div class="latest pb-0">
 	<div class="container">
 		<div class="row">
 			<div class="col">
@@ -41,7 +41,9 @@
 		<div class="row latest_row">
 			<div class="col-lg-10 offset-lg-1">
 				<div class="latest_play d-flex flex-column align-items-center justify-content-center">
-					<div class="latest_play_background" style="background-image:url({{this.pictures.sizes.[0].link}}); background-position:center top;"></div>
+					<div class="latest_play_background"
+						style="background-image:url({{this.pictures.sizes.[0].link}}); background-position:center top;">
+					</div>
 					<a class="vimeo latest_play_button" href="https://player.vimeo.com/video/99340873?title=0"
 						title="OH, PORTUGAL - IN 4K - Basti Hansen - Stock Footage">
 						<div
@@ -122,6 +124,8 @@
 
 
 			{{#each vimeo.data}}
+			{{#if @first}}
+			{{else}}
 
 
 
@@ -148,7 +152,7 @@
 				</div>
 			</div>
 
-
+			{{/if}}
 			{{/each}}
 
 			{{!-- <div class="col-lg-4 sermon_col">
@@ -400,18 +404,19 @@
 <!-- Quote -->
 
 <div class="quote">
-			<div class="container">
-				<div class="row">
-					<div class="col">
-						<div class="quote_container text-center">
-							<div class="quote_quote">“Our guiding vision comes from the words of Jesus. ‘From the believers will flow living waters.’ - John 7:38”</div>
-							<div class="quote_icon"><img src="images/quote_2.png" alt=""></div>
-							{{!-- <div class="quote_source">Ignatius of Antioch</div> --}}
-						</div>
-					</div>
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<div class="quote_container text-center">
+					<div class="quote_quote">“Our guiding vision comes from the words of Jesus. ‘From the believers will
+						flow living waters.’ - John 7:38”</div>
+					<div class="quote_icon"><img src="images/quote_2.png" alt=""></div>
+					{{!-- <div class="quote_source">Ignatius of Antioch</div> --}}
 				</div>
 			</div>
 		</div>
+	</div>
+</div>
 
 <script src="/js/jquery-3.2.1.min.js"></script>
 <script src="js/sermons.js"></script>
