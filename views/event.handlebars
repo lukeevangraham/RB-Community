@@ -23,11 +23,12 @@
 		</div>
 	</div>
 
-	{{#each events}}
-	{{#if this.fields.featured}}
+	{{!-- {{log this}} --}}
 
 
-{{log this}}
+
+
+
 
 	<!-- Upcoming Event -->
 
@@ -43,40 +44,40 @@
 			</div>
 			<div class="row about_row">
 				<div class="col-lg-6">
-					<div class="upcoming_image"><img src="{{this.fields.eventImage.fields.file.url}}" alt=""></div>
+					<div class="upcoming_image"><img src="{{events.fields.eventImage.fields.file.url}}" alt=""></div>
 				</div>
 				<div class="col-lg-6">
 					<div class="event_container d-flex flex-md-row flex-column align-items-start justify-content-start">
 						<div class="event_date">
 							<div class="d-flex flex-column align-items-center justify-content-center">
-								<div class="event_day">{{this.fields.shortDay}}</div>
-								<div class="event_month">{{this.fields.shortMonth}}</div>
+								<div class="event_day">{{events.fields.shortDay}}</div>
+								<div class="event_month">{{events.fields.shortMonth}}</div>
 							</div>
 						</div>
 						<div class="event_content">
-							<div class="event_title"><a href="event:{{this.sys.id}}">{{this.fields.title}}</a></div>
+							<div class="event_title">{{events.fields.title}}</div>
 							<ul class="event_row">
 								<li>
 									<div class="event_icon"><img src="images/calendar.png" alt=""></div>
-									<span>{{this.fields.time}}</span>
+									<span>{{events.fields.time}}</span>
 								</li>
 								<li>
 									<div class="event_icon"><img src="images/location.png" alt=""></div>
-									<span>{{this.fields.location}}</span>
+									<span>{{events.fields.location}}</span>
 								</li>
 							</ul>
 						</div>
 					</div>
 					<div class="event_text">
-						<p>{{this.fields.description}}</p>
+						<p>{{{events.fields.description}}}</p>
 					</div>
 
-
+{{#if events.fields.dateToCountTo }}
 
 					<!-- Event Timer -->
 					<div class="event_timer_container ml-lg-auto">
 						<ul class="event_timer">
-							<div id="dateToCountTo" style="display:none">{{this.fields.dateToCountTo}}</div>
+							<div id="dateToCountTo" style="display:none">{{events.fields.dateToCountTo}}</div>
 							<li>
 								<div id="day" class="event_num">00</div>
 								<div class="event_ss">day</div>
@@ -95,17 +96,19 @@
 							</li>
 						</ul>
 					</div>
+
+					{{/if}}
 				</div>
 			</div>
 		</div>
 	</div>
 
-	{{/if}}
-	{{/each}}
+
+
 
 	<!-- Events -->
 
-	<div class="events">
+	{{!-- <div class="events">
 		<div class="container">
 			<div class="row">
 				<div class="col">
@@ -140,7 +143,7 @@
 						</div>
 					</div>
 					<div class="event_content">
-						<div class="event_title"><a href="/event:{{this.sys.id}}">{{this.fields.title}}</a></div>
+						<div class="event_title"><a href="#">{{this.fields.title}}</a></div>
 						<ul class="event_row">
 							<li>
 								<div class="event_icon"><img src="images/calendar.png" alt=""></div>
@@ -156,7 +159,7 @@
 			</div>
 
 			{{/unless}}
-			{{/each}}
+			{{/each}} --}}
 
 
 			<!-- Page Nav -->

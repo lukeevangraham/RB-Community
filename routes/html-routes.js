@@ -3,6 +3,14 @@ let keys = require("../keys.js");
 var request = require("request");
 var moment = require("moment");
 var path = require("path");
+var marked = require('marked');
+
+marked.setOptions({
+  renderer: new marked.Renderer(),
+  sanitize: true,
+  smartLists: true,
+  smartypants: true
+});
 
 // Import the model (event.js) to use its database functions
 var db = require("../models/");
@@ -130,7 +138,6 @@ module.exports = function(app) {
 
   app.get("/blog_single:id", function(req, res) {
     req.params.id = req.params.id.substring(1);
-    // console.log("LOOK HERE: ", req.params)
     client.getEntry(req.params.id).then(function(entry) {
       // Converting times for template
       Object.assign(entry.fields, {
@@ -197,20 +204,20 @@ module.exports = function(app) {
               });
             }
             // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
-          if (item.fields.repeatsEveryDays > 0 ) {
-            if (moment(item.fields.date).isBefore(moment())) {
-              let start = moment(item.fields.date);
-              let end = moment();
+            if (item.fields.repeatsEveryDays > 0) {
+              if (moment(item.fields.date).isBefore(moment())) {
+                let start = moment(item.fields.date);
+                let end = moment();
 
-              while(start.isBefore(end)) {
-                start.add(item.fields.repeatsEveryDays, 'day');
+                while (start.isBefore(end)) {
+                  start.add(item.fields.repeatsEveryDays, "day");
+                }
+                console.log(start.format("MM DD YYYY"));
+                item.fields.date = start.format("YYYY-MM-DD");
+                item.fields.shortMonth = start.format("MMM");
+                item.fields.shortDay = start.format("DD");
               }
-              console.log(start.format("MM DD YYYY"))
-              item.fields.date = start.format('YYYY-MM-DD')
-              item.fields.shortMonth = start.format('MMM')
-              item.fields.shortDay = start.format('DD')
             }
-          }
           });
 
           secondRecord = dbEvent;
@@ -312,18 +319,18 @@ module.exports = function(app) {
           }
 
           // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
-          if (item.fields.repeatsEveryDays > 0 ) {
+          if (item.fields.repeatsEveryDays > 0) {
             if (moment(item.fields.date).isBefore(moment())) {
               let start = moment(item.fields.date);
               let end = moment();
 
-              while(start.isBefore(end)) {
-                start.add(item.fields.repeatsEveryDays, 'day');
+              while (start.isBefore(end)) {
+                start.add(item.fields.repeatsEveryDays, "day");
               }
-              console.log(start.format("MM DD YYYY"))
-              item.fields.date = start.format('YYYY-MM-DD')
-              item.fields.shortMonth = start.format('MMM')
-              item.fields.shortDay = start.format('DD')
+              console.log(start.format("MM DD YYYY"));
+              item.fields.date = start.format("YYYY-MM-DD");
+              item.fields.shortMonth = start.format("MMM");
+              item.fields.shortDay = start.format("DD");
             }
           }
         });
@@ -334,7 +341,7 @@ module.exports = function(app) {
                     <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`
         };
 
-        console.log(dbEvent.items[0])
+        console.log(dbEvent.items[0]);
         return res.render("events", hbsObject);
       });
   });
@@ -448,5 +455,62 @@ module.exports = function(app) {
         // console.log("hbsObject:  ", bloghbsObject.blogpost);
         res.render("ministry", bloghbsObject);
       });
+  });
+
+  // Page for individual events
+  app.get("/event:id", function(req, res) {
+    req.params.id = req.params.id.substring(1);
+    client.getEntry(req.params.id).then(function(dbEvent) {
+      // Converting times for template
+      Object.assign(dbEvent.fields, {
+        shortMonth: moment(dbEvent.fields.date).format("MMM")
+      });
+      Object.assign(dbEvent.fields, {
+        shortDay: moment(dbEvent.fields.date).format("DD")
+      });
+      if (moment(dbEvent.fields.date).isAfter(moment())) {
+        
+        Object.assign(dbEvent.fields, {
+          dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY")
+        });
+      }
+
+      console.log(dbEvent.fields.dateToCountTo)
+
+      // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
+      if (dbEvent.fields.repeatsEveryDays > 0) {
+        if (moment(dbEvent.fields.date).isBefore(moment())) {
+          let start = moment(dbEvent.fields.date);
+          let end = moment();
+
+          while (start.isBefore(end)) {
+            start.add(dbEvent.fields.repeatsEveryDays, "day");
+            // dbEvent.add(dbEvent.fields.repeatsEveryDays, "day");
+          }
+          console.log(start.format("MM DD YYYY"));
+          dbEvent.fields.date = start.format("YYYY-MM-DD");
+          dbEvent.fields.shortMonth = start.format("MMM");
+          dbEvent.fields.shortDay = start.format("DD");
+        }
+      }
+       dbEvent.fields.description = marked(dbEvent.fields.description)
+       
+       // RENDER HTML FOR DESCRIPTION
+      //  const rawRichTextField = dbEvent.fields.description;
+       // let renderedHtml = documentToHtmlString(rawRichTextField);
+      //  Object.assign(dbEvent.fields, {
+      //    renderedHtml: documentToHtmlString(rawRichTextField)
+      //   });
+        // console.log(dbEvent.fields.renderedHtml)
+        
+      var hbsObject = {
+        events: dbEvent,
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
+                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`
+      };
+
+      // console.log(dbEvent);
+      return res.render("event", hbsObject);
+    });
   });
 };

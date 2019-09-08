@@ -24,6 +24,7 @@
     "express": "^4.17.1",
     "express-handlebars": "^3.1.0",
     "handlebars.moment": "^1.0.4",
+    "marked": "^0.7.0",
     "moment": "^2.24.0",
     "mysql2": "^1.6.5",
     "request": "^2.88.0",
