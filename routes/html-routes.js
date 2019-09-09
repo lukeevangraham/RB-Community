@@ -187,7 +187,7 @@ module.exports = function(app) {
 
       vimeoRecord = JSON.parse(body);
 
-      console.log(moment().format());
+      // console.log(moment().format());
 
       client
         .getEntries({
@@ -413,7 +413,7 @@ module.exports = function(app) {
         });
       });
       
-      console.log("ITEMS: ", items);
+      // console.log("ITEMS: ", items);
       // var videoDate = vimeo.data[0].name.split(" ", 1)
 
       // console.log("LOOK HERE: ", vimeo.data[0].name.split(" ", 1))
