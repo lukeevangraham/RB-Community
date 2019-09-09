@@ -137,11 +137,11 @@
 					<ul>
 						<li class="active"><a href="/">Home</a></li>
 						{{!-- <li><a href="/">I'm New</a></li> --}}
-										<li><a href="about">About</a></li>
-										<li><a href="/blog">News</a></li>
-										<li><a href="/events">Events</a></li>
-										<li><a href="/ministries">Ministries</a></li>
-										<li><a href="/sermons">Sermons</a></li>
+										<li class="{{#if active.about}}active{{/if}}"><a href="about">About</a></li>
+										<li class="{{#if active.news}}active{{/if}}"><a href="/blog">News</a></li>
+										<li class="{{#if active.events}}active{{/if}}"><a href="/events">Events</a></li>
+										<li class="{{#if active.ministries}}active{{/if}}"><a href="/ministries">Ministries</a></li>
+										<li class="{{#if active.sermons}}active{{/if}}"> <a href="/sermons">Sermons</a></li>
 					</ul>
 				</nav>
 			</div>
