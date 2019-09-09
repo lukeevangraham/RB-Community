@@ -136,6 +136,7 @@ module.exports = function(app) {
 
         var hbsObject = {
           blogpost: dbBlog.items,
+          active: { news: true },
           headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
                 <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`
           // shortenedMain: newTrimmedString
@@ -167,6 +168,7 @@ module.exports = function(app) {
 
       var bloghbsObject = {
         article: entry,
+        active: { news: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
                     <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`
       };
@@ -353,6 +355,7 @@ module.exports = function(app) {
 
         var hbsObject = {
           events: dbEvent.items,
+          active: { events: true },
           headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
                     <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`
         };
@@ -364,6 +367,7 @@ module.exports = function(app) {
 
   app.get("/about", function(req, res) {
     res.render("about", {
+      active: { about: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
         <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`
     });
@@ -421,6 +425,7 @@ module.exports = function(app) {
 
       var hbsObject = {
         vimeo: items,
+        active: { sermons: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/sermons.css">
                 <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`
       };
@@ -438,6 +443,7 @@ module.exports = function(app) {
 
   app.get("/ministries", function(req, res) {
     res.render("ministries", {
+      active: { ministries: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
         <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">`
     });
@@ -502,6 +508,7 @@ module.exports = function(app) {
         var bloghbsObject = {
           blogpost: entry.items,
           request: req.params.id,
+          active: { ministries: true },
           headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
                 <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`
         };
@@ -561,6 +568,7 @@ module.exports = function(app) {
 
       var hbsObject = {
         events: dbEvent,
+        active: { events: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
                     <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`
       };
@@ -574,6 +582,7 @@ module.exports = function(app) {
     var bloghbsObject = {
       // article: entry.fields,
       // request: req.params.id,
+      active: { about: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
         <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`
     };
