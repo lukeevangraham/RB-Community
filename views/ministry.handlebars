@@ -48,9 +48,8 @@
 			{{/each}}
 		</div>
 
-		{{#each blogpost}}
+		{{#if blogpost}}
 		{{#unless this.fields.featureOnMinistryPage}}
-		{{#if @first}}
 
 		<div class="row pt-5 pb-2">
 			<div class="col">
@@ -61,11 +60,9 @@
 			</div>
 		</div>
 
-		{{/if}}
-
 		{{/unless}}
 
-		{{/each}}
+		{{/if}}
 
 
 		<div class="row news_row">
