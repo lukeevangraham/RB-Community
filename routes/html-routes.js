@@ -194,6 +194,7 @@ module.exports = function(app) {
           content_type: "events",
           // "fields.featuredOnHome": true,
           "fields.endDate[gte]": moment().format(),
+          "fields.homePagePassword": "Psalm 46:1",
           order: "fields.date"
           // limit: 3
         })
@@ -209,11 +210,12 @@ module.exports = function(app) {
             Object.assign(item.fields, {
               shortDay: moment(item.fields.date).format("DD")
             });
-            if (item.fields.featured) {
+            // if (item.fields.featured) {
               Object.assign(item.fields, {
                 dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
               });
-            }
+              // console.log("ROUTE: ", item.fields.dateToCountTo)
+            // }
             // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
             if (item.fields.repeatsEveryDays > 0) {
               if (moment(item.fields.date).isSameOrBefore(moment())) {
@@ -231,6 +233,9 @@ module.exports = function(app) {
                 item.fields.shortMonth = start.format("MMM");
                 item.fields.shortDay = start.format("DD");
               }
+              Object.assign(item.fields, {
+                dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
+              });
             }
           });
 
@@ -240,6 +245,7 @@ module.exports = function(app) {
             .getEntries({
               content_type: "blog",
               "fields.featureOnHomePage": true,
+              "fields.homePagePassword": "Psalm 46:1",
               order: "-fields.datePosted",
               limit: 3
             })
@@ -326,7 +332,7 @@ module.exports = function(app) {
           Object.assign(item.fields, {
             shortDay: moment(item.fields.date).format("DD")
           });
-          if (item.fields.featured) {
+          // if (item.fields.featured) {
             Object.assign(item.fields, {
               dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
             });
@@ -334,7 +340,7 @@ module.exports = function(app) {
             if (item.fields.description) {
               item.fields.description = marked(item.fields.description);
             }
-          }
+          // }
 
           // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
           if (item.fields.repeatsEveryDays > 0) {
@@ -350,6 +356,9 @@ module.exports = function(app) {
               item.fields.shortMonth = start.format("MMM");
               item.fields.shortDay = start.format("DD");
             }
+            Object.assign(item.fields, {
+              dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
+            });
           }
         });
 
@@ -528,11 +537,9 @@ module.exports = function(app) {
       Object.assign(dbEvent.fields, {
         shortDay: moment(dbEvent.fields.date).format("DD")
       });
-      if (moment(dbEvent.fields.date).isAfter(moment())) {
-        Object.assign(dbEvent.fields, {
-          dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY")
-        });
-      }
+      // if (moment(dbEvent.fields.date).isAfter(moment())) {
+        
+      // }
 
       console.log(dbEvent.fields.dateToCountTo);
 
@@ -552,6 +559,9 @@ module.exports = function(app) {
           dbEvent.fields.shortDay = start.format("DD");
         }
       }
+      Object.assign(dbEvent.fields, {
+        dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY")
+      });
 
       // CONVERT MARKDOWN TO HTML
       if (dbEvent.fields.description) {
