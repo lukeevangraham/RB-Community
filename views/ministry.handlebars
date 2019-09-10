@@ -1,3 +1,5 @@
+
+
 <!-- Home -->
 
 <div class="home">
@@ -46,11 +48,9 @@
 
 		{{#each blogpost}}
 
-{{#unless fields.featureOnMinistryPage}}
+		{{#unless fields.featureOnMinistryPage}}
 
-		 {{#if @first}}
-
-{{log this}}
+		{{#if @first}}
 
 		<div class="row pt-5 pb-2">
 			<div class="col">
@@ -63,7 +63,7 @@
 
 		{{/if}}
 
-{{/unless}}
+		{{/unless}}
 		{{/each}}
 
 		<div class="row news_row">
@@ -294,7 +294,70 @@
 		</div> --}}
 
 	</div>
-</div>
 
-<script src="/js/jquery-3.2.1.min.js"></script>
-<script src="js/blog.js"></script>
+
+
+	<!-- Events -->
+
+	<div class="events pt-0">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="section_title_container text-center">
+						<div class="section_title">list of events</div>
+						<div class="section_subtitle">Events held and scheduled by us</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div
+			class="events_items d-flex flex-lg-row flex-column align-items-lg-start align-items-center justify-content-lg-between justify-content-center flex-wrap">
+
+			{{#each events}}
+			{{#unless this.fields.featured}}
+
+
+
+
+			<!-- Event -->
+
+			<div class="events_item">
+				<div class="events_item_image"><a href="/event:{{this.sys.id}}"><img
+							src="{{this.fields.eventImage.fields.file.url}}" alt=""></a></div>
+				<div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
+					<div class="event_date">
+						<div class="d-flex flex-column align-items-center justify-content-center">
+							<div class="event_day">{{this.fields.shortDay}}</div>
+							<div class="event_month">{{this.fields.shortMonth}}</div>
+						</div>
+					</div>
+					<div class="event_content">
+						<div class="event_title"><a href="/event:{{this.sys.id}}">{{this.fields.title}}</a></div>
+						<ul class="event_row">
+							<li>
+								<div class="event_icon"><img src="images/calendar.png" alt=""></div>
+								<span>{{this.fields.time}}</span>
+							</li>
+							<li>
+								<div class="event_icon"><img src="images/location.png" alt=""></div>
+								<span>{{this.fields.location}}</span>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+
+			{{/unless}}
+			{{/each}}
+
+		</div>
+
+
+
+
+
+	</div>
+
+	<script src="/js/jquery-3.2.1.min.js"></script>
+	<script src="js/blog.js"></script>

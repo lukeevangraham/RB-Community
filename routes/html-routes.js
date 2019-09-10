@@ -211,10 +211,10 @@ module.exports = function(app) {
               shortDay: moment(item.fields.date).format("DD")
             });
             // if (item.fields.featured) {
-              Object.assign(item.fields, {
-                dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
-              });
-              // console.log("ROUTE: ", item.fields.dateToCountTo)
+            Object.assign(item.fields, {
+              dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
+            });
+            // console.log("ROUTE: ", item.fields.dateToCountTo)
             // }
             // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
             if (item.fields.repeatsEveryDays > 0) {
@@ -333,13 +333,13 @@ module.exports = function(app) {
             shortDay: moment(item.fields.date).format("DD")
           });
           // if (item.fields.featured) {
-            Object.assign(item.fields, {
-              dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
-            });
-            // CONVERT MARKDOWN TO HTML
-            if (item.fields.description) {
-              item.fields.description = marked(item.fields.description);
-            }
+          Object.assign(item.fields, {
+            dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
+          });
+          // CONVERT MARKDOWN TO HTML
+          if (item.fields.description) {
+            item.fields.description = marked(item.fields.description);
+          }
           // }
 
           // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
@@ -404,30 +404,31 @@ module.exports = function(app) {
           id: getIdFromVimeoURL(items[0].link)
         });
       }
-      
+
       items.forEach(item => {
         // console.log(moment(item.name.split(" ", 1), 'MM-DD-YY').format("MMM"))
         // console.log(moment(item.name.split(" ", 1), 'MM-DD-YY').format('MMM'))
         Object.assign(item, {
-          shortMonth: moment(item.name.split(" ", 1), 'MM-DD-YY').format('MMM')
+          shortMonth: moment(item.name.split(" ", 1), "MM-DD-YY").format("MMM")
         });
         Object.assign(item, {
-          shortDay: moment(item.name.split(" ", 1), 'MM-DD-YY').format('DD')
+          shortDay: moment(item.name.split(" ", 1), "MM-DD-YY").format("DD")
         });
         Object.assign(item, {
           shortTitle: item.name.split(": ", 2)[1]
         });
         Object.assign(item, {
-          featureDate: moment(item.name.split(" ", 1), 'MM-DD-YY').format('DD MMM YYYY')
+          featureDate: moment(item.name.split(" ", 1), "MM-DD-YY").format(
+            "DD MMM YYYY"
+          )
         });
       });
-      
+
       // console.log("ITEMS: ", items);
       // var videoDate = vimeo.data[0].name.split(" ", 1)
 
       // console.log("LOOK HERE: ", vimeo.data[0].name.split(" ", 1))
       // console.log("LOOK HERE: ", vimeo.data[0].name.split(": ", 2))
-
 
       var latestSermon = JSON.parse(body).data[0];
       // console.log(latestSermon);
@@ -462,6 +463,9 @@ module.exports = function(app) {
     // console.log("HEY")
     req.params.id = req.params.id.substring(1);
     // console.log("LOOK HERE: ", req.params.id)
+    var firstRecord = null;
+    var secondRecord = null;
+
     client
       .getEntries({
         content_type: "blog",
@@ -512,17 +516,72 @@ module.exports = function(app) {
           }
         });
 
-        // console.log("LOOK HERE", entry)
+        firstRecord = items;
 
-        var bloghbsObject = {
-          blogpost: entry.items,
-          request: req.params.id,
-          active: { ministries: true },
-          headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
-                <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`
-        };
-        // console.log("hbsObject:  ", bloghbsObject.blogpost);
-        res.render("ministry", bloghbsObject);
+        client
+          .getEntries({
+            content_type: "events",
+            "fields.endDate[gte]": moment().format(),
+            "fields.ministry": req.params.id,
+            order: "fields.date"
+          })
+          .then(function(dbEvent) {
+            var items = dbEvent.items;
+
+            // Converting times for template
+            items.forEach(item => {
+              Object.assign(item.fields, {
+                shortMonth: moment(item.fields.date).format("MMM")
+              });
+              Object.assign(item.fields, {
+                shortDay: moment(item.fields.date).format("DD")
+              });
+              // if (item.fields.featured) {
+              Object.assign(item.fields, {
+                dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
+              });
+              // CONVERT MARKDOWN TO HTML
+              if (item.fields.description) {
+                item.fields.description = marked(item.fields.description);
+              }
+              // }
+
+              // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
+              if (item.fields.repeatsEveryDays > 0) {
+                if (moment(item.fields.date).isBefore(moment())) {
+                  let start = moment(item.fields.date);
+                  let end = moment();
+
+                  while (start.isBefore(end)) {
+                    start.add(item.fields.repeatsEveryDays, "day");
+                  }
+                  console.log(start.format("MM DD YYYY"));
+                  item.fields.date = start.format("YYYY-MM-DD");
+                  item.fields.shortMonth = start.format("MMM");
+                  item.fields.shortDay = start.format("DD");
+                }
+                Object.assign(item.fields, {
+                  dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
+                });
+              }
+            });
+            secondRecord = items;
+
+            console.log("SECOND RECORD: ", secondRecord);
+            
+            // console.log("LOOK HERE", entry)
+            
+            var bloghbsObject = {
+              blogpost: entry.items,
+              request: req.params.id,
+              events: secondRecord,
+              active: { ministries: true },
+              headContent: `<link rel="stylesheet" type="text/css" href="styles/ministry.css">
+              <link rel="stylesheet" type="text/css" href="styles/ministry_responsive.css">`
+            };
+            // console.log("hbsObject:  ", bloghbsObject.events);
+            res.render("ministry", bloghbsObject);
+          });
       });
   });
 
@@ -538,7 +597,7 @@ module.exports = function(app) {
         shortDay: moment(dbEvent.fields.date).format("DD")
       });
       // if (moment(dbEvent.fields.date).isAfter(moment())) {
-        
+
       // }
 
       console.log(dbEvent.fields.dateToCountTo);

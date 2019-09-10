@@ -21,7 +21,7 @@ To add a news item or a ministry page header (which displays at the top of the m
 
 **Body:** Here is where your content goes!  Use "RB Community" instead of RBCC.
 
-**Image:** You can upload a new image or link to one already uploaded.  1170 x 500 pixels.  Please use photos without text.
+**Image:** You can upload a new image or link to one already uploaded.  Images from unsplash.com are great  1170 x 500 pixels.  Please use photos without text.
 
 **Ministry:** Select the ministry sponsoring the entry (if no check box exists contact Luke)
 
@@ -53,7 +53,7 @@ To add an event item select "Add Entry" from the top right of the content page a
 
 **Description:** Describe the event.  Include links to signup/payment forms here.  Use "RB Community" instead of RBCC.
 
-**Event image:** You can upload a new image or link to one already uploaded.  690 x 388 pixels.
+**Event image:** You can upload a new image or link to one already uploaded.  Images from unsplash.com are great.  690 x 388 pixels.
 
 **Feature on home:** The 'yes' button must be selected to show on our home page.
 
