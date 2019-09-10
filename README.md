@@ -21,7 +21,7 @@ To add a news item or a ministry page header (which displays at the top of the m
 
 **Body:** Here is where your content goes!
 
-**Image:** You can upload a new image or link to one already uploaded
+**Image:** You can upload a new image or link to one already uploaded.  1170 x 500 pixels.  Please use photos without text.
 
 **Ministry:** Select the ministry sponsoring the entry (if no check box exists contact Luke)
 
@@ -53,7 +53,7 @@ To add an event item select "Add Entry" from the top right of the content page a
 
 **Description:** Describe the event.  Include links to signup/payment forms here.
 
-**Event image:** You can upload a new image or link to one already uploaded.
+**Event image:** You can upload a new image or link to one already uploaded.  690 x 388 pixels.
 
 **Feature on home:** The 'yes' button must be selected to show on our home page.
 
@@ -61,10 +61,4 @@ To add an event item select "Add Entry" from the top right of the content page a
 
 **Home page password:** To display entry on home page a password must be entered.  Ask Bryan or Luke to enter the password.  You can submit a task to them via the panel on the right.
 
-**Ministry:** Select the ministry sponsoring the entry (if no check box exists contact Luke)
-
-
-
-
-
-## The Media Page
+**Ministry:** Select the ministry sponsoring the entry (if no check-box exists contact Luke).
