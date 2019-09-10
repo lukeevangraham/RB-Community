@@ -27,7 +27,7 @@
 	{{#if this.fields.featured}}
 
 
-{{log this}}
+	{{log this}}
 
 	<!-- Upcoming Event -->
 
@@ -43,7 +43,8 @@
 			</div>
 			<div class="row about_row">
 				<div class="col-lg-6">
-					<div class="upcoming_image"><a href="/event:{{this.sys.id}}"><img src="{{this.fields.eventImage.fields.file.url}}" alt=""></a></div>
+					<div class="upcoming_image"><a href="/event:{{this.sys.id}}"><img
+								src="{{this.fields.eventImage.fields.file.url}}" alt=""></a></div>
 				</div>
 				<div class="col-lg-6">
 					<div class="event_container d-flex flex-md-row flex-column align-items-start justify-content-start">
@@ -104,8 +105,12 @@
 	{{/each}}
 
 	<!-- Events -->
+	{{#each events}}
+	{{#unless this.fields.featured}}
 
-	<div class="events pt-0">
+	{{#if @first}}
+
+	<div class="events">
 		<div class="container">
 			<div class="row">
 				<div class="col">
@@ -119,11 +124,9 @@
 		<div
 			class="events_items d-flex flex-lg-row flex-column align-items-lg-start align-items-center justify-content-lg-between justify-content-center flex-wrap">
 
+			{{/if}}
 
 
-
-			{{#each events}}
-			{{#unless this.fields.featured}}
 
 
 
@@ -131,7 +134,8 @@
 			<!-- Event -->
 
 			<div class="events_item">
-				<div class="events_item_image"><a href="/event:{{this.sys.id}}"><img src="{{this.fields.eventImage.fields.file.url}}" alt=""></a></div>
+				<div class="events_item_image"><a href="/event:{{this.sys.id}}"><img
+							src="{{this.fields.eventImage.fields.file.url}}" alt=""></a></div>
 				<div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
 					<div class="event_date">
 						<div class="d-flex flex-column align-items-center justify-content-center">
@@ -175,28 +179,27 @@
 			</div> --}}
 		</div>
 
-			<!-- Quote -->
+		<!-- Quote -->
 
-			<div class="quote">
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <div class="quote_container text-center">
-                        <div class="quote_quote">“We believe encounters with Jesus transform lives.”</div>
-                        <div class="quote_icon"><img src="images/quote.png" alt=""></div>
-                        {{!-- <div class="quote_source">Ignatius of Antioch</div> --}}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
+		<div class="quote">
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<div class="quote_container text-center">
+							<div class="quote_quote">“We believe encounters with Jesus transform lives.”</div>
+							<div class="quote_icon"><img src="images/quote.png" alt=""></div>
+							{{!-- <div class="quote_source">Ignatius of Antioch</div> --}}
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 
 
+	</div>
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.0/moment.min.js"
-			type="text/javascript"></script>
-		<script src="/js/jquery-3.2.1.min.js"></script>
-		<script src="js/events.js"></script>
+
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.0/moment.min.js" type="text/javascript"></script>
+	<script src="/js/jquery-3.2.1.min.js"></script>
+	<script src="js/events.js"></script>

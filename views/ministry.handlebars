@@ -295,11 +295,14 @@
 
 	</div>
 
+			{{#each events}}
+			{{#unless this.fields.featured}}
 
+{{#if @first}}
 
 	<!-- Events -->
 
-	<div class="events pt-0">
+	<div class="events">
 		<div class="container">
 			<div class="row">
 				<div class="col">
@@ -313,9 +316,7 @@
 		<div
 			class="events_items d-flex flex-lg-row flex-column align-items-lg-start align-items-center justify-content-lg-between justify-content-center flex-wrap">
 
-			{{#each events}}
-			{{#unless this.fields.featured}}
-
+{{/if}}
 
 
 
