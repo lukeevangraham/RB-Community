@@ -22,6 +22,9 @@
 
 <!-- Ministry Featured Info -->
 
+
+
+
 <div class="news">
 	<div class="container">
 		<div class="row">
@@ -33,6 +36,8 @@
 			</div>
 		</div>
 
+
+
 		<div class="row pt-2 pb-3">
 			{{#each blogpost}}
 			{{#if fields.featureOnMinistryPage}}
@@ -43,14 +48,9 @@
 			{{/each}}
 		</div>
 
-
-		{{!-- {{#each blogpost}} --}}
-
-		{{!-- {{ log this}} --}}
-
-		{{!-- {{#unless fields.featureOnMinistryPage}} --}}
-
-		{{!-- {{#if @first}} --}}
+		{{#each blogpost}}
+		{{#unless this.fields.featureOnMinistryPage}}
+		{{#if @first}}
 
 		<div class="row pt-5 pb-2">
 			<div class="col">
@@ -61,10 +61,12 @@
 			</div>
 		</div>
 
-		{{!-- {{/if}} --}}
+		{{/if}}
 
-		{{!-- {{/unless}} --}}
-		{{!-- {{/each}} --}}
+		{{/unless}}
+
+		{{/each}}
+
 
 		<div class="row news_row">
 
