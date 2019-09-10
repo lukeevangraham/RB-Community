@@ -15,11 +15,11 @@ Let's go over adding a news item first:
 ---
 To add a news item or a ministry page header (which displays at the top of the ministry page) select "Add Entry" from the top right of the content page and fill out the form.
 
-**Title:** Insert a Catchy title
+**Title:** Insert a catchy title, no punctuation (no exclamation marks)
 
 **Author:** Name associated with the news item
 
-**Body:** Here is where your content goes!
+**Body:** Here is where your content goes!  Use "RB Community" instead of RBCC.
 
 **Image:** You can upload a new image or link to one already uploaded.  1170 x 500 pixels.  Please use photos without text.
 
@@ -51,7 +51,7 @@ To add an event item select "Add Entry" from the top right of the content page a
 
 **Location:** Enter the room, or an address
 
-**Description:** Describe the event.  Include links to signup/payment forms here.
+**Description:** Describe the event.  Include links to signup/payment forms here.  Use "RB Community" instead of RBCC.
 
 **Event image:** You can upload a new image or link to one already uploaded.  690 x 388 pixels.
 
