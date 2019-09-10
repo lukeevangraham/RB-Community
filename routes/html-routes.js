@@ -469,7 +469,8 @@ module.exports = function(app) {
     client
       .getEntries({
         content_type: "blog",
-        "fields.ministry": req.params.id
+        "fields.ministry": req.params.id,
+        limit: 6
       })
       .then(function(entry) {
         // console.log(entry)
@@ -523,7 +524,8 @@ module.exports = function(app) {
             content_type: "events",
             "fields.endDate[gte]": moment().format(),
             "fields.ministry": req.params.id,
-            order: "fields.date"
+            order: "fields.date",
+            limit: 6
           })
           .then(function(dbEvent) {
             var items = dbEvent.items;
@@ -567,7 +569,7 @@ module.exports = function(app) {
             });
             secondRecord = items;
 
-            console.log("SECOND RECORD: ", secondRecord);
+            // console.log("SECOND RECORD: ", secondRecord);
             
             // console.log("LOOK HERE", entry)
             
