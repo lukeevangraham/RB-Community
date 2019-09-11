@@ -470,7 +470,7 @@ module.exports = function(app) {
       .getEntries({
         content_type: "blog",
         "fields.ministry": req.params.id,
-        limit: 6
+        limit: 7
       })
       .then(function(entry) {
         // console.log(entry)
@@ -480,10 +480,11 @@ module.exports = function(app) {
           });
         }
 
-        
-        Object.assign(entry.items[0].fields, {
-          request: req.params.id
-        });
+        if (entry.fields) {
+          Object.assign(entry.items[0].fields, {
+            request: req.params.id
+          });
+        }
         
         var items = entry.items;
         // console.log("LOOK HERE: ", entry.items)
