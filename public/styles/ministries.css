@@ -1143,9 +1143,3 @@ section
 	color: #181818 !important;
 	border-bottom: solid 1px #327091;
 }
-
-.ministry-list {
-	-webkit-column-count: 2;
-	-moz-column-count: 2;
-	column-count: 2;
-}
