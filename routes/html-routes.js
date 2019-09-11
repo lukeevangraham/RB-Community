@@ -524,7 +524,7 @@ module.exports = function(app) {
 
         firstRecord = items;
 
-        // console.log("ITEMS: ", firstRecord)
+
 
         client
           .getEntries({
