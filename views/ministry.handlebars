@@ -48,21 +48,25 @@
 			{{/each}}
 		</div>
 
-		{{#if blogpost}}
-		{{#unless this.fields.featureOnMinistryPage}}
+
+
+
+{{#if this.blogpost.multipleEntries}}
+
 
 		<div class="row pt-5 pb-2">
 			<div class="col">
 				<div class="section_title_container text-center">
-					<div class="section_title">{{request}} news</div>
+					<div class="section_title">{{this.request}} news</div>
 					<div class="section_subtitle">Be part of a community of people experiencing God together.</div>
 				</div>
 			</div>
 		</div>
 
-		{{/unless}}
 
-		{{/if}}
+{{/if}}
+
+
 
 
 		<div class="row news_row">

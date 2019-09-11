@@ -474,13 +474,18 @@ module.exports = function(app) {
       })
       .then(function(entry) {
         // console.log(entry)
+        if (entry.total >= 2) {
+          Object.assign(entry.items, {
+            multipleEntries: true
+          });
+        }
 
-        var items = entry.items;
-
+        
         Object.assign(entry.items[0].fields, {
           request: req.params.id
         });
-
+        
+        var items = entry.items;
         // console.log("LOOK HERE: ", entry.items)
 
         // Converting times for template
@@ -518,6 +523,8 @@ module.exports = function(app) {
         });
 
         firstRecord = items;
+
+        // console.log("ITEMS: ", firstRecord)
 
         client
           .getEntries({
@@ -574,7 +581,7 @@ module.exports = function(app) {
             // console.log("LOOK HERE", entry)
             
             var bloghbsObject = {
-              blogpost: entry.items,
+              blogpost: firstRecord,
               request: req.params.id,
               events: secondRecord,
               active: { ministries: true },
