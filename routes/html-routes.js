@@ -100,7 +100,20 @@ module.exports = function(app) {
         "sys.id[nin]": "3JEwFofQhW3MQcReiGLCYu"
       })
       .then(function(dbBlog) {
-        var items = dbBlog.items;
+        var items = [];
+        var itemsIncludingExpired = dbBlog.items;
+
+        // ELIMINATING OLD ENTRIES FROM PAGE
+        itemsIncludingExpired.forEach(earlyItem => {
+          if (
+            moment(earlyItem.fields.expirationDate).isBefore(
+              moment().format("YYYY-MM-DD")
+            )
+          ) {
+          } else {
+            items.push(earlyItem);
+          }
+        });
 
         // Converting times for template
         items.forEach(item => {
@@ -122,7 +135,8 @@ module.exports = function(app) {
           }
 
           Object.assign(item.fields, {
-            excerpt: truncatedString
+            excerpt: truncatedString,
+            today: moment().format("YYYY-MM-DD")
           });
         });
 
@@ -135,7 +149,7 @@ module.exports = function(app) {
         // console.log("Look Here: ", dbBlog.items[3])
 
         var hbsObject = {
-          blogpost: dbBlog.items,
+          blogpost: items,
           active: { news: true },
           headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
                 <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`
@@ -469,6 +483,7 @@ module.exports = function(app) {
     client
       .getEntries({
         content_type: "blog",
+        order: "-fields.datePosted",
         "fields.ministry": req.params.id,
         limit: 7
       })
@@ -486,7 +501,23 @@ module.exports = function(app) {
           });
         }
         
-        var items = entry.items;
+        var items = [];
+        var itemsIncludingExpired = entry.items;
+        // ELIMINATING OLD ENTRIES FROM PAGE
+        itemsIncludingExpired.forEach(earlyItem => {
+          if (
+            moment(earlyItem.fields.expirationDate).isBefore(
+              moment().format("YYYY-MM-DD")
+            )
+          ) {
+          } else {
+            items.push(earlyItem);
+          }
+        });
+
+        console.log("ITEMS: ", items)
+
+        // var items = entry.items;
         // console.log("LOOK HERE: ", entry.items)
 
         // Converting times for template
@@ -524,8 +555,6 @@ module.exports = function(app) {
         });
 
         firstRecord = items;
-
-
 
         client
           .getEntries({
@@ -578,9 +607,9 @@ module.exports = function(app) {
             secondRecord = items;
 
             // console.log("SECOND RECORD: ", secondRecord);
-            
+
             // console.log("LOOK HERE", entry)
-            
+
             var bloghbsObject = {
               blogpost: firstRecord,
               request: req.params.id,
