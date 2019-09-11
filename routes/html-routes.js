@@ -265,7 +265,21 @@ module.exports = function(app) {
             })
             .then(function(dbBlog) {
               // console.log(dbBlog.items)
-              var items = dbBlog.items;
+              // var items = dbBlog.items;
+              var items = [];
+              var itemsIncludingExpired = dbBlog.items;
+
+              // ELIMINATING OLD ENTRIES FROM PAGE
+              itemsIncludingExpired.forEach(earlyItem => {
+                if (
+                  moment(earlyItem.fields.expirationDate).isBefore(
+                    moment().format("YYYY-MM-DD")
+                  )
+                ) {
+                } else {
+                  items.push(earlyItem);
+                }
+              });
 
               // Converting times for template
               items.forEach(item => {
@@ -292,7 +306,8 @@ module.exports = function(app) {
                 });
               });
 
-              thirdRecord = dbBlog;
+              thirdRecord = items;
+              console.log(items)
             })
             .then(function(body) {
               // console.log(body)
@@ -303,7 +318,7 @@ module.exports = function(app) {
               var hbsObject = {
                 events: secondRecord.items,
                 vimeo: vimeoRecord,
-                blogpost: thirdRecord.items,
+                blogpost: thirdRecord,
                 headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
               <link rel="stylesheet" type="text/css" href="styles/responsive.css">`
               };
@@ -500,7 +515,7 @@ module.exports = function(app) {
             request: req.params.id
           });
         }
-        
+
         var items = [];
         var itemsIncludingExpired = entry.items;
         // ELIMINATING OLD ENTRIES FROM PAGE
@@ -515,7 +530,7 @@ module.exports = function(app) {
           }
         });
 
-        console.log("ITEMS: ", items)
+        console.log("ITEMS: ", items);
 
         // var items = entry.items;
         // console.log("LOOK HERE: ", entry.items)
