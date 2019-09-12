@@ -373,14 +373,15 @@ module.exports = function(app) {
 
           // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
           if (item.fields.repeatsEveryDays > 0) {
-            if (moment(item.fields.date).isBefore(moment())) {
+            if (moment(item.fields.date).isBefore(moment().format('YYYY-MM-DD'))) {
               let start = moment(item.fields.date);
               let end = moment();
+              console.log("CHANGING: ", item.fields)
 
               while (start.isBefore(end)) {
                 start.add(item.fields.repeatsEveryDays, "day");
               }
-              console.log(start.format("MM DD YYYY"));
+              // console.log(start.format("MM DD YYYY"));
               item.fields.date = start.format("YYYY-MM-DD");
               item.fields.shortMonth = start.format("MMM");
               item.fields.shortDay = start.format("DD");
@@ -398,7 +399,7 @@ module.exports = function(app) {
                     <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`
         };
 
-        console.log(dbEvent.items[0]);
+        // console.log(dbEvent.items[0]);
         return res.render("events", hbsObject);
       });
   });
