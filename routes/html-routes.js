@@ -651,17 +651,12 @@ module.exports = function(app) {
       Object.assign(dbEvent.fields, {
         shortDay: moment(dbEvent.fields.date).format("DD")
       });
-      // if (moment(dbEvent.fields.date).isAfter(moment())) {
-
-      // }
-
-
 
       // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
       if (dbEvent.fields.repeatsEveryDays > 0) {
         if (moment(dbEvent.fields.date).isBefore(moment().format('YYYY-MM-DD'))) {
           let start = moment(dbEvent.fields.date);
-          let end = moment();
+          let end = moment().format('YYYY-MM-DD');
 
           while (start.isBefore(end)) {
             start.add(dbEvent.fields.repeatsEveryDays, "day");
@@ -673,11 +668,11 @@ module.exports = function(app) {
           dbEvent.fields.shortDay = start.format("DD");
         }
       }
-      // if (moment(dbEvent.fields.date, 'YYYY-MM-DD').isAfter(moment().format('YYYY-MM-DD'))) {
-        // Object.assign(dbEvent.fields, {
-        //   dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY")
-        // }); 
-      // }
+      if (moment(dbEvent.fields.date, 'YYYY-MM-DD').isAfter(moment().format('YYYY-MM-DD'))) {
+        Object.assign(dbEvent.fields, {
+          dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY")
+        }); 
+      }
 
       // unnecesary
 
