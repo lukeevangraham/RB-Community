@@ -655,7 +655,7 @@ module.exports = function(app) {
 
       // }
 
-      console.log(dbEvent.fields.dateToCountTo);
+
 
       // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
       if (dbEvent.fields.repeatsEveryDays > 0) {
@@ -667,15 +667,18 @@ module.exports = function(app) {
             start.add(dbEvent.fields.repeatsEveryDays, "day");
             // dbEvent.add(dbEvent.fields.repeatsEveryDays, "day");
           }
-          console.log(start.format("MM DD YYYY"));
+          // console.log(start.format("MM DD YYYY"));
           dbEvent.fields.date = start.format("YYYY-MM-DD");
           dbEvent.fields.shortMonth = start.format("MMM");
           dbEvent.fields.shortDay = start.format("DD");
         }
       }
-      Object.assign(dbEvent.fields, {
-        dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY")
-      });
+      if (moment(dbEvent.fields.date, 'YYYY-MM-DD').isAfter(moment().format('YYYY-MM-DD'))) {
+        Object.assign(dbEvent.fields, {
+          dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY")
+        });
+        
+      }
 
       // CONVERT MARKDOWN TO HTML
       if (dbEvent.fields.description) {
