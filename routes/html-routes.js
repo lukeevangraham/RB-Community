@@ -659,7 +659,7 @@ module.exports = function(app) {
 
       // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
       if (dbEvent.fields.repeatsEveryDays > 0) {
-        if (moment(dbEvent.fields.date).isBefore(moment())) {
+        if (moment(dbEvent.fields.date).isBefore(moment().format('YYYY-MM-DD'))) {
           let start = moment(dbEvent.fields.date);
           let end = moment();
 
