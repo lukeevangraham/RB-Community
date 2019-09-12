@@ -658,6 +658,9 @@ module.exports = function(app) {
           let start = moment(dbEvent.fields.date);
           let end = moment().format('YYYY-MM-DD');
 
+          console.log("START: ", start)
+          console.log("END: ", end)
+
           while (start.isBefore(end)) {
             start.add(dbEvent.fields.repeatsEveryDays, "day");
             // dbEvent.add(dbEvent.fields.repeatsEveryDays, "day");
@@ -673,8 +676,6 @@ module.exports = function(app) {
           dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY")
         }); 
       }
-
-      // unnecesary
 
       // CONVERT MARKDOWN TO HTML
       if (dbEvent.fields.description) {
