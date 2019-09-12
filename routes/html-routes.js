@@ -676,8 +676,7 @@ module.exports = function(app) {
       if (moment(dbEvent.fields.date, 'YYYY-MM-DD').isAfter(moment().format('YYYY-MM-DD'))) {
         Object.assign(dbEvent.fields, {
           dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY")
-        });
-        
+        }); 
       }
 
       // unnecesary
