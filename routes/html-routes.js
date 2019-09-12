@@ -673,11 +673,11 @@ module.exports = function(app) {
           dbEvent.fields.shortDay = start.format("DD");
         }
       }
-      if (moment(dbEvent.fields.date, 'YYYY-MM-DD').isAfter(moment().format('YYYY-MM-DD'))) {
-        Object.assign(dbEvent.fields, {
-          dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY")
-        }); 
-      }
+      // if (moment(dbEvent.fields.date, 'YYYY-MM-DD').isAfter(moment().format('YYYY-MM-DD'))) {
+        // Object.assign(dbEvent.fields, {
+        //   dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY")
+        // }); 
+      // }
 
       // unnecesary
 
