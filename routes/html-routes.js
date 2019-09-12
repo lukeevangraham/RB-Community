@@ -680,6 +680,8 @@ module.exports = function(app) {
         
       }
 
+      // unnecesary
+
       // CONVERT MARKDOWN TO HTML
       if (dbEvent.fields.description) {
         dbEvent.fields.description = marked(dbEvent.fields.description);
