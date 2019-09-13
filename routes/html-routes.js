@@ -127,14 +127,17 @@ module.exports = function(app) {
           });
 
           if (item.fields.body) {
-            var truncatedString = JSON.stringify(
-              item.fields.body.content[0].content[0].value.replace(
-                /^(.{165}[^\s]*).*/,
-                "$1"
-              )
-            );
-            var truncatedLength = truncatedString.length;
-            truncatedString = truncatedString.substring(1, truncatedLength - 1);
+            if (item.fields.body.content[0].content[0]) {
+              var truncatedString = JSON.stringify(
+                item.fields.body.content[0].content[0].value.replace(
+                  /^(.{165}[^\s]*).*/,
+                  "$1"
+                )
+              
+                );
+                var truncatedLength = truncatedString.length;
+                truncatedString = truncatedString.substring(1, truncatedLength - 1);
+              }
           }
 
           Object.assign(item.fields, {
