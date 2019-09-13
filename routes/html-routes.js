@@ -23,6 +23,9 @@ let contentfulAccessToken = process.env.ACCESS_TOKEN;
 const HtmlRenderer = require("@contentful/rich-text-html-renderer");
 let { documentToHtmlString } = HtmlRenderer;
 
+const richTextTypes = require("@contentful/rich-text-types");
+let { INLINES } = richTextTypes;
+
 let vimeoPass = process.env.VIMEO_TOKEN;
 
 var client = contentful.createClient({
@@ -173,12 +176,21 @@ module.exports = function(app) {
       });
       // console.log(entry.fields)
 
+        const options = {
+          renderNode: {
+            [INLINES.HYPERLINK]: (node) => `<IframeContainer><iframe title="Unique Title 001" src=${node.data.uri} width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></IframeContainer>`
+          }
+        };
+
+      // console.log(Post.fields.body)
+
       const rawRichTextField = entry.fields.body;
       // let renderedHtml = documentToHtmlString(rawRichTextField);
       Object.assign(entry.fields, {
-        renderedHtml: documentToHtmlString(rawRichTextField)
+        renderedHtml: documentToHtmlString(rawRichTextField, options)
       });
-      // })
+
+      // console.log("LOOK HERE: ", entry.fields.renderedHtml);
 
       var bloghbsObject = {
         article: entry,
@@ -307,7 +319,7 @@ module.exports = function(app) {
               });
 
               thirdRecord = items;
-              console.log(items)
+              console.log(items);
             })
             .then(function(body) {
               // console.log(body)
@@ -373,10 +385,12 @@ module.exports = function(app) {
 
           // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
           if (item.fields.repeatsEveryDays > 0) {
-            if (moment(item.fields.date).isBefore(moment().format('YYYY-MM-DD'))) {
+            if (
+              moment(item.fields.date).isBefore(moment().format("YYYY-MM-DD"))
+            ) {
               let start = moment(item.fields.date);
               let end = moment();
-              console.log("CHANGING: ", item.fields)
+              console.log("CHANGING: ", item.fields);
 
               while (start.isBefore(end)) {
                 start.add(item.fields.repeatsEveryDays, "day");
@@ -654,12 +668,14 @@ module.exports = function(app) {
 
       // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
       if (dbEvent.fields.repeatsEveryDays > 0) {
-        if (moment(dbEvent.fields.date).isBefore(moment().format('YYYY-MM-DD'))) {
+        if (
+          moment(dbEvent.fields.date).isBefore(moment().format("YYYY-MM-DD"))
+        ) {
           let start = moment(dbEvent.fields.date);
-          let end = moment().format('YYYY-MM-DD');
+          let end = moment().format("YYYY-MM-DD");
 
-          console.log("START: ", start)
-          console.log("END: ", end)
+          console.log("START: ", start);
+          console.log("END: ", end);
 
           while (start.isBefore(end)) {
             start.add(dbEvent.fields.repeatsEveryDays, "day");
@@ -671,10 +687,14 @@ module.exports = function(app) {
           dbEvent.fields.shortDay = start.format("DD");
         }
       }
-      if (moment(dbEvent.fields.date, 'YYYY-MM-DD').isAfter(moment().format('YYYY-MM-DD'))) {
+      if (
+        moment(dbEvent.fields.date, "YYYY-MM-DD").isAfter(
+          moment().format("YYYY-MM-DD")
+        )
+      ) {
         Object.assign(dbEvent.fields, {
           dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY")
-        }); 
+        });
       }
 
       // CONVERT MARKDOWN TO HTML
