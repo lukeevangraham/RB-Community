@@ -179,9 +179,16 @@ module.exports = function(app) {
       });
       // console.log(entry.fields)
 
+
+      // Converting vimeo embeds
         const options = {
           renderNode: {
-            [INLINES.HYPERLINK]: (node) => `<IframeContainer><iframe title="Unique Title 001" src=${node.data.uri} width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></IframeContainer>`
+            [INLINES.HYPERLINK]: (node) => {
+              if ((node.data.uri).includes("player.vimeo.com/video")) {
+                return `<IframeContainer><iframe title="Unique Title 001" src=${node.data.uri} width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></IframeContainer>` 
+              }
+              else return `<a href="${node.data.uri}" target="blank">${node.content[0].value}</a>`
+            }
           }
         };
 
