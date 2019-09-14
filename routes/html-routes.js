@@ -133,11 +133,13 @@ module.exports = function(app) {
                   /^(.{165}[^\s]*).*/,
                   "$1"
                 )
-              
-                );
-                var truncatedLength = truncatedString.length;
-                truncatedString = truncatedString.substring(1, truncatedLength - 1);
-              }
+              );
+              var truncatedLength = truncatedString.length;
+              truncatedString = truncatedString.substring(
+                1,
+                truncatedLength - 1
+              );
+            }
           }
 
           Object.assign(item.fields, {
@@ -179,18 +181,17 @@ module.exports = function(app) {
       });
       // console.log(entry.fields)
 
-
       // Converting vimeo embeds
-        const options = {
-          renderNode: {
-            [INLINES.HYPERLINK]: (node) => {
-              if ((node.data.uri).includes("player.vimeo.com/video")) {
-                return `<IframeContainer><iframe title="Unique Title 001" src=${node.data.uri} width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></IframeContainer>` 
-              }
-              else return `<a href="${node.data.uri}" target="blank">${node.content[0].value}</a>`
-            }
+      const options = {
+        renderNode: {
+          [INLINES.HYPERLINK]: node => {
+            if (node.data.uri.includes("player.vimeo.com/video")) {
+              return `<IframeContainer><iframe title="Unique Title 001" src=${node.data.uri} width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></IframeContainer>`;
+            } else
+              return `<a href="${node.data.uri}" target="blank">${node.content[0].value}</a>`;
           }
-        };
+        }
+      };
 
       // console.log(Post.fields.body)
 
@@ -399,7 +400,7 @@ module.exports = function(app) {
               moment(item.fields.date).isBefore(moment().format("YYYY-MM-DD"))
             ) {
               let start = moment(item.fields.date);
-              let end = moment();
+              let end = moment().format("YYYY-MM-DD");
               console.log("CHANGING: ", item.fields);
 
               while (start.isBefore(end)) {
@@ -629,7 +630,7 @@ module.exports = function(app) {
               if (item.fields.repeatsEveryDays > 0) {
                 if (moment(item.fields.date).isBefore(moment())) {
                   let start = moment(item.fields.date);
-                  let end = moment();
+                  let end = moment().format("YYYY-MM-DD");
 
                   while (start.isBefore(end)) {
                     start.add(item.fields.repeatsEveryDays, "day");
