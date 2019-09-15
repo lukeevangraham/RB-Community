@@ -383,6 +383,8 @@ function initLeafletMap() {
 	var marker = L.marker([33.020, -117.061]).addTo(mymap);
 
 	marker.bindPopup("<b>RB Community Church</b><br>17010 Pomerado Rd.<br>San Diego, CA 92128").openPopup();
+
+	mymap.scrollWheelZoom.disable()
 	
 	mapid = mymap;
 	

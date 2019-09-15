@@ -1147,4 +1147,6 @@ section
 
 #mapid {
 	height: 500px;
+	position: relative;
+	z-index: -1;
 }
