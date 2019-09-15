@@ -186,7 +186,7 @@ module.exports = function(app) {
         renderNode: {
           [INLINES.HYPERLINK]: node => {
             if (node.data.uri.includes("player.vimeo.com/video")) {
-              return `<IframeContainer><iframe title="Unique Title 001" src=${node.data.uri} width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></IframeContainer>`;
+              return `<div class="col-lg-7 col-xs-12 p-0"><IframeContainer class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" title="Unique Title 001" src=${node.data.uri} frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></IframeContainer></div>`;
             } else
               return `<a href="${node.data.uri}" target="blank">${node.content[0].value}</a>`;
           }
