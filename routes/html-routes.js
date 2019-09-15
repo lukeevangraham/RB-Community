@@ -506,6 +506,13 @@ module.exports = function(app) {
     });
   });
 
+  app.get("/giving", function(req, res) {
+    res.render("giving", {
+      headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+        <link rel="stylesheet" type="text/css" href="styles/about.css">`
+    });
+  });
+
   app.get("/ministries", function(req, res) {
     res.render("ministries", {
       active: { ministries: true },
