@@ -47,16 +47,16 @@
 
 						<!-- Contact Form -->
 						<div class="contact_form_container">
-							<form action="#">
+							<form action="https://formspree.io/info@rbcpc.org" method="POST">
 								<div class="row">
 									<div class="col-lg-6">
-										<input type="text" class="form_input" placeholder="Your Name" required="required">
+										<input type="text" class="form_input" placeholder="Your Name" required="required" name="name">
 									</div>
 									<div class="col-lg-6">
-										<input type="email" class="form_input email_input" placeholder="Your Email" required="required">
+										<input type="email" class="form_input email_input" placeholder="Your Email" required="required" name="email">
 									</div>
 									<div class="col-12">
-										<textarea class="form_text" placeholder="Your Message" required="required"></textarea>
+										<textarea class="form_text" placeholder="Your Message" required="required" name="message"></textarea>
 										<button type="submit" class="form_submit_button">send comment</button>
 									</div>
 								</div>
@@ -69,6 +69,9 @@
 	</div>
 
 	<!-- Contact Map -->
+
+<div id="mapid"></div>
+
 
 	{{!-- <div class="contact_map">
 
@@ -86,5 +89,5 @@
 
 
 <script src="/js/jquery-3.2.1.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCIwF204lFZg1y4kPSIhKaHEXMLYxxuMhA"></script>
+    {{!-- <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCIwF204lFZg1y4kPSIhKaHEXMLYxxuMhA"></script> --}}
 <script src="js/contact.js"></script>

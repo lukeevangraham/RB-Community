@@ -1143,3 +1143,8 @@ section
 	color: #181818 !important;
 	border-bottom: solid 1px #327091;
 }
+
+
+#mapid {
+	height: 500px;
+}

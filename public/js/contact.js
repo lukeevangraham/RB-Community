@@ -27,7 +27,8 @@ $(document).ready(function()
 	var hamb = $('.hamburger');
 	var menuActive = false;
 	var menu = $('.menu');
-	var map;
+	// var map;
+	var mapid = $('#mapid')
 
 	setHeader();
 
@@ -43,7 +44,8 @@ $(document).ready(function()
 
 	initHeaderSearch();
 	initMenu();
-	initGoogleMap();
+	// initGoogleMap();
+	initLeafletMap();
 
 	/* 
 
@@ -355,5 +357,36 @@ $(document).ready(function()
 			}, 1400);
 		});
 	}
+
+
+
+
+
+
+
+// 6. Leaflet
+
+function initLeafletMap() {
+	
+	console.log("map something!")
+	
+	var mymap = L.map('mapid').setView([33.020, -117.061], 13);
+	
+	
+	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		maxZoom: 18,
+		id: 'mapbox.streets',
+		accessToken: 'pk.eyJ1IjoiZGVsaXJpb3U1OCIsImEiOiJjazBraXp1MXgwbHNlM2ZvNGJsOW0xNzZsIn0.IRf4OdH3qM8cVwcZoVTHAA'
+	}).addTo(mymap);
+
+	var marker = L.marker([33.020, -117.061]).addTo(mymap);
+
+	marker.bindPopup("<b>RB Community Church</b><br>17010 Pomerado Rd.<br>San Diego, CA 92128").openPopup();
+	
+	mapid = mymap;
+	
+}
+
 
 });
