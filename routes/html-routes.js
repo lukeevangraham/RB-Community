@@ -500,7 +500,9 @@ module.exports = function(app) {
   });
 
   app.get("/contact", function(req, res) {
+    
     res.render("contact", {
+      active: { contact: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/contact.css">
         <link rel="stylesheet" type="text/css" href="styles/contact_responsive.css">`
     });
