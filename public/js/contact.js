@@ -330,30 +330,22 @@ $(document).ready(function() {
   // 6. Leaflet
 
   function initLeafletMap() {
-    var mymap = L.map("mapid").setView([33.02, -117.061], 13);
+    var mymap = L.map('mapid').setView([33.020, -117.061], 13);
+	
+	
+	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		maxZoom: 18,
+		id: 'mapbox.streets',
+		accessToken: 'pk.eyJ1IjoiZGVsaXJpb3U1OCIsImEiOiJjazBraXp1MXgwbHNlM2ZvNGJsOW0xNzZsIn0.IRf4OdH3qM8cVwcZoVTHAA'
+	}).addTo(mymap);
 
-    L.tileLayer(
-      "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}",
-      {
-        attribution:
-          'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: "mapbox.streets",
-        accessToken:
-          "pk.eyJ1IjoiZGVsaXJpb3U1OCIsImEiOiJjazBraXp1MXgwbHNlM2ZvNGJsOW0xNzZsIn0.IRf4OdH3qM8cVwcZoVTHAA"
-      }
-    ).addTo(mymap);
+	var marker = L.marker([33.020, -117.061]).addTo(mymap);
 
-    var marker = L.marker([33.02, -117.061]).addTo(mymap);
+	marker.bindPopup("<b>RB Community Church</b><br>17010 Pomerado Rd.<br>San Diego, CA 92128").openPopup();
 
-    marker
-      .bindPopup(
-        "<b>RB Community Church</b><br>17010 Pomerado Rd.<br>San Diego, CA 92128"
-      )
-	  .openPopup();
-	  
-	  map.scrollWheelZoom.enable()
-
-    mapid = mymap;
+	mymap.scrollWheelZoom.disable()
+	
+	mapid = mymap;
   }
 });
