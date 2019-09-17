@@ -34,71 +34,73 @@
 	<div class="container">
 		<div class="row">
 			<div class="col">
-				<div class="section_title_container text-center">
+				<div data-aos="fade-down" class="section_title_container text-center">
 					<div class="section_title">latest sermon</div>
 					<div class="section_subtitle">A discourse for the purpose of religious</div>
 				</div>
 			</div>
 		</div>
-		<div class="row latest_row">
-			<div class="col-lg-10 offset-lg-1">
-				<div class="latest_play d-flex flex-column align-items-center justify-content-center">
-					<div class="latest_play_background"
-						style="background-image:url({{this.pictures.sizes.[0].link}}); background-position:center top;">
-					</div>
-					<a class="vimeo latest_play_button" href="https://player.vimeo.com/video/{{this.id}}?title=0"
-						title="{{this.name}}">
-						<div
-							class="latest_play_button_outer d-flex flex-column align-items-center justify-content-center trans_200">
-							<div
-								class="latest_play_button_inner d-flex flex-column align-items-center justify-content-center trans_200">
-								<img src="images/play.png" alt="">
-							</div>
+		<div data-aos="fade-up">
+			<div class="row latest_row">
+				<div class="col-lg-10 offset-lg-1">
+					<div class="latest_play d-flex flex-column align-items-center justify-content-center">
+						<div class="latest_play_background"
+							style="background-image:url({{this.pictures.sizes.[0].link}}); background-position:center top;">
 						</div>
-					</a>
+						<a class="vimeo latest_play_button" href="https://player.vimeo.com/video/{{this.id}}?title=0"
+							title="{{this.name}}">
+							<div
+								class="latest_play_button_outer d-flex flex-column align-items-center justify-content-center trans_200">
+								<div
+									class="latest_play_button_inner d-flex flex-column align-items-center justify-content-center trans_200">
+									<img src="images/play.png" alt="">
+								</div>
+							</div>
+						</a>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="row latest_content_row">
-			<div class="col-lg-8 offset-lg-2 text-center">
-				<div class="latest_content_title">{{this.shortTitle}}</div>
-				<div class="latest_sermon_info_container">
-					{{!-- <div class="sermon_info">
+			<div class="row latest_content_row">
+				<div class="col-lg-8 offset-lg-2 text-center">
+					<div class="latest_content_title">{{this.shortTitle}}</div>
+					<div class="latest_sermon_info_container">
+						{{!-- <div class="sermon_info">
 						<div class="sermon_info_title">Pastor: </div>
 						<ul class="sermon_info_list">
 							<li><a href="#">Josh Brighton</a>,</li>
 						</ul>
 					</div> --}}
-					{{!-- <div class="sermon_info"> --}}
-					{{!-- <div class="sermon_info_title">Categories: </div> --}}
-					{{!-- <ul class="sermon_info_list"> --}}
-					{{!-- <li><a href="#">God, </a></li> --}}
-					{{!-- <li><a href="#">Prayer</a></li> --}}
-					{{!-- </ul> --}}
-					{{!-- </div> --}}
-					<div class="sermon_info">
-						<div class="sermon_info_title">On: </div>
-						<ul class="sermon_info_list">
-							<li><a href="#" style="text-transform:uppercase">{{featureDate}}</a></li>
-						</ul>
+						{{!-- <div class="sermon_info"> --}}
+						{{!-- <div class="sermon_info_title">Categories: </div> --}}
+						{{!-- <ul class="sermon_info_list"> --}}
+						{{!-- <li><a href="#">God, </a></li> --}}
+						{{!-- <li><a href="#">Prayer</a></li> --}}
+						{{!-- </ul> --}}
+						{{!-- </div> --}}
+						<div class="sermon_info">
+							<div class="sermon_info_title">On: </div>
+							<ul class="sermon_info_list">
+								<li><a href="#" style="text-transform:uppercase">{{featureDate}}</a></li>
+							</ul>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="col-md-8 offset-md-2 text-center">
-				{{!-- <div class="latest_text">
+				<div class="col-md-8 offset-md-2 text-center">
+					{{!-- <div class="latest_text">
 					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean at convallis justo. Suspendisse
 						ut nisl diam. Sed non vehicula sem. Etiam efficitur eros a leo mollis, interdum sodales erat
 						ultricies. Pellentesque in felis sem. Phasellus nunc tellus, suscipit rutrum risus quis, aucibus
 						vel ipsumeu. </p>
 				</div> --}}
-				{{!-- <div class="sermon_links latest_sermon_links"> --}}
+					{{!-- <div class="sermon_links latest_sermon_links"> --}}
 					{{!-- <ul> --}}
-						{{!-- <li><a href="#"><i class="fa fa-link" aria-hidden="true"></i></a></li> --}}
-						{{!-- <li><a href="#"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a></li> --}}
-						{{!-- <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li> --}}
-						{{!-- <li><a href="#"><i class="fa fa-download" aria-hidden="true"></i></a></li> --}}
+					{{!-- <li><a href="#"><i class="fa fa-link" aria-hidden="true"></i></a></li> --}}
+					{{!-- <li><a href="#"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a></li> --}}
+					{{!-- <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li> --}}
+					{{!-- <li><a href="#"><i class="fa fa-download" aria-hidden="true"></i></a></li> --}}
 					{{!-- </ul> --}}
-				{{!-- </div> --}}
+					{{!-- </div> --}}
+				</div>
 			</div>
 		</div>
 	</div>
@@ -114,13 +116,13 @@
 	<div class="container">
 		<div class="row">
 			<div class="col">
-				<div class="section_title_container text-center">
+				<div data-aos="fade-down" class="section_title_container text-center">
 					<div class="section_title">list of sermons</div>
 					<div class="section_subtitle">Our lives in praising God</div>
 				</div>
 			</div>
 		</div>
-		<div class="row sermons_row">
+		<div data-aos="fade-down" class="row sermons_row">
 
 			<!-- Sermon -->
 
@@ -141,14 +143,14 @@
 					<div class="card-body text-center">
 						<div class="card-title sermon_title"><a href="{{this.link}}">{{this.shortTitle}}</a></div>
 						{{!-- <div class="card-text sermon_info_container"> --}}
-							{{!-- <div class="sermon_links"> --}}
-								{{!-- <ul> --}}
-									{{!-- <li><a href="#"><i class="fa fa-link" aria-hidden="true"></i></a></li> --}}
-									{{!-- <li><a href="#"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a></li> --}}
-									{{!-- <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li> --}}
-									{{!-- <li><a href="#"><i class="fa fa-download" aria-hidden="true"></i></a></li> --}}
-								{{!-- </ul> --}}
-							{{!-- </div> --}}
+						{{!-- <div class="sermon_links"> --}}
+						{{!-- <ul> --}}
+						{{!-- <li><a href="#"><i class="fa fa-link" aria-hidden="true"></i></a></li> --}}
+						{{!-- <li><a href="#"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a></li> --}}
+						{{!-- <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li> --}}
+						{{!-- <li><a href="#"><i class="fa fa-download" aria-hidden="true"></i></a></li> --}}
+						{{!-- </ul> --}}
+						{{!-- </div> --}}
 						{{!-- </div> --}}
 					</div>
 				</div>
@@ -410,7 +412,7 @@
 		<div class="row">
 			<div class="col">
 				<div class="quote_container text-center">
-					<div class="quote_quote">“Our guiding vision comes from the words of Jesus. ‘From the believers will
+					<div data-aos="fade-down" class="quote_quote">“Our guiding vision comes from the words of Jesus. ‘From the believers will
 						flow living waters.’ - John 7:38”</div>
 					<div class="quote_icon"><img src="images/quote_2.png" alt=""></div>
 					{{!-- <div class="quote_source">Ignatius of Antioch</div> --}}
