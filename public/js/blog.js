@@ -42,7 +42,7 @@ $(document).ready(function()
 	initHeaderSearch();
 	initMenu();
 
-	initDate();
+	// initDate();
 
 	/* 
 

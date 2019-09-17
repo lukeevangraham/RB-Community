@@ -226,7 +226,6 @@ module.exports = function(app) {
 
       vimeoRecord = JSON.parse(body);
 
-      // console.log(moment().format());
 
       client
         .getEntries({
@@ -253,13 +252,10 @@ module.exports = function(app) {
             Object.assign(item.fields, {
               dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
             });
-            // console.log("ROUTE: ", item.fields.dateToCountTo)
             // }
             // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
             if (item.fields.repeatsEveryDays > 0) {
               if (moment(item.fields.date).isSameOrBefore(moment())) {
-                // console.log("FIRST: ", item.fields.date)
-                // console.log("MOMENT: ", moment().add(1, 'days').format("YYYY-MM-DD"))
 
                 let start = moment(item.fields.date);
                 let end = moment().format("YYYY-MM-DD");
@@ -267,7 +263,6 @@ module.exports = function(app) {
                 while (start.isBefore(end)) {
                   start.add(item.fields.repeatsEveryDays, "day");
                 }
-                // console.log(start.format("MM DD YYYY"));
                 item.fields.date = start.format("YYYY-MM-DD");
                 item.fields.shortMonth = start.format("MMM");
                 item.fields.shortDay = start.format("DD");
@@ -289,8 +284,6 @@ module.exports = function(app) {
               limit: 3
             })
             .then(function(dbBlog) {
-              // console.log(dbBlog.items)
-              // var items = dbBlog.items;
               var items = [];
               var itemsIncludingExpired = dbBlog.items;
 
@@ -332,7 +325,6 @@ module.exports = function(app) {
               });
 
               thirdRecord = items;
-              console.log(items);
             })
             .then(function(body) {
               // console.log(body)
@@ -347,8 +339,6 @@ module.exports = function(app) {
                 headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
               <link rel="stylesheet" type="text/css" href="styles/responsive.css">`
               };
-
-              // console.log(hbsObject)
 
               res.render("home", hbsObject);
             });
@@ -403,7 +393,6 @@ module.exports = function(app) {
             ) {
               let start = moment(item.fields.date);
               let end = moment().format("YYYY-MM-DD");
-              console.log("CHANGING: ", item.fields);
 
               while (start.isBefore(end)) {
                 start.add(item.fields.repeatsEveryDays, "day");
@@ -526,9 +515,7 @@ module.exports = function(app) {
   });
 
   app.get("/ministry:id", function(req, res) {
-    // console.log("HEY")
     req.params.id = req.params.id.substring(1);
-    // console.log("LOOK HERE: ", req.params.id)
     var firstRecord = null;
     var secondRecord = null;
 
@@ -540,7 +527,6 @@ module.exports = function(app) {
         limit: 7
       })
       .then(function(entry) {
-        // console.log(entry)
         if (entry.total >= 2) {
           Object.assign(entry.items, {
             multipleEntries: true
@@ -567,10 +553,6 @@ module.exports = function(app) {
           }
         });
 
-        console.log("ITEMS: ", items);
-
-        // var items = entry.items;
-        // console.log("LOOK HERE: ", entry.items)
 
         // Converting times for template
         items.forEach(item => {
