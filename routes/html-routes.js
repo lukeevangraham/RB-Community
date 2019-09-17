@@ -189,7 +189,9 @@ module.exports = function(app) {
               return `<div class="col-lg-7 col-xs-12 p-0"><IframeContainer class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" title="Unique Title 001" src=${node.data.uri} frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></IframeContainer></div>`;
             } else
               return `<a href="${node.data.uri}" target="blank">${node.content[0].value}</a>`;
-          }
+          },
+          'embedded-asset-block': (node) =>
+          `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`
         }
       };
 
