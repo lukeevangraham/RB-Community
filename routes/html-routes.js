@@ -415,7 +415,6 @@ module.exports = function(app) {
                     <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`
         };
 
-        console.log(dbEvent.items[0]);
         return res.render("events", hbsObject);
       });
   });
