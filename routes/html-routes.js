@@ -737,4 +737,8 @@ module.exports = function(app) {
     // console.log("hbsObject:  ", bloghbsObject.blogpost);
     res.render("services", bloghbsObject);
   });
+
+  app.get("/card", function(req, res) {
+    res.redirect("https://rbcc.churchcenter.com/people/forms/43489")
+  })
 };
