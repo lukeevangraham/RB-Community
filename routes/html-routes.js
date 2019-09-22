@@ -362,7 +362,7 @@ module.exports = function(app) {
     client
       .getEntries({
         content_type: "events",
-        "fields.endDate[gte]": moment().format(),
+        "fields.endDate[gte]": moment().format('YYYY-MM-DD'),
         order: "fields.date"
       })
       .then(function(dbEvent) {
@@ -370,6 +370,7 @@ module.exports = function(app) {
 
         // Converting times for template
         items.forEach(item => {
+          console.log(item.fields.title)
           Object.assign(item.fields, {
             shortMonth: moment(item.fields.date).format("MMM")
           });
