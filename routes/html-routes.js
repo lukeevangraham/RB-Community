@@ -92,6 +92,21 @@ function doReq(url, what) {
   });
 }
 
+
+// sort event dates by date field
+function compare(a, b) {
+  const dateA = moment(a.fields.date).format('YYYY-MM-DD')
+  const dateB = moment(b.fields.date).format('YYYY-MM-DD')
+
+  let comparison = 0;
+  if (dateA > dateB) {
+comparison = 1;
+  } else if (dateA < dateB) {
+    comparison = -1;
+  }
+  return comparison
+}
+
 // Routes
 module.exports = function(app) {
   app.get("/blog", function(req, res) {
@@ -370,7 +385,6 @@ module.exports = function(app) {
 
         // Converting times for template
         items.forEach(item => {
-          console.log(item.fields.title)
           Object.assign(item.fields, {
             shortMonth: moment(item.fields.date).format("MMM")
           });
@@ -408,6 +422,9 @@ module.exports = function(app) {
             });
           }
         });
+
+        // SORT EVENTS BY NEWLY CALCULATED DATE
+        items.sort(compare)
 
         var hbsObject = {
           events: dbEvent.items,
@@ -628,7 +645,7 @@ module.exports = function(app) {
                   while (start.isBefore(end)) {
                     start.add(item.fields.repeatsEveryDays, "day");
                   }
-                  console.log(start.format("MM DD YYYY"));
+                  // console.log(start.format("MM DD YYYY"));
                   item.fields.date = start.format("YYYY-MM-DD");
                   item.fields.shortMonth = start.format("MMM");
                   item.fields.shortDay = start.format("DD");
@@ -638,6 +655,10 @@ module.exports = function(app) {
                 });
               }
             });
+
+            // SORT EVENTS BY NEWLY CALCULATED DATE
+        items.sort(compare)
+
             secondRecord = items;
 
             // console.log("SECOND RECORD: ", secondRecord);
@@ -738,6 +759,7 @@ module.exports = function(app) {
     res.render("services", bloghbsObject);
   });
 
+  // REDIRECT TO CONNECTION CARD
   app.get("/card", function(req, res) {
     res.redirect("https://rbcc.churchcenter.com/people/forms/43489")
   })
