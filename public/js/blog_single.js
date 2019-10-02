@@ -39,18 +39,6 @@ $(document).ready(function() {
   initHeaderSearch();
   initMenu();
 
-  $("#fb_share").click(function(e) {
-	e.preventDefault();
-	console.log($("#fb_share").value)
-    FB.ui(
-      {
-        method: "share",
-        href: "https://rbcommunitychurch.org/blog_single:" + $("#fb_share").value
-      },
-      function(response) {}
-    );
-  });
-
   /* 
 
 	2. Set Header
