@@ -43,16 +43,16 @@
 <body>
 
 	<script>
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId            : '392922794721386',
-      autoLogAppEvents : true,
-      xfbml            : true,
-      version          : 'v4.0'
-    });
-  };
-</script>
-<script async defer src="https://connect.facebook.net/en_US/sdk.js"></script>
+		window.fbAsyncInit = function () {
+			FB.init({
+				appId: '392922794721386',
+				autoLogAppEvents: true,
+				xfbml: true,
+				version: 'v4.0'
+			});
+		};
+	</script>
+	<script async defer src="https://connect.facebook.net/en_US/sdk.js"></script>
 
 	<div class="super_container">
 
@@ -252,22 +252,53 @@
 				</div>
 
 				<!-- Footer - Subscribe -->
-				{{!-- <div class="col-lg-4 footer_col">
+				<div class="col-lg-4 footer_col">
 					<div class="footer_column footer_subscribe">
-						<div class="footer_title">subscribe</div>
-						<div class="footer_text">Join our weekly email newsletter to receive news, events and other
-							announcements about what is going on at our church.</div>
-						<div class="footer_form_container">
-							<form action="#" class="footer_form">
-								<div>
-									<input type="email" class="subscribe_input" placeholder="Enter your email"
-										required="required">
-									<button class="subscribe_button trans_200" type="submit">subscribe</button>
+
+
+
+						<!-- Begin Mailchimp Signup Form -->
+						<div id="mc_embed_signup">
+							<form
+								action="https://rbcommunitychurch.us11.list-manage.com/subscribe/post?u=16a7d00c97055ae7a7fe916ec&amp;id=39674a4e1c"
+								method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form"
+								class="validate footer_form" target="_blank" novalidate>
+								<div id="mc_embed_signup_scroll">
+									<div class="footer_title">Subscribe</div>
+									{{!-- <div class="indicates-required"><span class="asterisk">*</span> indicates
+												required</div> --}}
+									<div class="footer_text">Get Pastor Bryan's email devotional to receive
+										in-the-moment reflection
+										on selected scripture passages.</div>
+									<div class="mc-field-group footer_form_container">
+
+										<input type="email" value="" name="EMAIL" class="required email subscribe_input"
+											placeholder="Enter your email" id="mce-EMAIL">
+									</div>
+									<div id="mce-responses" class="clear">
+										<div class="response" id="mce-error-response" style="display:none">
+										</div>
+										<div class="response" id="mce-success-response" style="display:none">
+										</div>
+									</div>
+									<!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+									<div style="position: absolute; left: -5000px;" aria-hidden="true"><input
+											type="text" name="b_16a7d00c97055ae7a7fe916ec_39674a4e1c" tabindex="-1"
+											value=""></div>
+									<div class="clear"><input type="submit" value="Subscribe" name="subscribe"
+											id="mc-embedded-subscribe" class="button subscribe_button trans_200"></div>
 								</div>
 							</form>
 						</div>
+
+						<!--End mc_embed_signup-->
+
+
+
+
+
 					</div>
-				</div> --}}
+				</div>
 
 			</div>
 			<div class="row copyright_row">
@@ -311,6 +342,7 @@
 	<script src="plugins/easing/easing.js"></script>
 	<script src="plugins/parallax-js-master/parallax.min.js"></script>
 	<script src="plugins/colorbox/jquery.colorbox-min.js"></script>
+	<script src="/js/subscribe.js"></script>
 
 </body>
 

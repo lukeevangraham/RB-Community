@@ -1388,12 +1388,15 @@ section {
   border: none;
   outline: none;
   border-top-right-radius: 3px;
+  border-top-left-radius: 0px;
   border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 0px;
   font-size: 12px;
   color: #327091;
   font-weight: 700;
   text-transform: uppercase;
   cursor: pointer;
+  margin-top: -40px;
 }
 .subscribe_button:hover {
   background: #327091;
