@@ -775,4 +775,16 @@ module.exports = function(app) {
   app.get("/card", function(req, res) {
     res.redirect("https://rbcc.churchcenter.com/people/forms/43489");
   });
+
+  app.use(function(req, res) {
+    var bloghbsObject = {
+      // article: entry.fields,
+      // request: req.params.id,
+      // active: { about: true },
+      headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+        <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
+      title: `404`
+    };
+    res.render("404", bloghbsObject);
+  })
 };
