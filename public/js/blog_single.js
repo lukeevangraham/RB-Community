@@ -40,7 +40,8 @@ $(document).ready(function() {
   initMenu();
 
   $("#fb_share").click(function(e) {
-    e.preventDefault();
+	e.preventDefault();
+	console.log($("#fb_share").value)
     FB.ui(
       {
         method: "share",
