@@ -194,7 +194,6 @@ module.exports = function(app) {
       Object.assign(entry.fields, {
         shortDay: moment(entry.fields.datePosted).format("DD")
       });
-      // console.log(entry.fields)
 
       // Converting vimeo embeds
       const options = {
@@ -210,7 +209,6 @@ module.exports = function(app) {
         }
       };
 
-      // console.log(Post.fields.body)
 
       const rawRichTextField = entry.fields.body;
       // let renderedHtml = documentToHtmlString(rawRichTextField);

@@ -39,6 +39,18 @@ $(document).ready(function() {
   initHeaderSearch();
   initMenu();
 
+  $("#fb_share").click(function(e) {
+	e.preventDefault();
+	console.log("LOOK HERE: ", $("#fb_share")[0].baseURI)
+    FB.ui(
+      {
+        method: "share",
+        href: $("#fb_share")[0].baseURI
+      },
+      function(response) {}
+    );
+  });
+
   /* 
 
 	2. Set Header
