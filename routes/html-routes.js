@@ -54,7 +54,7 @@ var vimeoOptionsHome = {
   qs: {
     query: "Sermon",
     fields:
-      "name, link, pictures.sizes.link, pictures.sizes.link_with_play_button",
+      "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button",
     sizes: "960",
     per_page: "3",
     page: "1"
@@ -238,6 +238,14 @@ module.exports = function(app) {
       if (error) throw new Error(error);
 
       vimeoRecord = JSON.parse(body);
+
+      
+      vimeoRecord.data.forEach(item => {
+        Object.assign(item, {
+          shortTitle: item.name.split(": ", 2)[1]
+        });
+      })
+      console.log("VIMEORECORD: ", vimeoRecord.data)
 
       client
         .getEntries({
