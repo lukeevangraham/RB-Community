@@ -44,7 +44,7 @@ $(document).ready(function() {
     FB.ui(
       {
         method: "share",
-        href: "https://developers.facebook.com/docs/"
+        href: "https://rbcommunitychurch.org/blog_single:" + $("#fb_share").value
       },
       function(response) {}
     );

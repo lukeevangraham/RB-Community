@@ -215,7 +215,8 @@ module.exports = function(app) {
       const rawRichTextField = entry.fields.body;
       // let renderedHtml = documentToHtmlString(rawRichTextField);
       Object.assign(entry.fields, {
-        renderedHtml: documentToHtmlString(rawRichTextField, options)
+        renderedHtml: documentToHtmlString(rawRichTextField, options),
+        id: req.params.id
       });
 
       var bloghbsObject = {
