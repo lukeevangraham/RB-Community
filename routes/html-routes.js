@@ -92,19 +92,18 @@ function doReq(url, what) {
   });
 }
 
-
 // sort event dates by date field
 function compare(a, b) {
-  const dateA = moment(a.fields.date).format('YYYY-MM-DD')
-  const dateB = moment(b.fields.date).format('YYYY-MM-DD')
+  const dateA = moment(a.fields.date).format("YYYY-MM-DD");
+  const dateB = moment(b.fields.date).format("YYYY-MM-DD");
 
   let comparison = 0;
   if (dateA > dateB) {
-comparison = 1;
+    comparison = 1;
   } else if (dateA < dateB) {
     comparison = -1;
   }
-  return comparison
+  return comparison;
 }
 
 // Routes
@@ -175,7 +174,8 @@ module.exports = function(app) {
           blogpost: items,
           active: { news: true },
           headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
-                <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`
+                <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`,
+          title: `Latest News`
           // shortenedMain: newTrimmedString
         };
         res.render("blog", hbsObject);
@@ -205,8 +205,8 @@ module.exports = function(app) {
             } else
               return `<a href="${node.data.uri}" target="blank">${node.content[0].value}</a>`;
           },
-          'embedded-asset-block': (node) =>
-          `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`
+          "embedded-asset-block": node =>
+            `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`
         }
       };
 
@@ -218,13 +218,12 @@ module.exports = function(app) {
         renderedHtml: documentToHtmlString(rawRichTextField, options)
       });
 
-      // console.log("LOOK HERE: ", entry.fields.renderedHtml);
-
       var bloghbsObject = {
         article: entry,
         active: { news: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
-                    <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`
+                    <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`,
+        title: entry.fields.title
       };
       // console.log("hbsObject:  ", bloghbsObject.article);
       res.render("blog_single", bloghbsObject);
@@ -240,7 +239,6 @@ module.exports = function(app) {
       if (error) throw new Error(error);
 
       vimeoRecord = JSON.parse(body);
-
 
       client
         .getEntries({
@@ -271,7 +269,6 @@ module.exports = function(app) {
             // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
             if (item.fields.repeatsEveryDays > 0) {
               if (moment(item.fields.date).isSameOrBefore(moment())) {
-
                 let start = moment(item.fields.date);
                 let end = moment().format("YYYY-MM-DD");
 
@@ -352,7 +349,8 @@ module.exports = function(app) {
                 vimeo: vimeoRecord,
                 blogpost: thirdRecord,
                 headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
-              <link rel="stylesheet" type="text/css" href="styles/responsive.css">`
+              <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
+                title: `Home`
               };
 
               res.render("home", hbsObject);
@@ -377,7 +375,7 @@ module.exports = function(app) {
     client
       .getEntries({
         content_type: "events",
-        "fields.endDate[gte]": moment().format('YYYY-MM-DD'),
+        "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
         order: "fields.date"
       })
       .then(function(dbEvent) {
@@ -424,13 +422,14 @@ module.exports = function(app) {
         });
 
         // SORT EVENTS BY NEWLY CALCULATED DATE
-        items.sort(compare)
+        items.sort(compare);
 
         var hbsObject = {
           events: dbEvent.items,
           active: { events: true },
           headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
-                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`
+                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+          title: `Events`
         };
 
         return res.render("events", hbsObject);
@@ -441,7 +440,8 @@ module.exports = function(app) {
     res.render("about", {
       active: { about: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
-        <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`
+        <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
+      title: `About`
     });
   });
 
@@ -500,7 +500,8 @@ module.exports = function(app) {
         vimeo: items,
         active: { sermons: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/sermons.css">
-                <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`
+                <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`,
+        title: `Sermons`
       };
 
       return res.render("sermons", hbsObject);
@@ -508,18 +509,19 @@ module.exports = function(app) {
   });
 
   app.get("/contact", function(req, res) {
-    
     res.render("contact", {
       active: { contact: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/contact.css">
-        <link rel="stylesheet" type="text/css" href="styles/contact_responsive.css">`
+        <link rel="stylesheet" type="text/css" href="styles/contact_responsive.css">`,
+      title: `Sermons`
     });
   });
 
   app.get("/giving", function(req, res) {
     res.render("giving", {
       headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
-        <link rel="stylesheet" type="text/css" href="styles/about.css">`
+        <link rel="stylesheet" type="text/css" href="styles/about.css">`,
+      title: `Giving`
     });
   });
 
@@ -527,7 +529,8 @@ module.exports = function(app) {
     res.render("ministries", {
       active: { ministries: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
-        <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">`
+        <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">`,
+      title: `Ministries`
     });
   });
 
@@ -569,7 +572,6 @@ module.exports = function(app) {
             items.push(earlyItem);
           }
         });
-
 
         // Converting times for template
         items.forEach(item => {
@@ -657,7 +659,7 @@ module.exports = function(app) {
             });
 
             // SORT EVENTS BY NEWLY CALCULATED DATE
-        items.sort(compare)
+            items.sort(compare);
 
             secondRecord = items;
 
@@ -671,7 +673,8 @@ module.exports = function(app) {
               events: secondRecord,
               active: { ministries: true },
               headContent: `<link rel="stylesheet" type="text/css" href="styles/ministry.css">
-              <link rel="stylesheet" type="text/css" href="styles/ministry_responsive.css">`
+              <link rel="stylesheet" type="text/css" href="styles/ministry_responsive.css">`,
+              title: req.params.id
             };
             // console.log("hbsObject:  ", bloghbsObject.events);
             res.render("ministry", bloghbsObject);
@@ -699,8 +702,8 @@ module.exports = function(app) {
           let start = moment(dbEvent.fields.date);
           let end = moment().format("YYYY-MM-DD");
 
-          console.log("START: ", start);
-          console.log("END: ", end);
+          // console.log("START: ", start);
+          // console.log("END: ", end);
 
           while (start.isBefore(end)) {
             start.add(dbEvent.fields.repeatsEveryDays, "day");
@@ -739,7 +742,8 @@ module.exports = function(app) {
         events: dbEvent,
         active: { events: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
-                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`
+                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+        title: dbEvent.fields.title
       };
 
       // console.log(dbEvent);
@@ -753,7 +757,8 @@ module.exports = function(app) {
       // request: req.params.id,
       active: { about: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
-        <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`
+        <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`,
+      title: `Services`
     };
     // console.log("hbsObject:  ", bloghbsObject.blogpost);
     res.render("services", bloghbsObject);
@@ -761,6 +766,6 @@ module.exports = function(app) {
 
   // REDIRECT TO CONNECTION CARD
   app.get("/card", function(req, res) {
-    res.redirect("https://rbcc.churchcenter.com/people/forms/43489")
-  })
+    res.redirect("https://rbcc.churchcenter.com/people/forms/43489");
+  });
 };
