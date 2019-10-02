@@ -70,6 +70,7 @@
 					</div>
 					<div class="event_text">
 						<p>{{{events.fields.description}}}</p>
+					
 					</div>
 
 {{#if events.fields.dateToCountTo }}
@@ -95,9 +96,36 @@
 								<div class="event_ss">sec</div>
 							</li>
 						</ul>
+						<div class="event_container">
+							<div class="social_and_tags d-flex flex-lg-row flex-column align-items-start justify-content-start">
+						<div class="blog_social">
+							<ul>
+								<li><a href=""><i class="fa fa-facebook" aria-hidden="true" id="fb_share" value="{{this.id}}"></i></a></li>
+								{{!-- <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li> --}}
+								{{!-- <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li> --}}
+								{{!-- <li><a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a></li> --}}
+								{{!-- <li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li> --}}
+								{{!-- <li><a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li> --}}
+							</ul>
+						</div>
+						<div class="blog_post_tags ml-lg-auto">
+							<ul>{{#each ministry}}
+								{{!-- <li><a href="#">faithful</a></li> --}}
+								<li><a href="/ministry:{{this}}">{{this}}</a></li>
+								{{!-- <li><a href="#">news</a></li> --}}
+								{{/each}}
+							</ul>
+						</div>
+					</div>
+						</div>
 					</div>
 
 					{{/if}}
+
+					
+
+
+
 				</div>
 			</div>
 		</div>

@@ -245,7 +245,7 @@ module.exports = function(app) {
           shortTitle: item.name.split(": ", 2)[1]
         });
       })
-      console.log("VIMEORECORD: ", vimeoRecord.data)
+
 
       client
         .getEntries({

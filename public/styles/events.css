@@ -1253,3 +1253,19 @@ section
 {
 	color: #327091;
 }
+
+.blog_social ul li a i
+{
+	font-size: 18px;
+	padding: 10px;
+	color: #bfbfbf;
+	-webkit-transition: all 200ms ease;
+	-moz-transition: all 200ms ease;
+	-ms-transition: all 200ms ease;
+	-o-transition: all 200ms ease;
+	transition: all 200ms ease;
+}
+.blog_social ul li a i:hover
+{
+	color: #327091;
+}

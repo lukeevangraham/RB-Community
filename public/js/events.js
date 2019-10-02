@@ -6,7 +6,7 @@ $(document).ready(function() {
   // $(document).on("click", "button.edit", handlePostEdit);
   var events;
 
-  function getEvents() {
+  // function getEvents() {
     // $.get("api/events", function (data) {
     // 	console.log("Events", data);
     // 	events = data;
@@ -17,7 +17,7 @@ $(document).ready(function() {
     // 		initializeRows();
     // 	}
     // });
-  }
+  // }
 
   // This function displays a message when there are no posts
   function displayEmpty() {
@@ -31,7 +31,7 @@ $(document).ready(function() {
   }
 
   // Getting the initial list of posts
-  getEvents();
+  // getEvents();
   // InitializeRows handles appending all of our constructed post HTML inside
   // blogContainer
   function initializeRows() {
@@ -145,6 +145,17 @@ $(document).ready(function() {
   initHeaderSearch();
   initMenu();
   initTimer();
+
+  $("#fb_share").click(function(e) {
+    e.preventDefault();
+      FB.ui(
+        {
+          method: "share",
+          href: $("#fb_share")[0].baseURI,
+        },
+        function(response) {}
+      );
+    });
 
   /* 
 
