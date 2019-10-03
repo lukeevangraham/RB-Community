@@ -775,7 +775,7 @@ section {
 
 .sermons {
   padding-top: 89px;
-  padding-bottom: 100px;
+  padding-bottom: 25px;
   background: #f7f7f7;
 }
 .sermons_row {
@@ -791,7 +791,7 @@ section {
 }
 .card-body {
   padding-top: 44px;
-  padding-bottom: 50px;
+  padding-bottom: 25px;
 }
 .card-title {
   margin-bottom: 0;

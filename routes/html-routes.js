@@ -520,7 +520,7 @@ module.exports = function(app) {
       active: { contact: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/contact.css">
         <link rel="stylesheet" type="text/css" href="styles/contact_responsive.css">`,
-      title: `Sermons`
+      title: `Contact`
     });
   });
 
