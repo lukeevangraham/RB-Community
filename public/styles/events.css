@@ -990,6 +990,11 @@ section {
 .footer_links_list li a i {
   color: #327091 !important;
 }
+#oneColumn {
+  columns: 1 !important;
+  -webkit-columns: 1 !important;
+  -moz-columns: 1 !important;
+}
 .footer_subscribe {
   padding-top: 70px;
 }

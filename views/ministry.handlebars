@@ -39,19 +39,16 @@
 
 
 		<div class="row pt-2 pb-3">
-			{{#each blogpost}}
-			{{#if fields.featureOnMinistryPage}}
 			<div class="col">
-				{{{ fields.renderedHtml}}}
+
+				{{{ header.fields.renderedHtml}}}
 			</div>
-			{{/if}}
-			{{/each}}
 		</div>
 
 
 
 
-{{#if this.blogpost.multipleEntries}}
+{{#if blogpost.multipleEntries}}
 
 
 		<div class="row pt-5 pb-2">

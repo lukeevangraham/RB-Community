@@ -209,7 +209,6 @@ module.exports = function(app) {
         }
       };
 
-
       const rawRichTextField = entry.fields.body;
       // let renderedHtml = documentToHtmlString(rawRichTextField);
       Object.assign(entry.fields, {
@@ -239,13 +238,11 @@ module.exports = function(app) {
 
       vimeoRecord = JSON.parse(body);
 
-      
       vimeoRecord.data.forEach(item => {
         Object.assign(item, {
           shortTitle: item.name.split(": ", 2)[1]
         });
-      })
-
+      });
 
       client
         .getEntries({
@@ -545,27 +542,28 @@ module.exports = function(app) {
     req.params.id = req.params.id.substring(1);
     var firstRecord = null;
     var secondRecord = null;
+    var thirdRecord = null;
 
     client
       .getEntries({
         content_type: "blog",
         order: "-fields.datePosted",
         "fields.ministry": req.params.id,
-        limit: 7
+        limit: 6
       })
       .then(function(entry) {
-        if (entry.total >= 2) {
+        if (entry.total >= 1) {
           Object.assign(entry.items, {
             multipleEntries: true
           });
         }
-
+        
         if (entry.fields) {
           Object.assign(entry.items[0].fields, {
             request: req.params.id
           });
         }
-
+        
         var items = [];
         var itemsIncludingExpired = entry.items;
         // ELIMINATING OLD ENTRIES FROM PAGE
@@ -573,13 +571,14 @@ module.exports = function(app) {
           if (
             moment(earlyItem.fields.expirationDate).isBefore(
               moment().format("YYYY-MM-DD")
-            )
-          ) {
-          } else {
-            items.push(earlyItem);
-          }
-        });
-
+              )
+              ) {
+              } else {
+                items.push(earlyItem);
+              }
+            });
+            console.log("LOOK HERE", items)
+            
         // Converting times for template
         items.forEach(item => {
           // Converting Date info
@@ -613,6 +612,8 @@ module.exports = function(app) {
             });
           }
         });
+
+        // console.log("ITEMS: ", items)
 
         firstRecord = items;
 
@@ -670,21 +671,40 @@ module.exports = function(app) {
 
             secondRecord = items;
 
-            // console.log("SECOND RECORD: ", secondRecord);
+            client
+              .getEntries({
+                content_type: "blog",
+                "fields.ministry": req.params.id,
+                "fields.featureOnMinistryPage": true,
+                limit: 1
+              })
+              .then(function(entry) {
+                var item = entry.items[0];
+                const rawRichTextField = item.fields.body;
+                // let renderedHtml = documentToHtmlString(rawRichTextField);
+                Object.assign(item.fields, {
+                  renderedHtml: documentToHtmlString(rawRichTextField)
+                });
 
-            // console.log("LOOK HERE", entry)
+                thirdRecord = item
 
-            var bloghbsObject = {
-              blogpost: firstRecord,
-              request: req.params.id,
-              events: secondRecord,
-              active: { ministries: true },
-              headContent: `<link rel="stylesheet" type="text/css" href="styles/ministry.css">
+                // console.log("SECOND RECORD: ", secondRecord);
+
+                // console.log("LOOK HERE", entry)
+
+                var bloghbsObject = {
+                  blogpost: firstRecord,
+                  request: req.params.id,
+                  events: secondRecord,
+                  header: thirdRecord,
+                  active: { ministries: true },
+                  headContent: `<link rel="stylesheet" type="text/css" href="styles/ministry.css">
               <link rel="stylesheet" type="text/css" href="styles/ministry_responsive.css">`,
-              title: req.params.id
-            };
-            // console.log("hbsObject:  ", bloghbsObject.events);
-            res.render("ministry", bloghbsObject);
+                  title: req.params.id
+                };
+                // console.log("hbsObject:  ", bloghbsObject.blogpost);
+                res.render("ministry", bloghbsObject);
+              });
           });
       });
   });
@@ -786,5 +806,5 @@ module.exports = function(app) {
       title: `404`
     };
     res.render("404", bloghbsObject);
-  })
+  });
 };

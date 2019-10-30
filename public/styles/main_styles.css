@@ -1432,3 +1432,9 @@ section {
 .footer_social ul li a i:hover {
   color: #327091;
 }
+#oneColumn {
+  columns: 1 !important;
+  -webkit-columns: 1 !important;
+  -moz-columns: 1 !important;
+  margin-top: 15px !important;
+}
