@@ -680,11 +680,14 @@ module.exports = function(app) {
               })
               .then(function(entry) {
                 var item = entry.items[0];
-                const rawRichTextField = item.fields.body;
-                // let renderedHtml = documentToHtmlString(rawRichTextField);
-                Object.assign(item.fields, {
-                  renderedHtml: documentToHtmlString(rawRichTextField)
-                });
+                if (item) {
+                  
+                  const rawRichTextField = item.fields.body;
+                  // let renderedHtml = documentToHtmlString(rawRichTextField);
+                  Object.assign(item.fields, {
+                    renderedHtml: documentToHtmlString(rawRichTextField)
+                  });
+                }
 
                 thirdRecord = item
 
