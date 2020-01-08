@@ -107,80 +107,112 @@ function compare(a, b) {
 }
 
 // Routes
-module.exports = function(app) {
-  app.get("/blog", function(req, res) {
-    client
-      .getEntries({
-        content_type: "blog",
-        order: "-fields.datePosted",
-        // remove about rB Community from the news feed
-        "sys.id[nin]": "3JEwFofQhW3MQcReiGLCYu"
-      })
-      .then(function(dbBlog) {
-        var items = [];
-        var itemsIncludingExpired = dbBlog.items;
+module.exports = function(app, req) {
+  app.get(["/blog", "/blog:id"], function(req, res) {
 
-        // ELIMINATING OLD ENTRIES FROM PAGE
-        itemsIncludingExpired.forEach(earlyItem => {
-          if (
-            moment(earlyItem.fields.expirationDate).isBefore(
-              moment().format("YYYY-MM-DD")
-            )
-          ) {
-          } else {
-            items.push(earlyItem);
-          }
-        });
+    function blogPageRender(dbBlog) {
+      console.log("LOOK HERE: ", dbBlog.items);
+      var items = [];
+      var itemsIncludingExpired = dbBlog.items;
 
-        // Converting times for template
-        items.forEach(item => {
-          Object.assign(item.fields, {
-            formattedDate: moment(item.fields.datePosted)
-              .format("DD MMM, YYYY")
-              .toUpperCase()
-          });
-
-          if (item.fields.body) {
-            if (item.fields.body.content[0].content[0]) {
-              var truncatedString = JSON.stringify(
-                item.fields.body.content[0].content[0].value.replace(
-                  /^(.{165}[^\s]*).*/,
-                  "$1"
-                )
-              );
-              var truncatedLength = truncatedString.length;
-              truncatedString = truncatedString.substring(
-                1,
-                truncatedLength - 1
-              );
-            }
-          }
-
-          Object.assign(item.fields, {
-            excerpt: truncatedString,
-            today: moment().format("YYYY-MM-DD")
-          });
-        });
-
-        // console.log(dbBlog);
-        // let str = dbBlog[0].dataValues.maincontent
-
-        // let newTrimmedString = str.split('.')[0] + ".";
-        // dbBlog['shortenedMain'] = newTrimmedString;
-
-        // console.log("Look Here: ", dbBlog.items[3])
-
-        var hbsObject = {
-          blogpost: items,
-          active: { news: true },
-          headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
-                <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`,
-          title: `Latest News`
-          // shortenedMain: newTrimmedString
-        };
-        res.render("blog", hbsObject);
+      // ELIMINATING OLD ENTRIES FROM PAGE
+      itemsIncludingExpired.forEach(earlyItem => {
+        if (
+          moment(earlyItem.fields.expirationDate).isBefore(
+            moment().format("YYYY-MM-DD")
+          )
+        ) {
+        } else {
+          items.push(earlyItem);
+        }
       });
-  });
+
+      if (req.params.id) {
+        items = items.slice(0, 9)
+      }
+
+      // Converting times for template
+      items.forEach(item => {
+        Object.assign(item.fields, {
+          formattedDate: moment(item.fields.datePosted)
+            .format("DD MMM, YYYY")
+            .toUpperCase()
+        });
+
+        if (item.fields.body) {
+          if (item.fields.body.content[0].content[0]) {
+            var truncatedString = JSON.stringify(
+              item.fields.body.content[0].content[0].value.replace(
+                /^(.{165}[^\s]*).*/,
+                "$1"
+              )
+            );
+            var truncatedLength = truncatedString.length;
+            truncatedString = truncatedString.substring(1, truncatedLength - 1);
+          }
+        }
+
+        Object.assign(item.fields, {
+          excerpt: truncatedString,
+          today: moment().format("YYYY-MM-DD")
+        });
+      });
+
+      // console.log(dbBlog);
+      // let str = dbBlog[0].dataValues.maincontent
+
+      // let newTrimmedString = str.split('.')[0] + ".";
+      // dbBlog['shortenedMain'] = newTrimmedString;
+
+      // console.log("Look Here: ", dbBlog.items[3])
+
+      var hbsObject = {
+        blogpost: items,
+        active: { news: true },
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
+                <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`,
+        title: `Latest News`
+        // shortenedMain: newTrimmedString
+      };
+      res.render("blog", hbsObject);
+    }
+
+    if (req.params.id) {
+      req.params.id = req.params.id.substring(1);
+      console.log("REQ HERE: ", req.params.id);
+
+      client
+        .getEntries({
+          content_type: "blog",
+          // remove if Featured on Ministry Page
+          "fields.featureOnMinistryPage[nin]": "true",
+          order: "-fields.datePosted",
+          // remove about rB Community from the news feed
+          "sys.id[nin]": "3JEwFofQhW3MQcReiGLCYu",
+          // "expirationDate[lte]": "",
+          limit: 15,
+          skip: ((req.params.id * 9) - 9)
+        })
+        .then(function(dbBlog) {
+          blogPageRender(dbBlog);
+        });
+    } else {
+      client
+        .getEntries({
+          content_type: "blog",
+          // remove if Featured on Ministry Page
+          "fields.featureOnMinistryPage[nin]": "true",
+          order: "-fields.datePosted",
+          // remove about rB Community from the news feed
+          "sys.id[nin]": "3JEwFofQhW3MQcReiGLCYu",
+          // "expirationDate[lte]": "",
+          // limit: 9
+        })
+        .then(function(dbBlog) {
+          blogPageRender(dbBlog);
+    })
+  }
+});
 
   app.get("/blog_single:id", function(req, res) {
     req.params.id = req.params.id.substring(1);
@@ -557,13 +589,13 @@ module.exports = function(app) {
             multipleEntries: true
           });
         }
-        
+
         if (entry.fields) {
           Object.assign(entry.items[0].fields, {
             request: req.params.id
           });
         }
-        
+
         var items = [];
         var itemsIncludingExpired = entry.items;
         // ELIMINATING OLD ENTRIES FROM PAGE
@@ -571,14 +603,14 @@ module.exports = function(app) {
           if (
             moment(earlyItem.fields.expirationDate).isBefore(
               moment().format("YYYY-MM-DD")
-              )
-              ) {
-              } else {
-                items.push(earlyItem);
-              }
-            });
-            console.log("LOOK HERE", items)
-            
+            )
+          ) {
+          } else {
+            items.push(earlyItem);
+          }
+        });
+        console.log("LOOK HERE", items);
+
         // Converting times for template
         items.forEach(item => {
           // Converting Date info
@@ -681,7 +713,6 @@ module.exports = function(app) {
               .then(function(entry) {
                 var item = entry.items[0];
                 if (item) {
-                  
                   const rawRichTextField = item.fields.body;
                   // let renderedHtml = documentToHtmlString(rawRichTextField);
                   Object.assign(item.fields, {
@@ -689,7 +720,7 @@ module.exports = function(app) {
                   });
                 }
 
-                thirdRecord = item
+                thirdRecord = item;
 
                 // console.log("SECOND RECORD: ", secondRecord);
 
