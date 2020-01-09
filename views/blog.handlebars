@@ -21,6 +21,8 @@
 
 <!-- Latest News -->
 
+{{log this }}
+
 <div class="news">
 	<div class="container">
 		<div class="row">
@@ -252,7 +254,10 @@
 					<ul>
 						<li class="active"><a href="#">1</a></li>
 						<li><a href="#">2</a></li>
-						<li><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i></a></li>
+						<li><a href="#">{{this.blogTotal}}</a></li>
+						{{!-- {{#if this.endPagination}} --}}
+						<li><a href="/blog:{{this.blogNextPage}}"><i class="fa fa-angle-right" aria-hidden="true"></i></a></li>
+						{{!-- {{/if}} --}}
 					</ul>
 				</div>
 			</div>

@@ -109,9 +109,7 @@ function compare(a, b) {
 // Routes
 module.exports = function(app, req) {
   app.get(["/blog", "/blog:id"], function(req, res) {
-
     function blogPageRender(dbBlog) {
-      console.log("LOOK HERE: ", dbBlog.items);
       var items = [];
       var itemsIncludingExpired = dbBlog.items;
 
@@ -128,7 +126,7 @@ module.exports = function(app, req) {
       });
 
       if (req.params.id) {
-        items = items.slice(0, 9)
+        items = items.slice(0, 9);
       }
 
       // Converting times for template
@@ -165,13 +163,19 @@ module.exports = function(app, req) {
       // dbBlog['shortenedMain'] = newTrimmedString;
 
       // console.log("Look Here: ", dbBlog.items[3])
+      let endPagination = false;
+      parseInt(req.params.id) >= (dbBlog.total / 9) ? endPagination = true : ""
 
       var hbsObject = {
         blogpost: items,
         active: { news: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
                 <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`,
-        title: `Latest News`
+        title: `Latest News`,
+        blogTotal: Math.ceil(dbBlog.total / 9),
+        blogCurrentPage: req.params.id,
+        blogNextPage: (parseInt(req.params.id) + 1),
+        endPagination: endPagination
         // shortenedMain: newTrimmedString
       };
       res.render("blog", hbsObject);
@@ -179,7 +183,6 @@ module.exports = function(app, req) {
 
     if (req.params.id) {
       req.params.id = req.params.id.substring(1);
-      console.log("REQ HERE: ", req.params.id);
 
       client
         .getEntries({
@@ -191,7 +194,7 @@ module.exports = function(app, req) {
           "sys.id[nin]": "3JEwFofQhW3MQcReiGLCYu",
           // "expirationDate[lte]": "",
           limit: 15,
-          skip: ((req.params.id * 9) - 9)
+          skip: req.params.id * 9 - 9
         })
         .then(function(dbBlog) {
           blogPageRender(dbBlog);
@@ -204,15 +207,15 @@ module.exports = function(app, req) {
           "fields.featureOnMinistryPage[nin]": "true",
           order: "-fields.datePosted",
           // remove about rB Community from the news feed
-          "sys.id[nin]": "3JEwFofQhW3MQcReiGLCYu",
+          "sys.id[nin]": "3JEwFofQhW3MQcReiGLCYu"
           // "expirationDate[lte]": "",
           // limit: 9
         })
         .then(function(dbBlog) {
           blogPageRender(dbBlog);
-    })
-  }
-});
+        });
+    }
+  });
 
   app.get("/blog_single:id", function(req, res) {
     req.params.id = req.params.id.substring(1);
