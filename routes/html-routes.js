@@ -524,7 +524,7 @@ module.exports = function(app) {
   app.get("/giving", function(req, res) {
     res.render("giving", {
       headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
-        <link rel="stylesheet" type="text/css" href="styles/about.css">`,
+        <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
       title: `Giving`
     });
   });
