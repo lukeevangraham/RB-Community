@@ -449,7 +449,7 @@ module.exports = function(app) {
     });
   });
 
-  app.get("/sermons", function(req, res) {
+  app.get("/sermons", "/sermons:#", function(req, res) {
     request(vimeoOptions, function(error, response, body) {
       if (error) throw new Error(error);
       //
