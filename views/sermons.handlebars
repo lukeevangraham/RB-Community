@@ -395,7 +395,8 @@
 				<div class="page_nav">
 					<ul>
 						<li class="active"><a href="/sermons">1</a></li>
-						{{!-- <li><a href="#">2</a></li> --}}
+
+						{{#if thisSermonPage}}<li><a href="#">{{this.thisSermonPage}}</a></li>{{/if}}
 						<li><a href="/sermons:{{this.nextSermonPage}}"><i class="fa fa-angle-right" aria-hidden="true"></i></a></li>
 					</ul>
 				</div>

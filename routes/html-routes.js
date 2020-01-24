@@ -450,10 +450,8 @@ module.exports = function(app) {
   });
 
   app.get(["/sermons", "/sermons:id"], function(req, res) {
-
-    
     if (req.params.id) {
-      vimeoOptions.qs.page = parseInt(req.params.id.substr(1))
+      vimeoOptions.qs.page = parseInt(req.params.id.substr(1));
     } else {
       vimeoOptions.qs.page = 1;
     }
@@ -472,41 +470,42 @@ module.exports = function(app) {
 
       // console.log(getIdFromVimeoURL(vimeo.data[0].link))
 
-      // console.log(items)
 
-      if (items[0].link) {
-        Object.assign(items[0], {
-          id: getIdFromVimeoURL(items[0].link)
-        });
-      }
-
-      items.forEach(item => {
-        // console.log(moment(item.name.split(" ", 1), 'MM-DD-YY').format("MMM"))
-        // console.log(moment(item.name.split(" ", 1), 'MM-DD-YY').format('MMM'))
-        Object.assign(item, {
-          shortMonth: moment(item.name.split(" ", 1), "MM-DD-YY").format("MMM")
-        });
-        Object.assign(item, {
-          shortDay: moment(item.name.split(" ", 1), "MM-DD-YY").format("DD")
-        });
-        Object.assign(item, {
-          shortTitle: item.name.split(": ", 2)[1]
-        });
-        Object.assign(item, {
-          featureDate: moment(item.name.split(" ", 1), "MM-DD-YY").format(
-            "DD MMM YYYY"
-          )
-        });
-      });
-
-      // console.log("ITEMS: ", items);
-      // var videoDate = vimeo.data[0].name.split(" ", 1)
-
-      // console.log("LOOK HERE: ", vimeo.data[0].name.split(" ", 1))
-      // console.log("LOOK HERE: ", vimeo.data[0].name.split(": ", 2))
-
-      var latestSermon = JSON.parse(body).data[0];
-      // console.log(latestSermon);
+      if (items) {
+        if (items[0].link) {
+          Object.assign(items[0], {
+            id: getIdFromVimeoURL(items[0].link)
+          });
+        }
+        
+        items.forEach(item => {
+          // console.log(moment(item.name.split(" ", 1), 'MM-DD-YY').format("MMM"))
+          // console.log(moment(item.name.split(" ", 1), 'MM-DD-YY').format('MMM'))
+          Object.assign(item, {
+            shortMonth: moment(item.name.split(" ", 1), "MM-DD-YY").format("MMM")
+          });
+          Object.assign(item, {
+            shortDay: moment(item.name.split(" ", 1), "MM-DD-YY").format("DD")
+          });
+          Object.assign(item, {
+            shortTitle: item.name.split(": ", 2)[1]
+          });
+          Object.assign(item, {
+            featureDate: moment(item.name.split(" ", 1), "MM-DD-YY").format(
+              "DD MMM YYYY"
+              )
+            });
+          });
+          
+          // console.log("ITEMS: ", items);
+          // var videoDate = vimeo.data[0].name.split(" ", 1)
+          
+          // console.log("LOOK HERE: ", vimeo.data[0].name.split(" ", 1))
+          // console.log("LOOK HERE: ", vimeo.data[0].name.split(": ", 2))
+          
+          var latestSermon = JSON.parse(body).data[0];
+          // console.log(latestSermon);
+        }
 
       var hbsObject = {
         vimeo: items,
@@ -514,8 +513,12 @@ module.exports = function(app) {
         headContent: `<link rel="stylesheet" type="text/css" href="styles/sermons.css">
                 <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`,
         title: `Sermons`,
-        nextSermonPage: (vimeoOptions.qs.page+1)
+        nextSermonPage: vimeoOptions.qs.page + 1
       };
+
+      vimeoOptions.qs.page > 1 ? hbsObject.thisSermonPage = vimeoOptions.qs.page : ''
+
+
 
       return res.render("sermons", hbsObject);
     });
@@ -566,13 +569,13 @@ module.exports = function(app) {
             multipleEntries: true
           });
         }
-        
+
         if (entry.fields) {
           Object.assign(entry.items[0].fields, {
             request: req.params.id
           });
         }
-        
+
         var items = [];
         var itemsIncludingExpired = entry.items;
         // ELIMINATING OLD ENTRIES FROM PAGE
@@ -580,14 +583,14 @@ module.exports = function(app) {
           if (
             moment(earlyItem.fields.expirationDate).isBefore(
               moment().format("YYYY-MM-DD")
-              )
-              ) {
-              } else {
-                items.push(earlyItem);
-              }
-            });
-            console.log("LOOK HERE", items)
-            
+            )
+          ) {
+          } else {
+            items.push(earlyItem);
+          }
+        });
+        console.log("LOOK HERE", items);
+
         // Converting times for template
         items.forEach(item => {
           // Converting Date info
@@ -690,7 +693,6 @@ module.exports = function(app) {
               .then(function(entry) {
                 var item = entry.items[0];
                 if (item) {
-                  
                   const rawRichTextField = item.fields.body;
                   // let renderedHtml = documentToHtmlString(rawRichTextField);
                   Object.assign(item.fields, {
@@ -698,7 +700,7 @@ module.exports = function(app) {
                   });
                 }
 
-                thirdRecord = item
+                thirdRecord = item;
 
                 // console.log("SECOND RECORD: ", secondRecord);
 
