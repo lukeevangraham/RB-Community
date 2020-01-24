@@ -141,7 +141,7 @@
 					</div>
 					<a href="{{this.link}}"><img class="card-img-top" src="{{this.pictures.sizes.[0].link}}" alt=""></a>
 					<div class="card-body text-center">
-						<div class="card-title sermon_title"><a href="{{this.link}}">{{this.description}}: {{this.shortTitle}}</a></div>
+						<div class="card-title sermon_title"><a href="{{this.link}}">{{#if this.description}}{{this.description}}: {{/if}}{{this.shortTitle}}</a></div>
 						{{!-- <div class="card-text sermon_info_container"> --}}
 						{{!-- <div class="sermon_links"> --}}
 						{{!-- <ul> --}}
@@ -390,17 +390,17 @@
 
 		<!-- Page Nav -->
 
-		{{!-- <div class="row">
+		<div class="row">
 			<div class="col">
 				<div class="page_nav">
 					<ul>
-						<li class="active"><a href="#">1</a></li>
-						<li><a href="#">2</a></li>
-						<li><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i></a></li>
+						<li class="active"><a href="/sermons">1</a></li>
+						{{!-- <li><a href="#">2</a></li> --}}
+						<li><a href="/sermons:{{this.nextSermonPage}}"><i class="fa fa-angle-right" aria-hidden="true"></i></a></li>
 					</ul>
 				</div>
 			</div>
-		</div> --}}
+		</div>
 
 	</div>
 </div>

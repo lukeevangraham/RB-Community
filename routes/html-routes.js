@@ -449,7 +449,15 @@ module.exports = function(app) {
     });
   });
 
-  app.get("/sermons", "/sermons:#", function(req, res) {
+  app.get(["/sermons", "/sermons:id"], function(req, res) {
+
+    
+    if (req.params.id) {
+      vimeoOptions.qs.page = parseInt(req.params.id.substr(1))
+    } else {
+      vimeoOptions.qs.page = 1;
+    }
+
     request(vimeoOptions, function(error, response, body) {
       if (error) throw new Error(error);
       //
@@ -505,7 +513,8 @@ module.exports = function(app) {
         active: { sermons: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/sermons.css">
                 <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`,
-        title: `Sermons`
+        title: `Sermons`,
+        nextSermonPage: (vimeoOptions.qs.page+1)
       };
 
       return res.render("sermons", hbsObject);
