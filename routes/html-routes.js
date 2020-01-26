@@ -512,7 +512,7 @@ module.exports = function(app) {
         active: { sermons: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/sermons.css">
                 <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`,
-        title: `Sermons`,
+        title: `Sermons | Page ` + vimeoOptions.qs.page,
         nextSermonPage: vimeoOptions.qs.page + 1
       };
 
