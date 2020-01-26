@@ -831,6 +831,10 @@ section
 	margin-bottom: 21px;
 }
 
+.invisible {
+	display: none;
+}
+
 /*********************************
 7. Blog Social
 *********************************/
