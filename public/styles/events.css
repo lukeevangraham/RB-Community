@@ -846,6 +846,10 @@ section {
   transition: all 200ms ease;
 }
 
+.invisible {
+	display: none;
+}
+
 /*********************************
 12. Quote
 *********************************/
