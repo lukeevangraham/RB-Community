@@ -1,0 +1,6 @@
+@media print {
+    p {
+        -webkit-print-color-adjust: exact;
+        color: black !important;
+    }
+}
