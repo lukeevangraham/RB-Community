@@ -810,6 +810,10 @@ module.exports = function(app) {
     res.redirect("https://rbcc.churchcenter.com/people/forms/43489");
   });
 
+  app.get("/sitemap.xml", function(req, res) {
+    res.sendFile("/sitemap.xml")
+  })
+
   app.use(function(req, res) {
     var bloghbsObject = {
       // article: entry.fields,
