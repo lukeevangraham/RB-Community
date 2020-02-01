@@ -771,6 +771,9 @@ section
 {
 	margin-top: 31px;
 }
+.invisible {
+	display: none;
+}
 
 /*********************************
 7. Mission

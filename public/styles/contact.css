@@ -740,6 +740,9 @@ section {
   border-radius: 3px;
   margin-top: 24px;
 }
+.invisible {
+	display: none;
+}
 
 /*********************************
 6. Contact Map

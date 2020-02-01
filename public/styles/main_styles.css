@@ -626,6 +626,9 @@ section {
   margin-right: auto;
   margin-top: 33px;
 }
+.invisible {
+	display: none;
+}
 
 /*********************************
 6. Event
