@@ -813,6 +813,10 @@ module.exports = function(app) {
   app.get("/highschool", function(req, res) {
     res.redirect("/ministry:High%20School")
   })
+  
+  app.get("/msm", function(req, res) {
+    res.redirect("/ministry:Middle%20School")
+  })
 
   app.get("/sitemap.xml", function(req, res) {
     res.sendFile("/sitemap.xml")
