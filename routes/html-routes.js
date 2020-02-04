@@ -809,10 +809,15 @@ module.exports = function(app) {
   app.get("/card", function(req, res) {
     res.redirect("https://rbcc.churchcenter.com/people/forms/43489");
   });
+  
+  app.get("/highschool", function(req, res) {
+    res.redirect("/ministry:High%20School")
+  })
 
   app.get("/sitemap.xml", function(req, res) {
     res.sendFile("/sitemap.xml")
   })
+
 
   app.use(function(req, res) {
     var bloghbsObject = {
