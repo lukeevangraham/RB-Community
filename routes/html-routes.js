@@ -391,7 +391,8 @@ module.exports = function(app) {
             shortMonth: moment(item.fields.date).format("MMM")
           });
           Object.assign(item.fields, {
-            shortDay: moment(item.fields.date).format("DD")
+            shortDay: moment(item.fields.date).format("DD"),
+            dayOfWeek: moment(item.fields.date).format("ddd")
           });
           // if (item.fields.featured) {
           Object.assign(item.fields, {
