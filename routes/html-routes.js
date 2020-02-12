@@ -730,7 +730,8 @@ module.exports = function(app) {
     client.getEntry(req.params.id).then(function(dbEvent) {
       // Converting times for template
       Object.assign(dbEvent.fields, {
-        shortMonth: moment(dbEvent.fields.date).format("MMM")
+        shortMonth: moment(dbEvent.fields.date).format("MMM"),
+        dayOfWeek: moment(dbEvent.fields.date).format("ddd")
       });
       Object.assign(dbEvent.fields, {
         shortDay: moment(dbEvent.fields.date).format("DD")
