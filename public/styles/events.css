@@ -697,7 +697,15 @@ section {
   color: #ffffff;
   text-transform: uppercase;
   line-height: 0.75;
-  margin-top: 11px;
+  margin-top: 1px;
+}
+.event_day_of_week {
+  font-size: 15px;
+  font-weight: 100;
+  color: #ffffff;
+  /* text-transform: uppercase; */
+  line-height: 0.75;
+  margin-top: 5px;
 }
 .event_content {
   padding-left: 35px;

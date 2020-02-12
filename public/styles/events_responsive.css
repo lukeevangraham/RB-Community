@@ -347,7 +347,12 @@
 	.event_month
 	{
 		font-size: 12px;
-		margin-top: 7px;
+		margin-top: 0px;
+	}
+	.event_day_of_week
+	{
+		font-size: 11px;
+		margin-top: 4px;
 	}
 	.page_nav ul li
 	{
