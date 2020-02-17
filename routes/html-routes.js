@@ -267,7 +267,7 @@ module.exports = function(app) {
         vimeoAnnRecord = JSON.parse(body);
 
         a = vimeoAnnRecord.data[0].embed.html;
-        vimeoAnnRecord.data[0].embed.html = a.replace(`" `,`" class="about_image" `)
+        vimeoAnnRecord.data[0].embed.html = a.replace(`" `,`" data-aos="fade-right" class="about_image" `)
       });
 
       client
