@@ -92,7 +92,10 @@
             </div>
             <div class="row about_row" style="align-items: center">
                 <div class="col-lg-6">
-                    <div data-aos="fade-right" class="about_image"><img data-src="images/about2.jpg" alt="" class="lazyload"></div>
+                    {{!-- <div data-aos="fade-right" class="about_image"><img data-src="images/about2.jpg" alt="" class="lazyload"></div> --}}
+                    {{#each vimeoAnn.data}}
+                    {{{this.embed.html}}}
+                    {{/each}}
                 </div>
                 <div class="col-lg-6">
                     <div data-aos="fade-left" class="about_content">

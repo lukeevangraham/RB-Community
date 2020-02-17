@@ -64,6 +64,22 @@ var vimeoOptionsHome = {
   }
 };
 
+var vimeoOptionsAnnHome = {
+  method: "GET",
+  url: "https://api.vimeo.com/users/14320074/videos",
+  qs: {
+    query: "Announcements",
+    fields:
+      "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button, embed",
+    width: "690",
+    per_page: "1",
+    page: "1"
+  },
+  headers: {
+    Authorization: "Bearer " + vimeoPass
+  }
+};
+
 function getIdFromVimeoURL(url) {
   return /(vimeo(pro)?\.com)\/(?:[^\d]+)?(\d+)\??(.*)?$/.exec(url)[3];
 }
@@ -232,6 +248,7 @@ module.exports = function(app) {
     var vimeoRecord = null;
     let secondRecord = null;
     let thirdRecord = null;
+    let vimeoAnnRecord = null;
 
     request(vimeoOptionsHome, function(error, response, body) {
       if (error) throw new Error(error);
@@ -242,6 +259,15 @@ module.exports = function(app) {
         Object.assign(item, {
           shortTitle: item.name.split(": ", 2)[1]
         });
+      });
+
+      request(vimeoOptionsAnnHome, function(error, response, body) {
+        if (error) throw new Error(error);
+
+        vimeoAnnRecord = JSON.parse(body);
+
+        a = vimeoAnnRecord.data[0].embed.html;
+        vimeoAnnRecord.data[0].embed.html = a.replace(`" `,`" data-aos="fade-right" class="about_image" `)
       });
 
       client
@@ -342,15 +368,18 @@ module.exports = function(app) {
 
               thirdRecord = items;
             })
+
             .then(function(body) {
               // console.log(body)
               // console.log("VIMEO SAYS: ", vimeoRecord);
               // console.log("CONTENTFUL SAYS: ", secondRecord.items[0])
               // console.log("LOOK HERE: ", thirdRecord.items);
+              // console.log("NEW VIMEO: ", vimeoAnnRecord.data[0].embed)
 
               var hbsObject = {
                 events: secondRecord.items,
                 vimeo: vimeoRecord,
+                vimeoAnn: vimeoAnnRecord,
                 blogpost: thirdRecord,
                 headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
               <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
@@ -471,19 +500,20 @@ module.exports = function(app) {
 
       // console.log(getIdFromVimeoURL(vimeo.data[0].link))
 
-
       if (items) {
         if (items[0].link) {
           Object.assign(items[0], {
             id: getIdFromVimeoURL(items[0].link)
           });
         }
-        
+
         items.forEach(item => {
           // console.log(moment(item.name.split(" ", 1), 'MM-DD-YY').format("MMM"))
           // console.log(moment(item.name.split(" ", 1), 'MM-DD-YY').format('MMM'))
           Object.assign(item, {
-            shortMonth: moment(item.name.split(" ", 1), "MM-DD-YY").format("MMM")
+            shortMonth: moment(item.name.split(" ", 1), "MM-DD-YY").format(
+              "MMM"
+            )
           });
           Object.assign(item, {
             shortDay: moment(item.name.split(" ", 1), "MM-DD-YY").format("DD")
@@ -494,19 +524,19 @@ module.exports = function(app) {
           Object.assign(item, {
             featureDate: moment(item.name.split(" ", 1), "MM-DD-YY").format(
               "DD MMM YYYY"
-              )
-            });
+            )
           });
-          
-          // console.log("ITEMS: ", items);
-          // var videoDate = vimeo.data[0].name.split(" ", 1)
-          
-          // console.log("LOOK HERE: ", vimeo.data[0].name.split(" ", 1))
-          // console.log("LOOK HERE: ", vimeo.data[0].name.split(": ", 2))
-          
-          var latestSermon = JSON.parse(body).data[0];
-          // console.log(latestSermon);
-        }
+        });
+
+        // console.log("ITEMS: ", items);
+        // var videoDate = vimeo.data[0].name.split(" ", 1)
+
+        // console.log("LOOK HERE: ", vimeo.data[0].name.split(" ", 1))
+        // console.log("LOOK HERE: ", vimeo.data[0].name.split(": ", 2))
+
+        var latestSermon = JSON.parse(body).data[0];
+        // console.log(latestSermon);
+      }
 
       var hbsObject = {
         vimeo: items,
@@ -517,9 +547,9 @@ module.exports = function(app) {
         nextSermonPage: vimeoOptions.qs.page + 1
       };
 
-      vimeoOptions.qs.page > 1 ? hbsObject.thisSermonPage = vimeoOptions.qs.page : ''
-
-
+      vimeoOptions.qs.page > 1
+        ? (hbsObject.thisSermonPage = vimeoOptions.qs.page)
+        : "";
 
       return res.render("sermons", hbsObject);
     });
@@ -811,19 +841,18 @@ module.exports = function(app) {
   app.get("/card", function(req, res) {
     res.redirect("https://rbcc.churchcenter.com/people/forms/43489");
   });
-  
+
   app.get("/highschool", function(req, res) {
-    res.redirect("/ministry:High%20School")
-  })
-  
+    res.redirect("/ministry:High%20School");
+  });
+
   app.get("/msm", function(req, res) {
-    res.redirect("/ministry:Middle%20School")
-  })
+    res.redirect("/ministry:Middle%20School");
+  });
 
   app.get("/sitemap.xml", function(req, res) {
-    res.sendFile("/sitemap.xml")
-  })
-
+    res.sendFile("/sitemap.xml");
+  });
 
   app.use(function(req, res) {
     var bloghbsObject = {
