@@ -268,6 +268,8 @@ module.exports = function(app) {
 
         a = vimeoAnnRecord.data[0].embed.html;
         vimeoAnnRecord.data[0].embed.html = a.replace(`" `,`" data-aos="fade-right" class="about_image" `)
+        a = a.replace(`https://`,`//`)
+        console.log("HERE: ", a)
       });
 
       client
