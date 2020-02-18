@@ -249,6 +249,7 @@ module.exports = function(app) {
     let secondRecord = null;
     let thirdRecord = null;
     let vimeoAnnRecord = null;
+    let vimeoAnnURL = null;
 
     request(vimeoOptionsHome, function(error, response, body) {
       if (error) throw new Error(error);
@@ -270,6 +271,10 @@ module.exports = function(app) {
         vimeoAnnRecord.data[0].embed.html = a.replace(`" `,`" data-aos="fade-right" class="about_image" `)
         a = a.replace(`https://`,`//`)
         console.log("HERE: ", a)
+        console.log(vimeoAnnRecord)
+
+        vimeoAnnURL = vimeoAnnRecord.data[0].link;
+        console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
       });
 
       client
