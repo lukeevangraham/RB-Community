@@ -271,14 +271,18 @@ module.exports = function(app) {
         var items = vimeoAnnRecord.data;
         // console.log("ITEMS: ", items)
         let trimmedURL = getIdFromVimeoURL(items[0].link);
+
+        let editedEmbed = items[0].embed.html
         // console.log("TRIMMED URL: ", trimmedURL)
-        // vimeoAnnRecord.data[0].embed.html = a.replace(`" `,`" data-aos="fade-right" class="about_image" `)
+        editedEmbed = editedEmbed.replace(`" `,`" data-aos="fade-right" class="about_image" `)
         // a = a.replace(`https://`,`//`)
         // console.log("HERE: ", a)
         // console.log(vimeoAnnRecord)
 
         // vimeoAnnURL = getIdFromVimeoURL(a);
-        vimeoAnnURL = trimmedURL;
+        // vimeoAnnURL = trimmedURL;
+        // vimeoAnnURL = items[0].embed.html;
+        vimeoAnnURL = editedEmbed;
         console.log("vimeoAnnURL: ", vimeoAnnURL);
         // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
 
