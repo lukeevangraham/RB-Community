@@ -262,22 +262,6 @@ module.exports = function(app) {
         });
       });
 
-      request(vimeoOptionsAnnHome, function(error, response, body) {
-        if (error) throw new Error(error);
-
-        vimeoAnnRecord = JSON.parse(body);
-
-        a = vimeoAnnRecord.data[0].link;
-        // vimeoAnnRecord.data[0].embed.html = a.replace(`" `,`" data-aos="fade-right" class="about_image" `)
-        // a = a.replace(`https://`,`//`)
-        // console.log("HERE: ", a)
-        // console.log(vimeoAnnRecord)
-
-        // vimeoAnnURL = getIdFromVimeoURL(a);
-        vimeoAnnURL = getIdFromVimeoURL(vimeoAnnRecord.data[0].link);
-        // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
-      });
-
       client
         .getEntries({
           content_type: "events",
@@ -334,6 +318,23 @@ module.exports = function(app) {
               limit: 3
             })
             .then(function(dbBlog) {
+
+              request(vimeoOptionsAnnHome, function(error, response, body) {
+                if (error) throw new Error(error);
+        
+                vimeoAnnRecord = JSON.parse(body);
+        
+                a = vimeoAnnRecord.data[0].link;
+                // vimeoAnnRecord.data[0].embed.html = a.replace(`" `,`" data-aos="fade-right" class="about_image" `)
+                // a = a.replace(`https://`,`//`)
+                // console.log("HERE: ", a)
+                // console.log(vimeoAnnRecord)
+        
+                // vimeoAnnURL = getIdFromVimeoURL(a);
+                vimeoAnnURL = getIdFromVimeoURL(vimeoAnnRecord.data[0].link);
+                // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
+              });
+
               var items = [];
               var itemsIncludingExpired = dbBlog.items;
 
