@@ -269,16 +269,16 @@ module.exports = function(app) {
 
         // a = vimeoAnnRecord.data[0].link;
         var items = vimeoAnnRecord.data;
-        console.log("ITEMS: ", items)
+        // console.log("ITEMS: ", items)
         let trimmedURL = getIdFromVimeoURL(items[0].link)
-        console.log("TRIMMED URL: ", trimmedURL)
+        // console.log("TRIMMED URL: ", trimmedURL)
         // vimeoAnnRecord.data[0].embed.html = a.replace(`" `,`" data-aos="fade-right" class="about_image" `)
         // a = a.replace(`https://`,`//`)
         // console.log("HERE: ", a)
         // console.log(vimeoAnnRecord)
 
         // vimeoAnnURL = getIdFromVimeoURL(a);
-        // vimeoAnnURL = trimmedURL;
+        vimeoAnnURL = trimmedURL;
         // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
       });
 
@@ -397,6 +397,8 @@ module.exports = function(app) {
               <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
                 title: `Home`
               };
+
+              console.log("HBS: ", hbsObject)
 
               res.render("home", hbsObject);
             });
