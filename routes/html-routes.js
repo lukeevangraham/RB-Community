@@ -274,7 +274,7 @@ module.exports = function(app) {
         // console.log(vimeoAnnRecord)
 
         // vimeoAnnURL = getIdFromVimeoURL(a);
-        vimeoAnnURL = getIdFromVimeoURL(vimeoAnnRecord.link);
+        vimeoAnnURL = vimeoAnnRecord.link;
         // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
       });
 
