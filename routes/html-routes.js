@@ -270,7 +270,7 @@ module.exports = function(app) {
         // a = vimeoAnnRecord.data[0].link;
         var items = vimeoAnnRecord.data;
         // console.log("ITEMS: ", items)
-        let trimmedURL = getIdFromVimeoURL(items[0].link)
+        let trimmedURL = getIdFromVimeoURL(items[0].link);
         // console.log("TRIMMED URL: ", trimmedURL)
         // vimeoAnnRecord.data[0].embed.html = a.replace(`" `,`" data-aos="fade-right" class="about_image" `)
         // a = a.replace(`https://`,`//`)
@@ -279,131 +279,131 @@ module.exports = function(app) {
 
         // vimeoAnnURL = getIdFromVimeoURL(a);
         vimeoAnnURL = trimmedURL;
-        console.log("vimeoAnnURL: ", vimeoAnnURL)
+        console.log("vimeoAnnURL: ", vimeoAnnURL);
         // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
-      });
 
-      client
-        .getEntries({
-          content_type: "events",
-          // "fields.featuredOnHome": true,
-          "fields.endDate[gte]": moment().format(),
-          "fields.homePagePassword": "Psalm 46:1",
-          order: "fields.date"
-          // limit: 3
-        })
-        .then(function(dbEvent) {
-          // console.log("LOOK HERE: ", dbEvent.items[0].fields);
-          var items = dbEvent.items;
+        client
+          .getEntries({
+            content_type: "events",
+            // "fields.featuredOnHome": true,
+            "fields.endDate[gte]": moment().format(),
+            "fields.homePagePassword": "Psalm 46:1",
+            order: "fields.date"
+            // limit: 3
+          })
+          .then(function(dbEvent) {
+            // console.log("LOOK HERE: ", dbEvent.items[0].fields);
+            var items = dbEvent.items;
 
-          // Converting times for template
-          items.forEach(item => {
-            Object.assign(item.fields, {
-              shortMonth: moment(item.fields.date).format("MMM")
-            });
-            Object.assign(item.fields, {
-              shortDay: moment(item.fields.date).format("DD")
-            });
-            // if (item.fields.featured) {
-            Object.assign(item.fields, {
-              dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
-            });
-            // }
-            // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
-            if (item.fields.repeatsEveryDays > 0) {
-              if (moment(item.fields.date).isSameOrBefore(moment())) {
-                let start = moment(item.fields.date);
-                let end = moment().format("YYYY-MM-DD");
-
-                while (start.isBefore(end)) {
-                  start.add(item.fields.repeatsEveryDays, "day");
-                }
-                item.fields.date = start.format("YYYY-MM-DD");
-                item.fields.shortMonth = start.format("MMM");
-                item.fields.shortDay = start.format("DD");
-              }
+            // Converting times for template
+            items.forEach(item => {
+              Object.assign(item.fields, {
+                shortMonth: moment(item.fields.date).format("MMM")
+              });
+              Object.assign(item.fields, {
+                shortDay: moment(item.fields.date).format("DD")
+              });
+              // if (item.fields.featured) {
               Object.assign(item.fields, {
                 dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
               });
-            }
-          });
+              // }
+              // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
+              if (item.fields.repeatsEveryDays > 0) {
+                if (moment(item.fields.date).isSameOrBefore(moment())) {
+                  let start = moment(item.fields.date);
+                  let end = moment().format("YYYY-MM-DD");
 
-          secondRecord = dbEvent;
-
-          client
-            .getEntries({
-              content_type: "blog",
-              "fields.featureOnHomePage": true,
-              "fields.homePagePassword": "Psalm 46:1",
-              order: "-fields.datePosted",
-              limit: 3
-            })
-            .then(function(dbBlog) {
-              var items = [];
-              var itemsIncludingExpired = dbBlog.items;
-
-              // ELIMINATING OLD ENTRIES FROM PAGE
-              itemsIncludingExpired.forEach(earlyItem => {
-                if (
-                  moment(earlyItem.fields.expirationDate).isBefore(
-                    moment().format("YYYY-MM-DD")
-                  )
-                ) {
-                } else {
-                  items.push(earlyItem);
+                  while (start.isBefore(end)) {
+                    start.add(item.fields.repeatsEveryDays, "day");
+                  }
+                  item.fields.date = start.format("YYYY-MM-DD");
+                  item.fields.shortMonth = start.format("MMM");
+                  item.fields.shortDay = start.format("DD");
                 }
-              });
-
-              // Converting times for template
-              items.forEach(item => {
                 Object.assign(item.fields, {
-                  formattedDate: moment(item.fields.datePosted)
-                    .format("DD MMM, YYYY")
-                    .toUpperCase()
+                  dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
                 });
-
-                var truncatedString = JSON.stringify(
-                  item.fields.body.content[0].content[0].value.replace(
-                    /^(.{165}[^\s]*).*/,
-                    "$1"
-                  )
-                );
-                var truncatedLength = truncatedString.length;
-                truncatedString = truncatedString.substring(
-                  1,
-                  truncatedLength - 1
-                );
-
-                Object.assign(item.fields, {
-                  excerpt: truncatedString
-                });
-              });
-
-              thirdRecord = items;
-            })
-
-            .then(function(body) {
-              // console.log(body)
-              // console.log("VIMEO SAYS: ", vimeoRecord);
-              // console.log("CONTENTFUL SAYS: ", secondRecord.items[0])
-              // console.log("LOOK HERE: ", thirdRecord.items);
-              // console.log("NEW VIMEO: ", vimeoAnnRecord.data[0].embed)
-
-              var hbsObject = {
-                events: secondRecord.items,
-                vimeo: vimeoRecord,
-                vimeoAnn: vimeoAnnURL,
-                blogpost: thirdRecord,
-                headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
-              <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
-                title: `Home`
-              };
-
-              console.log("HBS: ", hbsObject)
-
-              res.render("home", hbsObject);
+              }
             });
-        });
+
+            secondRecord = dbEvent;
+
+            client
+              .getEntries({
+                content_type: "blog",
+                "fields.featureOnHomePage": true,
+                "fields.homePagePassword": "Psalm 46:1",
+                order: "-fields.datePosted",
+                limit: 3
+              })
+              .then(function(dbBlog) {
+                var items = [];
+                var itemsIncludingExpired = dbBlog.items;
+
+                // ELIMINATING OLD ENTRIES FROM PAGE
+                itemsIncludingExpired.forEach(earlyItem => {
+                  if (
+                    moment(earlyItem.fields.expirationDate).isBefore(
+                      moment().format("YYYY-MM-DD")
+                    )
+                  ) {
+                  } else {
+                    items.push(earlyItem);
+                  }
+                });
+
+                // Converting times for template
+                items.forEach(item => {
+                  Object.assign(item.fields, {
+                    formattedDate: moment(item.fields.datePosted)
+                      .format("DD MMM, YYYY")
+                      .toUpperCase()
+                  });
+
+                  var truncatedString = JSON.stringify(
+                    item.fields.body.content[0].content[0].value.replace(
+                      /^(.{165}[^\s]*).*/,
+                      "$1"
+                    )
+                  );
+                  var truncatedLength = truncatedString.length;
+                  truncatedString = truncatedString.substring(
+                    1,
+                    truncatedLength - 1
+                  );
+
+                  Object.assign(item.fields, {
+                    excerpt: truncatedString
+                  });
+                });
+
+                thirdRecord = items;
+              })
+
+              .then(function(body) {
+                // console.log(body)
+                // console.log("VIMEO SAYS: ", vimeoRecord);
+                // console.log("CONTENTFUL SAYS: ", secondRecord.items[0])
+                // console.log("LOOK HERE: ", thirdRecord.items);
+                // console.log("NEW VIMEO: ", vimeoAnnRecord.data[0].embed)
+
+                var hbsObject = {
+                  events: secondRecord.items,
+                  vimeo: vimeoRecord,
+                  vimeoAnn: vimeoAnnURL,
+                  blogpost: thirdRecord,
+                  headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
+              <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
+                  title: `Home`
+                };
+
+                console.log("HBS: ", hbsObject);
+
+                res.render("home", hbsObject);
+              });
+          });
+      });
     });
   });
 
