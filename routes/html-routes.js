@@ -289,7 +289,7 @@ module.exports = function(app) {
           .getEntries({
             content_type: "events",
             // "fields.featuredOnHome": true,
-            "fields.endDate[gte]": moment().format(),
+            "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
             "fields.homePagePassword": "Psalm 46:1",
             order: "fields.date"
             // limit: 3
@@ -297,6 +297,8 @@ module.exports = function(app) {
           .then(function(dbEvent) {
             // console.log("LOOK HERE: ", dbEvent.items[0].fields);
             var items = dbEvent.items;
+
+            console.log("LOOK HERE: ", items)
 
             // Converting times for template
             items.forEach(item => {
