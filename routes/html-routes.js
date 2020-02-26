@@ -283,7 +283,6 @@ module.exports = function(app) {
         // vimeoAnnURL = trimmedURL;
         // vimeoAnnURL = items[0].embed.html;
         vimeoAnnURL = editedEmbed;
-        console.log("vimeoAnnURL: ", vimeoAnnURL);
         // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
 
         client
@@ -401,8 +400,6 @@ module.exports = function(app) {
               <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
                   title: `Home`
                 };
-
-                console.log("HBS: ", hbsObject);
 
                 res.render("home", hbsObject);
               });
