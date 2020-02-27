@@ -868,6 +868,10 @@ module.exports = function(app) {
     res.redirect("/ministry:Middle%20School");
   });
 
+  app.get("/missions", function(req, res) {
+    res.redirect("/ministry:Missions");
+  })
+
   app.get("/sitemap.xml", function(req, res) {
     res.sendFile("/sitemap.xml");
   });
