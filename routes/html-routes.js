@@ -872,6 +872,10 @@ module.exports = function(app) {
     res.redirect("/ministry:Missions");
   })
 
+  app.get("/shop", function(req, res) {
+    res.redirect("https://www.companycasuals.com/RBCommunity");
+  })
+
   app.get("/sitemap.xml", function(req, res) {
     res.sendFile("/sitemap.xml");
   });
