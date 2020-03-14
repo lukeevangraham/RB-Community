@@ -431,9 +431,13 @@ module.exports = function(app) {
       })
       .then(function(dbEvent) {
         var items = dbEvent.items;
+        var topItem =[];
 
         // Converting times for template
         items.forEach(item => {
+          if (item.fields.featured) {
+            topItem.push(item);
+          }
           Object.assign(item.fields, {
             shortMonth: moment(item.fields.date).format("MMM")
           });
@@ -476,8 +480,11 @@ module.exports = function(app) {
         // SORT EVENTS BY NEWLY CALCULATED DATE
         items.sort(compare);
 
+        // console.log("LOOK HERE: ", topItem)
+
         var hbsObject = {
           events: dbEvent.items,
+          topEvent: topItem,
           active: { events: true },
           headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
                     <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
