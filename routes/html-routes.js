@@ -883,6 +883,10 @@ module.exports = function(app) {
     res.redirect("https://www.companycasuals.com/RBCommunity");
   })
 
+  app.get("/give", function(req, res) {
+    res.redirect("/giving");
+  })
+
   app.get("/sitemap.xml", function(req, res) {
     res.sendFile("/sitemap.xml");
   });
