@@ -891,6 +891,10 @@ module.exports = function(app) {
     res.sendFile("/sitemap.xml");
   });
 
+  app.get("/arabic", function(req, res) {
+    res.redirect("/ministry:Arabic%20Ministries");
+  })
+
   app.use(function(req, res) {
     var bloghbsObject = {
       // article: entry.fields,
