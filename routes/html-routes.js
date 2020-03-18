@@ -250,6 +250,7 @@ module.exports = function(app) {
     let thirdRecord = null;
     let vimeoAnnRecord = null;
     let vimeoAnnURL = null;
+    let welcomeRecord = null;
 
     request(vimeoOptionsHome, function(error, response, body) {
       if (error) throw new Error(error);
@@ -272,9 +273,12 @@ module.exports = function(app) {
         // console.log("ITEMS: ", items)
         let trimmedURL = getIdFromVimeoURL(items[0].link);
 
-        let editedEmbed = items[0].embed.html
+        let editedEmbed = items[0].embed.html;
         // console.log("TRIMMED URL: ", trimmedURL)
-        editedEmbed = editedEmbed.replace(`" `,`" data-aos="fade-right" class="about_image" `)
+        editedEmbed = editedEmbed.replace(
+          `" `,
+          `" data-aos="fade-right" class="about_image" `
+        );
         // a = a.replace(`https://`,`//`)
         // console.log("HERE: ", a)
         // console.log(vimeoAnnRecord)
@@ -298,7 +302,6 @@ module.exports = function(app) {
             // console.log("LOOK HERE: ", dbEvent.items[0].fields);
             var items = dbEvent.items;
 
-            console.log("LOOK HERE: ", items)
 
             // Converting times for template
             items.forEach(item => {
@@ -384,27 +387,35 @@ module.exports = function(app) {
                 });
 
                 thirdRecord = items;
-              })
 
-              .then(function(body) {
-                // console.log(body)
-                // console.log("VIMEO SAYS: ", vimeoRecord);
-                // console.log("CONTENTFUL SAYS: ", secondRecord.items[0])
-                // console.log("LOOK HERE: ", thirdRecord.items);
-                // console.log("NEW VIMEO: ", vimeoAnnRecord.data[0].embed)
+                client.getEntry("5yMSI9dIzpsdb55JvXkZk").then(function(entry) {
+                  // console.log("LOOK HERE: ", entry);
+                  const rawRichTextField = entry.fields.body;
+
+                  Object.assign(entry.fields, {
+                    renderedHtml: documentToHtmlString(rawRichTextField)
+                  });
+                  welcomeRecord = entry;
+                  // console.log("LOOK HERE: ", welcomeRecord)
+                
+
+              // .then(function(body) {
 
                 var hbsObject = {
                   events: secondRecord.items,
                   vimeo: vimeoRecord,
                   vimeoAnn: vimeoAnnURL,
                   blogpost: thirdRecord,
+                  homeWelcome: welcomeRecord.fields.renderedHtml,
                   headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
               <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
                   title: `Home`
                 };
 
                 res.render("home", hbsObject);
-              });
+              // });
+            });
+          })
           });
       });
     });
@@ -431,7 +442,7 @@ module.exports = function(app) {
       })
       .then(function(dbEvent) {
         var items = dbEvent.items;
-        var topItem =[];
+        var topItem = [];
 
         // Converting times for template
         items.forEach(item => {
@@ -645,7 +656,7 @@ module.exports = function(app) {
             items.push(earlyItem);
           }
         });
-        console.log("LOOK HERE", items);
+        // console.log("LOOK HERE", items);
 
         // Converting times for template
         items.forEach(item => {
@@ -877,15 +888,15 @@ module.exports = function(app) {
 
   app.get("/missions", function(req, res) {
     res.redirect("/ministry:Missions");
-  })
+  });
 
   app.get("/shop", function(req, res) {
     res.redirect("https://www.companycasuals.com/RBCommunity");
-  })
+  });
 
   app.get("/give", function(req, res) {
     res.redirect("/giving");
-  })
+  });
 
   app.get("/sitemap.xml", function(req, res) {
     res.sendFile("/sitemap.xml");
@@ -893,7 +904,7 @@ module.exports = function(app) {
 
   app.get("/arabic", function(req, res) {
     res.redirect("/ministry:Arabic%20Ministries");
-  })
+  });
 
   app.use(function(req, res) {
     var bloghbsObject = {
