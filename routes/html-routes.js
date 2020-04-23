@@ -9,7 +9,7 @@ marked.setOptions({
   renderer: new marked.Renderer(),
   sanitize: true,
   smartLists: true,
-  smartypants: true
+  smartypants: true,
 });
 
 // Import the model (event.js) to use its database functions
@@ -30,7 +30,7 @@ let vimeoPass = process.env.VIMEO_TOKEN;
 
 var client = contentful.createClient({
   space: spaceId,
-  accessToken: contentfulAccessToken
+  accessToken: contentfulAccessToken,
 });
 
 var vimeoOptions = {
@@ -42,11 +42,11 @@ var vimeoOptions = {
       "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button",
     sizes: "960",
     per_page: "7",
-    page: "1"
+    page: "1",
   },
   headers: {
-    Authorization: "Bearer " + vimeoPass
-  }
+    Authorization: "Bearer " + vimeoPass,
+  },
 };
 var vimeoOptionsHome = {
   method: "GET",
@@ -57,11 +57,11 @@ var vimeoOptionsHome = {
       "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button",
     sizes: "960",
     per_page: "3",
-    page: "1"
+    page: "1",
   },
   headers: {
-    Authorization: "Bearer " + vimeoPass
-  }
+    Authorization: "Bearer " + vimeoPass,
+  },
 };
 
 var vimeoOptionsAnnHome = {
@@ -73,11 +73,11 @@ var vimeoOptionsAnnHome = {
       "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button, embed",
     width: "690",
     per_page: "1",
-    page: "1"
+    page: "1",
   },
   headers: {
-    Authorization: "Bearer " + vimeoPass
-  }
+    Authorization: "Bearer " + vimeoPass,
+  },
 };
 
 function getIdFromVimeoURL(url) {
@@ -85,20 +85,20 @@ function getIdFromVimeoURL(url) {
 }
 
 function doReq(url, what) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     request(
       {
         url: url,
         headers: {
-          Bearer: "sampleapitoken"
-        }
+          Bearer: "sampleapitoken",
+        },
       },
-      function(error, response) {
+      function (error, response) {
         if (error || response.statusCode !== 200) {
           reject(error);
         } else {
           var data = {};
-          (Array.isArray(what) ? what : [what]).forEach(function(item, index) {
+          (Array.isArray(what) ? what : [what]).forEach(function (item, index) {
             data[item] = JSON.parse(arguments[index + 2]);
           });
           resolve(data);
@@ -123,21 +123,21 @@ function compare(a, b) {
 }
 
 // Routes
-module.exports = function(app) {
-  app.get("/blog", function(req, res) {
+module.exports = function (app) {
+  app.get("/blog", function (req, res) {
     client
       .getEntries({
         content_type: "blog",
         order: "-fields.datePosted",
         // remove about rB Community from the news feed
-        "sys.id[nin]": "3JEwFofQhW3MQcReiGLCYu"
+        "sys.id[nin]": "3JEwFofQhW3MQcReiGLCYu",
       })
-      .then(function(dbBlog) {
+      .then(function (dbBlog) {
         var items = [];
         var itemsIncludingExpired = dbBlog.items;
 
         // ELIMINATING OLD ENTRIES FROM PAGE
-        itemsIncludingExpired.forEach(earlyItem => {
+        itemsIncludingExpired.forEach((earlyItem) => {
           if (
             moment(earlyItem.fields.expirationDate).isBefore(
               moment().format("YYYY-MM-DD")
@@ -149,11 +149,11 @@ module.exports = function(app) {
         });
 
         // Converting times for template
-        items.forEach(item => {
+        items.forEach((item) => {
           Object.assign(item.fields, {
             formattedDate: moment(item.fields.datePosted)
               .format("DD MMM, YYYY")
-              .toUpperCase()
+              .toUpperCase(),
           });
 
           if (item.fields.body) {
@@ -174,7 +174,7 @@ module.exports = function(app) {
 
           Object.assign(item.fields, {
             excerpt: truncatedString,
-            today: moment().format("YYYY-MM-DD")
+            today: moment().format("YYYY-MM-DD"),
           });
         });
 
@@ -191,77 +191,89 @@ module.exports = function(app) {
           active: { news: true },
           headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
                 <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`,
-          title: `Latest News`
+          title: `Latest News`,
           // shortenedMain: newTrimmedString
         };
         res.render("blog", hbsObject);
       });
   });
 
-  app.get(["/blog_single:id", "/blog:id"], function(req, res) {
-    console.log("ID: ", req.params.id)
-    req.params.id = req.params.id.substring(1);
-    
-    
-    // original contentful query
-    // client.getEntry(req.params.id)
-    
-    // new query
-    client.getEntries({
-      content_type: "blog",
-      "fields.title": req.params.id,
-    
-    })
-    .then(function(entry) {
+  app.get(["/blog_single:id", "/blog:id"], function (req, res) {
 
-      // console.log("ENRY: ", entry.items[0].fields)
+    function renderSingleBlog(entry) {
+      var bloghbsObject = {
+        article: entry,
+        active: { news: true },
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
+                  <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`,
+        title: entry.fields.title,
+      };
+      // console.log("hbsObject:  ", bloghbsObject.article);
+      res.render("blog_single", bloghbsObject);
+    }
 
-      //new query for title
+    function prepareBlogEntryForSinglePage(entry) {
 
-      // Converting times for template
-      Object.assign(entry.items[0].fields, {
-        shortMonth: moment(entry.items[0].fields.datePosted)
+      Object.assign(entry.fields, {
+        shortMonth: moment(entry.fields.datePosted)
           .format("MMM")
-          .toUpperCase()
+          .toUpperCase(),
       });
-      Object.assign(entry.items[0].fields, {
-        shortDay: moment(entry.items[0].fields.datePosted).format("DD")
+      Object.assign(entry.fields, {
+        shortDay: moment(entry.fields.datePosted).format("DD"),
       });
 
       // Converting vimeo embeds
       const options = {
         renderNode: {
-          [INLINES.HYPERLINK]: node => {
+          [INLINES.HYPERLINK]: (node) => {
             if (node.data.uri.includes("player.vimeo.com/video")) {
               return `<div class="col-lg-7 col-xs-12 p-0"><IframeContainer class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" title="Unique Title 001" src=${node.data.uri} frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></IframeContainer></div>`;
             } else
               return `<a href="${node.data.uri}" target="blank">${node.content[0].value}</a>`;
           },
-          "embedded-asset-block": node =>
-            `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`
-        }
+          "embedded-asset-block": (node) =>
+            `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`,
+        },
       };
 
-      const rawRichTextField = entry.items[0].fields.body;
+      const rawRichTextField = entry.fields.body;
       // let renderedHtml = documentToHtmlString(rawRichTextField);
-      Object.assign(entry.items[0].fields, {
+      Object.assign(entry.fields, {
         renderedHtml: documentToHtmlString(rawRichTextField, options),
-        id: req.params.id
+        id: req.params.id,
       });
+      renderSingleBlog(entry)
+    }
 
-      var bloghbsObject = {
-        article: entry.items[0],
-        active: { news: true },
-        headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
-                    <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`,
-        title: entry.items[0].fields.title
-      };
-      // console.log("hbsObject:  ", bloghbsObject.article);
-      res.render("blog_single", bloghbsObject);
-    });
+
+    req.params.id = req.params.id.substring(1);
+    console.log("ID: ", req.params.id.charAt(0));
+
+    // let blogEntry;
+
+    // Is the ID a number(old format) ar a string(title of article)
+    req.params.id.charAt(0) >= "0" && req.params.id.charAt(0) <= "9"
+      ? (console.log("number"),
+        client.getEntry(req.params.id).then(function (entry) {
+          // console.log("ENTRY #: ", entry);
+          // blogEntry = entry;
+          prepareBlogEntryForSinglePage(entry);
+        }))
+      : (
+        console.log("no number"),
+        client.getEntries({
+          content_type: "blog",
+          "fields.title": req.params.id,
+        }).then(function (entry) {
+          // console.log("ENTRY no#: ", entry.items[0])
+          // blogEntry = entry.items[0]
+          prepareBlogEntryForSinglePage(entry.items[0])
+        })
+        );
   });
 
-  app.get(["/", "/index.html", "/home"], function(req, res) {
+  app.get(["/", "/index.html", "/home"], function (req, res) {
     var vimeoRecord = null;
     let secondRecord = null;
     let thirdRecord = null;
@@ -269,18 +281,18 @@ module.exports = function(app) {
     let vimeoAnnURL = null;
     let welcomeRecord = null;
 
-    request(vimeoOptionsHome, function(error, response, body) {
+    request(vimeoOptionsHome, function (error, response, body) {
       if (error) throw new Error(error);
 
       vimeoRecord = JSON.parse(body);
 
-      vimeoRecord.data.forEach(item => {
+      vimeoRecord.data.forEach((item) => {
         Object.assign(item, {
-          shortTitle: item.name.split(": ", 2)[1]
+          shortTitle: item.name.split(": ", 2)[1],
         });
       });
 
-      request(vimeoOptionsAnnHome, function(error, response, body) {
+      request(vimeoOptionsAnnHome, function (error, response, body) {
         if (error) throw new Error(error);
 
         vimeoAnnRecord = JSON.parse(body);
@@ -312,25 +324,24 @@ module.exports = function(app) {
             // "fields.featuredOnHome": true,
             "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
             "fields.homePagePassword": "Psalm 46:1",
-            order: "fields.date"
+            order: "fields.date",
             // limit: 3
           })
-          .then(function(dbEvent) {
+          .then(function (dbEvent) {
             // console.log("LOOK HERE: ", dbEvent.items[0].fields);
             var items = dbEvent.items;
 
-
             // Converting times for template
-            items.forEach(item => {
+            items.forEach((item) => {
               Object.assign(item.fields, {
-                shortMonth: moment(item.fields.date).format("MMM")
+                shortMonth: moment(item.fields.date).format("MMM"),
               });
               Object.assign(item.fields, {
-                shortDay: moment(item.fields.date).format("DD")
+                shortDay: moment(item.fields.date).format("DD"),
               });
               // if (item.fields.featured) {
               Object.assign(item.fields, {
-                dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
+                dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
               });
               // }
               // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
@@ -347,7 +358,9 @@ module.exports = function(app) {
                   item.fields.shortDay = start.format("DD");
                 }
                 Object.assign(item.fields, {
-                  dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
+                  dateToCountTo: moment(item.fields.date).format(
+                    "MMMM D, YYYY"
+                  ),
                 });
               }
             });
@@ -360,14 +373,14 @@ module.exports = function(app) {
                 "fields.featureOnHomePage": true,
                 "fields.homePagePassword": "Psalm 46:1",
                 order: "-fields.datePosted",
-                limit: 3
+                limit: 3,
               })
-              .then(function(dbBlog) {
+              .then(function (dbBlog) {
                 var items = [];
                 var itemsIncludingExpired = dbBlog.items;
 
                 // ELIMINATING OLD ENTRIES FROM PAGE
-                itemsIncludingExpired.forEach(earlyItem => {
+                itemsIncludingExpired.forEach((earlyItem) => {
                   if (
                     moment(earlyItem.fields.expirationDate).isBefore(
                       moment().format("YYYY-MM-DD")
@@ -379,11 +392,11 @@ module.exports = function(app) {
                 });
 
                 // Converting times for template
-                items.forEach(item => {
+                items.forEach((item) => {
                   Object.assign(item.fields, {
                     formattedDate: moment(item.fields.datePosted)
                       .format("DD MMM, YYYY")
-                      .toUpperCase()
+                      .toUpperCase(),
                   });
 
                   var truncatedString = JSON.stringify(
@@ -399,50 +412,49 @@ module.exports = function(app) {
                   );
 
                   Object.assign(item.fields, {
-                    excerpt: truncatedString
+                    excerpt: truncatedString,
                   });
                 });
 
                 thirdRecord = items;
 
-                client.getEntry("5yMSI9dIzpsdb55JvXkZk").then(function(entry) {
+                client.getEntry("5yMSI9dIzpsdb55JvXkZk").then(function (entry) {
                   // console.log("LOOK HERE: ", entry);
                   const rawRichTextField = entry.fields.body;
 
                   Object.assign(entry.fields, {
-                    renderedHtml: documentToHtmlString(rawRichTextField)
+                    renderedHtml: documentToHtmlString(rawRichTextField),
                   });
                   welcomeRecord = entry;
                   // console.log("LOOK HERE: ", welcomeRecord)
-                
 
-              // .then(function(body) {
+                  // .then(function(body) {
 
-                var hbsObject = {
-                  events: secondRecord.items,
-                  vimeo: vimeoRecord,
-                  vimeoAnn: vimeoAnnURL,
-                  blogpost: thirdRecord,
-                  homeWelcome: welcomeRecord.fields.renderedHtml,
-                  headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
+                  var hbsObject = {
+                    events: secondRecord.items,
+                    vimeo: vimeoRecord,
+                    vimeoAnn: vimeoAnnURL,
+                    blogpost: thirdRecord,
+                    homeWelcome: welcomeRecord.fields.renderedHtml,
+                    headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
               <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
-                  title: `Home`
-                };
+                    title: `Home`,
+                  };
 
-                res.render("home", hbsObject);
-              // });
-            });
-          })
+                  res.render("home", hbsObject);
+                  // });
+                });
+              });
           });
       });
     });
   });
 
-  app.get("/cms", function(req, res) {
+  app.get("/cms", function (req, res) {
     res.sendFile(path.join(__dirname, "../public/cms.html"));
   });
 
-  app.get("/cms-post", function(req, res) {
+  app.get("/cms-post", function (req, res) {
     res.sendFile(path.join(__dirname, "../public/cms-post.html"));
   });
 
@@ -450,32 +462,32 @@ module.exports = function(app) {
   //     res.sendFile(path.join(__dirname, "../public/events.html"));
   // })
 
-  app.get("/events", function(req, res) {
+  app.get("/events", function (req, res) {
     client
       .getEntries({
         content_type: "events",
         "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
-        order: "fields.date"
+        order: "fields.date",
       })
-      .then(function(dbEvent) {
+      .then(function (dbEvent) {
         var items = dbEvent.items;
         var topItem = [];
 
         // Converting times for template
-        items.forEach(item => {
+        items.forEach((item) => {
           if (item.fields.featured) {
             topItem.push(item);
           }
           Object.assign(item.fields, {
-            shortMonth: moment(item.fields.date).format("MMM")
+            shortMonth: moment(item.fields.date).format("MMM"),
           });
           Object.assign(item.fields, {
             shortDay: moment(item.fields.date).format("DD"),
-            dayOfWeek: moment(item.fields.date).format("ddd")
+            dayOfWeek: moment(item.fields.date).format("ddd"),
           });
           // if (item.fields.featured) {
           Object.assign(item.fields, {
-            dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
+            dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
           });
           // CONVERT MARKDOWN TO HTML
           if (item.fields.description) {
@@ -500,7 +512,7 @@ module.exports = function(app) {
               item.fields.shortDay = start.format("DD");
             }
             Object.assign(item.fields, {
-              dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
+              dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
             });
           }
         });
@@ -516,30 +528,30 @@ module.exports = function(app) {
           active: { events: true },
           headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
                     <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-          title: `Events`
+          title: `Events`,
         };
 
         return res.render("events", hbsObject);
       });
   });
 
-  app.get("/about", function(req, res) {
+  app.get("/about", function (req, res) {
     res.render("about", {
       active: { about: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
         <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
-      title: `About`
+      title: `About`,
     });
   });
 
-  app.get(["/sermons", "/sermons:id"], function(req, res) {
+  app.get(["/sermons", "/sermons:id"], function (req, res) {
     if (req.params.id) {
       vimeoOptions.qs.page = parseInt(req.params.id.substr(1));
     } else {
       vimeoOptions.qs.page = 1;
     }
 
-    request(vimeoOptions, function(error, response, body) {
+    request(vimeoOptions, function (error, response, body) {
       if (error) throw new Error(error);
       //
 
@@ -556,28 +568,28 @@ module.exports = function(app) {
       if (items) {
         if (items[0].link) {
           Object.assign(items[0], {
-            id: getIdFromVimeoURL(items[0].link)
+            id: getIdFromVimeoURL(items[0].link),
           });
         }
 
-        items.forEach(item => {
+        items.forEach((item) => {
           // console.log(moment(item.name.split(" ", 1), 'MM-DD-YY').format("MMM"))
           // console.log(moment(item.name.split(" ", 1), 'MM-DD-YY').format('MMM'))
           Object.assign(item, {
             shortMonth: moment(item.name.split(" ", 1), "MM-DD-YY").format(
               "MMM"
-            )
+            ),
           });
           Object.assign(item, {
-            shortDay: moment(item.name.split(" ", 1), "MM-DD-YY").format("DD")
+            shortDay: moment(item.name.split(" ", 1), "MM-DD-YY").format("DD"),
           });
           Object.assign(item, {
-            shortTitle: item.name.split(": ", 2)[1]
+            shortTitle: item.name.split(": ", 2)[1],
           });
           Object.assign(item, {
             featureDate: moment(item.name.split(" ", 1), "MM-DD-YY").format(
               "DD MMM YYYY"
-            )
+            ),
           });
         });
 
@@ -597,7 +609,7 @@ module.exports = function(app) {
         headContent: `<link rel="stylesheet" type="text/css" href="styles/sermons.css">
                 <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`,
         title: `Sermons | Page ` + vimeoOptions.qs.page,
-        nextSermonPage: vimeoOptions.qs.page + 1
+        nextSermonPage: vimeoOptions.qs.page + 1,
       };
 
       vimeoOptions.qs.page > 1
@@ -608,33 +620,33 @@ module.exports = function(app) {
     });
   });
 
-  app.get("/contact", function(req, res) {
+  app.get("/contact", function (req, res) {
     res.render("contact", {
       active: { contact: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/contact.css">
         <link rel="stylesheet" type="text/css" href="styles/contact_responsive.css">`,
-      title: `Contact`
+      title: `Contact`,
     });
   });
 
-  app.get("/giving", function(req, res) {
+  app.get("/giving", function (req, res) {
     res.render("giving", {
       headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
         <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
-      title: `Giving`
+      title: `Giving`,
     });
   });
 
-  app.get("/ministries", function(req, res) {
+  app.get("/ministries", function (req, res) {
     res.render("ministries", {
       active: { ministries: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
         <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">`,
-      title: `Ministries`
+      title: `Ministries`,
     });
   });
 
-  app.get("/ministry:id", function(req, res) {
+  app.get("/ministry:id", function (req, res) {
     req.params.id = req.params.id.substring(1);
     var firstRecord = null;
     var secondRecord = null;
@@ -645,25 +657,25 @@ module.exports = function(app) {
         content_type: "blog",
         order: "-fields.datePosted",
         "fields.ministry": req.params.id,
-        limit: 6
+        limit: 6,
       })
-      .then(function(entry) {
+      .then(function (entry) {
         if (entry.total >= 1) {
           Object.assign(entry.items, {
-            multipleEntries: true
+            multipleEntries: true,
           });
         }
 
         if (entry.fields) {
           Object.assign(entry.items[0].fields, {
-            request: req.params.id
+            request: req.params.id,
           });
         }
 
         var items = [];
         var itemsIncludingExpired = entry.items;
         // ELIMINATING OLD ENTRIES FROM PAGE
-        itemsIncludingExpired.forEach(earlyItem => {
+        itemsIncludingExpired.forEach((earlyItem) => {
           if (
             moment(earlyItem.fields.expirationDate).isBefore(
               moment().format("YYYY-MM-DD")
@@ -676,12 +688,12 @@ module.exports = function(app) {
         // console.log("LOOK HERE", items);
 
         // Converting times for template
-        items.forEach(item => {
+        items.forEach((item) => {
           // Converting Date info
           Object.assign(item.fields, {
             formattedDate: moment(item.fields.datePosted)
               .format("DD MMM, YYYY")
-              .toUpperCase()
+              .toUpperCase(),
           });
 
           // Creating article excerpt
@@ -695,7 +707,7 @@ module.exports = function(app) {
           truncatedString = truncatedString.substring(1, truncatedLength - 1);
 
           Object.assign(item.fields, {
-            excerpt: truncatedString
+            excerpt: truncatedString,
           });
 
           // Render HTML if featured on requested ministry
@@ -704,7 +716,7 @@ module.exports = function(app) {
             const rawRichTextField = item.fields.body;
             // let renderedHtml = documentToHtmlString(rawRichTextField);
             Object.assign(item.fields, {
-              renderedHtml: documentToHtmlString(rawRichTextField)
+              renderedHtml: documentToHtmlString(rawRichTextField),
             });
           }
         });
@@ -719,22 +731,22 @@ module.exports = function(app) {
             "fields.endDate[gte]": moment().format(),
             "fields.ministry": req.params.id,
             order: "fields.date",
-            limit: 6
+            limit: 6,
           })
-          .then(function(dbEvent) {
+          .then(function (dbEvent) {
             var items = dbEvent.items;
 
             // Converting times for template
-            items.forEach(item => {
+            items.forEach((item) => {
               Object.assign(item.fields, {
-                shortMonth: moment(item.fields.date).format("MMM")
+                shortMonth: moment(item.fields.date).format("MMM"),
               });
               Object.assign(item.fields, {
-                shortDay: moment(item.fields.date).format("DD")
+                shortDay: moment(item.fields.date).format("DD"),
               });
               // if (item.fields.featured) {
               Object.assign(item.fields, {
-                dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
+                dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
               });
               // CONVERT MARKDOWN TO HTML
               if (item.fields.description) {
@@ -757,7 +769,9 @@ module.exports = function(app) {
                   item.fields.shortDay = start.format("DD");
                 }
                 Object.assign(item.fields, {
-                  dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY")
+                  dateToCountTo: moment(item.fields.date).format(
+                    "MMMM D, YYYY"
+                  ),
                 });
               }
             });
@@ -772,15 +786,15 @@ module.exports = function(app) {
                 content_type: "blog",
                 "fields.ministry": req.params.id,
                 "fields.featureOnMinistryPage": true,
-                limit: 1
+                limit: 1,
               })
-              .then(function(entry) {
+              .then(function (entry) {
                 var item = entry.items[0];
                 if (item) {
                   const rawRichTextField = item.fields.body;
                   // let renderedHtml = documentToHtmlString(rawRichTextField);
                   Object.assign(item.fields, {
-                    renderedHtml: documentToHtmlString(rawRichTextField)
+                    renderedHtml: documentToHtmlString(rawRichTextField),
                   });
                 }
 
@@ -798,7 +812,7 @@ module.exports = function(app) {
                   active: { ministries: true },
                   headContent: `<link rel="stylesheet" type="text/css" href="styles/ministry.css">
               <link rel="stylesheet" type="text/css" href="styles/ministry_responsive.css">`,
-                  title: req.params.id
+                  title: req.params.id,
                 };
                 // console.log("hbsObject:  ", bloghbsObject.blogpost);
                 res.render("ministry", bloghbsObject);
@@ -808,16 +822,16 @@ module.exports = function(app) {
   });
 
   // Page for individual events
-  app.get("/event:id", function(req, res) {
+  app.get("/event:id", function (req, res) {
     req.params.id = req.params.id.substring(1);
-    client.getEntry(req.params.id).then(function(dbEvent) {
+    client.getEntry(req.params.id).then(function (dbEvent) {
       // Converting times for template
       Object.assign(dbEvent.fields, {
         shortMonth: moment(dbEvent.fields.date).format("MMM"),
-        dayOfWeek: moment(dbEvent.fields.date).format("ddd")
+        dayOfWeek: moment(dbEvent.fields.date).format("ddd"),
       });
       Object.assign(dbEvent.fields, {
-        shortDay: moment(dbEvent.fields.date).format("DD")
+        shortDay: moment(dbEvent.fields.date).format("DD"),
       });
 
       // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
@@ -847,7 +861,7 @@ module.exports = function(app) {
         )
       ) {
         Object.assign(dbEvent.fields, {
-          dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY")
+          dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY"),
         });
       }
 
@@ -869,7 +883,7 @@ module.exports = function(app) {
         active: { events: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
                     <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-        title: dbEvent.fields.title
+        title: dbEvent.fields.title,
       };
 
       // console.log(dbEvent);
@@ -877,60 +891,60 @@ module.exports = function(app) {
     });
   });
 
-  app.get("/services", function(req, res) {
+  app.get("/services", function (req, res) {
     var bloghbsObject = {
       // article: entry.fields,
       // request: req.params.id,
       active: { about: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
         <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`,
-      title: `Services`
+      title: `Services`,
     };
     // console.log("hbsObject:  ", bloghbsObject.blogpost);
     res.render("services", bloghbsObject);
   });
 
   // REDIRECT TO CONNECTION CARD
-  app.get("/card", function(req, res) {
+  app.get("/card", function (req, res) {
     res.redirect("https://rbcc.churchcenter.com/people/forms/43489");
   });
 
-  app.get("/highschool", function(req, res) {
+  app.get("/highschool", function (req, res) {
     res.redirect("/ministry:High%20School");
   });
 
-  app.get("/msm", function(req, res) {
+  app.get("/msm", function (req, res) {
     res.redirect("/ministry:Middle%20School");
   });
 
-  app.get("/missions", function(req, res) {
+  app.get("/missions", function (req, res) {
     res.redirect("/ministry:Missions");
   });
 
-  app.get("/shop", function(req, res) {
+  app.get("/shop", function (req, res) {
     res.redirect("https://www.companycasuals.com/RBCommunity");
   });
 
-  app.get("/give", function(req, res) {
+  app.get("/give", function (req, res) {
     res.redirect("/giving");
   });
 
-  app.get("/sitemap.xml", function(req, res) {
+  app.get("/sitemap.xml", function (req, res) {
     res.sendFile("/sitemap.xml");
   });
 
-  app.get("/arabic", function(req, res) {
+  app.get("/arabic", function (req, res) {
     res.redirect("/ministry:Arabic%20Ministries");
   });
 
-  app.use(function(req, res) {
+  app.use(function (req, res) {
     var bloghbsObject = {
       // article: entry.fields,
       // request: req.params.id,
       // active: { about: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
         <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
-      title: `404`
+      title: `404`,
     };
     res.render("404", bloghbsObject);
   });
