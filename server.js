@@ -19,6 +19,17 @@ app.engine(
     helpers: {
       formatDate: function(date, format) {
         return moment(date).format(format);
+      },
+      changeSpacesToDashes: function(str) {
+        console.log("HELPER START: ", str)
+        str = str.replace(/\s+/g, "-")
+        console.log("HELPER END: ", str)
+        return str
+      },
+      changeDashesToSpaces: function(str) {
+        console.log("HELPER START: ", str)
+        str = str.replace(/-/g, " ")        
+        console.log("HELPER END: ", str)
       }
       // function(name, options) {
       //     if(!this._sections) this._section = {};

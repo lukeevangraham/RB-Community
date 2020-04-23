@@ -465,11 +465,11 @@
                 <!-- News Post -->
                 <div class="col-xl-4 col-lg-6 news_post_col" data-aos="fade-down">
                     <div class="news_post">
-                        <div class="news_image"><a href="./blog:{{this.fields.title}}"><img
+                        <div class="news_image"><a href="./blog-{{changeSpacesToDashes this.fields.title}}"><img
                                     data-src="{{fields.image.fields.file.url}}" class="lazyload" alt=""></a></div>
                         <div class="news_post_content">
                             <div class="news_post_title">
-                                <a href="./blog:{{this.fields.title}}">{{fields.title}}</a>
+                                <a href="./blog-{{changeSpacesToDashes this.fields.title}}">{{fields.title}}</a>
                             </div>
                             <div class="news_post_meta">
                                 <ul>

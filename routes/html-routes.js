@@ -247,6 +247,8 @@ module.exports = function (app) {
   });
 
   app.get("/blog:id", function (req, res) {
+    console.log("ORG URL: ", req.originalUrl)
+    console.log("ID: ", req.params.id)
     // console.log("LOOK HERE: ", req.params.id.match(/_single:/g).length)
     req.params.id.match(/_single:/g) ? (
       console.log("_blog_single: detected!!"),
@@ -261,6 +263,8 @@ module.exports = function (app) {
     // req.params.id.substring,
     req.params.id = req.originalUrl.substring(6),
     str = req.originalUrl.substring(6),
+    str = str.replace(/-/g, " "),
+
     console.log("Before: ", str),
     
   // newRes = str.replace(/%20/g, " "),
