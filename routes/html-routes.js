@@ -250,7 +250,6 @@ module.exports = function (app) {
     req.params.id.match(/_single:/g) ? (
       console.log("_blog_single: detected!!"),
       req.params.id = req.params.id.substring(8),
-      console.log("REQ ID: ", req.params.id),
       client.getEntry(req.params.id).then(function (entry) {
         // console.log("ENTRY #: ", entry),
         // blogEntry = entry;
@@ -258,10 +257,8 @@ module.exports = function (app) {
           renderSingleBlog(entry, res)
       })
     ) : (
-      console.log("REQ: ", req.params.id),
-    req.params.id.substring,
+    // req.params.id.substring,
     req.params.id = req.params.id.substring(1),
-    console.log("ID (new): ", req.params.id.charAt(0)),
 
     client.getEntries({
       content_type: "blog",
