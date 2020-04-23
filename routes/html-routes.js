@@ -122,6 +122,53 @@ function compare(a, b) {
   return comparison;
 }
 
+function prepareBlogEntryForSinglePage(entry, requestId) {
+
+  Object.assign(entry.fields, {
+    shortMonth: moment(entry.fields.datePosted)
+      .format("MMM")
+      .toUpperCase(),
+  });
+  Object.assign(entry.fields, {
+    shortDay: moment(entry.fields.datePosted).format("DD"),
+  });
+
+  // Converting vimeo embeds
+  const options = {
+    renderNode: {
+      [INLINES.HYPERLINK]: (node) => {
+        if (node.data.uri.includes("player.vimeo.com/video")) {
+          return `<div class="col-lg-7 col-xs-12 p-0"><IframeContainer class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" title="Unique Title 001" src=${node.data.uri} frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></IframeContainer></div>`;
+        } else
+          return `<a href="${node.data.uri}" target="blank">${node.content[0].value}</a>`;
+      },
+      "embedded-asset-block": (node) =>
+        `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`,
+    },
+  };
+
+  const rawRichTextField = entry.fields.body;
+  // let renderedHtml = documentToHtmlString(rawRichTextField);
+  Object.assign(entry.fields, {
+    renderedHtml: documentToHtmlString(rawRichTextField, options),
+    id: requestId,
+  });
+  // renderSingleBlog(entry)
+  return entry;
+}
+
+function renderSingleBlog(entry, res) {
+  var bloghbsObject = {
+    article: entry,
+    active: { news: true },
+    headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
+              <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`,
+    title: entry.fields.title,
+  };
+  // console.log("hbsObject:  ", bloghbsObject.article);
+  res.render("blog_single", bloghbsObject);
+}
+
 // Routes
 module.exports = function (app) {
   app.get("/blog", function (req, res) {
@@ -198,80 +245,35 @@ module.exports = function (app) {
       });
   });
 
-  app.get(["/blog_single:id", "/blog:id"], function (req, res) {
+  app.get("/blog:id", function (req, res) {
+    // console.log("LOOK HERE: ", req.params.id.match(/_single:/g).length)
+    req.params.id.match(/_single:/g) ? (
+      console.log("_blog_single: detected!!"),
+      req.params.id = req.params.id.substring(8),
+      console.log("REQ ID: ", req.params.id),
+      client.getEntry(req.params.id).then(function (entry) {
+        // console.log("ENTRY #: ", entry),
+        // blogEntry = entry;
+        prepareBlogEntryForSinglePage(entry, req.params.id)
+          renderSingleBlog(entry, res)
+      })
+    ) : (
+      console.log("REQ: ", req.params.id),
+    req.params.id.substring,
+    req.params.id = req.params.id.substring(1),
+    console.log("ID (new): ", req.params.id.charAt(0)),
 
-    function renderSingleBlog(entry) {
-      var bloghbsObject = {
-        article: entry,
-        active: { news: true },
-        headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
-                  <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`,
-        title: entry.fields.title,
-      };
-      // console.log("hbsObject:  ", bloghbsObject.article);
-      res.render("blog_single", bloghbsObject);
-    }
-
-    function prepareBlogEntryForSinglePage(entry) {
-
-      Object.assign(entry.fields, {
-        shortMonth: moment(entry.fields.datePosted)
-          .format("MMM")
-          .toUpperCase(),
-      });
-      Object.assign(entry.fields, {
-        shortDay: moment(entry.fields.datePosted).format("DD"),
-      });
-
-      // Converting vimeo embeds
-      const options = {
-        renderNode: {
-          [INLINES.HYPERLINK]: (node) => {
-            if (node.data.uri.includes("player.vimeo.com/video")) {
-              return `<div class="col-lg-7 col-xs-12 p-0"><IframeContainer class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" title="Unique Title 001" src=${node.data.uri} frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></IframeContainer></div>`;
-            } else
-              return `<a href="${node.data.uri}" target="blank">${node.content[0].value}</a>`;
-          },
-          "embedded-asset-block": (node) =>
-            `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`,
-        },
-      };
-
-      const rawRichTextField = entry.fields.body;
-      // let renderedHtml = documentToHtmlString(rawRichTextField);
-      Object.assign(entry.fields, {
-        renderedHtml: documentToHtmlString(rawRichTextField, options),
-        id: req.params.id,
-      });
-      renderSingleBlog(entry)
-    }
-
-
-    req.params.id = req.params.id.substring(1);
-    console.log("ID: ", req.params.id.charAt(0));
-
-    // let blogEntry;
-
-    // Is the ID a number(old format) ar a string(title of article)
-    req.params.id.charAt(0) >= "0" && req.params.id.charAt(0) <= "9"
-      ? (console.log("number"),
-        client.getEntry(req.params.id).then(function (entry) {
-          // console.log("ENTRY #: ", entry);
-          // blogEntry = entry;
-          prepareBlogEntryForSinglePage(entry);
-        }))
-      : (
-        console.log("no number"),
-        client.getEntries({
-          content_type: "blog",
-          "fields.title": req.params.id,
-        }).then(function (entry) {
-          // console.log("ENTRY no#: ", entry.items[0])
-          // blogEntry = entry.items[0]
-          prepareBlogEntryForSinglePage(entry.items[0])
-        })
-        );
-  });
+    client.getEntries({
+      content_type: "blog",
+      "fields.title": req.params.id,
+    }).then(function (entry) {
+      // console.log("ENTRY no#: ", entry.items[0])
+      // blogEntry = entry.items[0]
+      prepareBlogEntryForSinglePage(entry.items[0], req.params.id)
+      renderSingleBlog(entry.items[0], res)
+    })
+    )
+  })
 
   app.get(["/", "/index.html", "/home"], function (req, res) {
     var vimeoRecord = null;
