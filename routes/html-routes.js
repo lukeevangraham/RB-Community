@@ -201,15 +201,31 @@ module.exports = function(app) {
   app.get(["/blog_single:id", "/blog:id"], function(req, res) {
     console.log("ID: ", req.params.id)
     req.params.id = req.params.id.substring(1);
-    client.getEntry(req.params.id).then(function(entry) {
+    
+    
+    // original contentful query
+    // client.getEntry(req.params.id)
+    
+    // new query
+    client.getEntries({
+      content_type: "blog",
+      "fields.title": req.params.id,
+    
+    })
+    .then(function(entry) {
+
+      // console.log("ENRY: ", entry.items[0].fields)
+
+      //new query for title
+
       // Converting times for template
-      Object.assign(entry.fields, {
-        shortMonth: moment(entry.fields.datePosted)
+      Object.assign(entry.items[0].fields, {
+        shortMonth: moment(entry.items[0].fields.datePosted)
           .format("MMM")
           .toUpperCase()
       });
-      Object.assign(entry.fields, {
-        shortDay: moment(entry.fields.datePosted).format("DD")
+      Object.assign(entry.items[0].fields, {
+        shortDay: moment(entry.items[0].fields.datePosted).format("DD")
       });
 
       // Converting vimeo embeds
@@ -226,19 +242,19 @@ module.exports = function(app) {
         }
       };
 
-      const rawRichTextField = entry.fields.body;
+      const rawRichTextField = entry.items[0].fields.body;
       // let renderedHtml = documentToHtmlString(rawRichTextField);
-      Object.assign(entry.fields, {
+      Object.assign(entry.items[0].fields, {
         renderedHtml: documentToHtmlString(rawRichTextField, options),
         id: req.params.id
       });
 
       var bloghbsObject = {
-        article: entry,
+        article: entry.items[0],
         active: { news: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
                     <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`,
-        title: entry.fields.title
+        title: entry.items[0].fields.title
       };
       // console.log("hbsObject:  ", bloghbsObject.article);
       res.render("blog_single", bloghbsObject);
