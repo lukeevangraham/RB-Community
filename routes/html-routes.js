@@ -198,7 +198,8 @@ module.exports = function(app) {
       });
   });
 
-  app.get("/blog_single:id", function(req, res) {
+  app.get(["/blog_single:id", "/blog:id"], function(req, res) {
+    console.log("ID: ", req.params.id)
     req.params.id = req.params.id.substring(1);
     client.getEntry(req.params.id).then(function(entry) {
       // Converting times for template
