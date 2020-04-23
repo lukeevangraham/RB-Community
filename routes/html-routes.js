@@ -124,6 +124,7 @@ function compare(a, b) {
 
 function prepareBlogEntryForSinglePage(entry, requestId) {
 
+
   Object.assign(entry.fields, {
     shortMonth: moment(entry.fields.datePosted)
       .format("MMM")
@@ -258,11 +259,18 @@ module.exports = function (app) {
       })
     ) : (
     // req.params.id.substring,
-    req.params.id = req.params.id.substring(1),
+    req.params.id = req.originalUrl.substring(6),
+    str = req.originalUrl.substring(6),
+    console.log("Before: ", str),
+    
+  // newRes = str.replace(/%20/g, " "),
+  newRes = decodeURI(str),
+
+    console.log("LOOK HERE: ", newRes),
 
     client.getEntries({
       content_type: "blog",
-      "fields.title": req.params.id,
+      "fields.title": newRes,
     }).then(function (entry) {
       // console.log("ENTRY no#: ", entry.items[0])
       // blogEntry = entry.items[0]
