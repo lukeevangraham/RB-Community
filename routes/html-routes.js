@@ -264,6 +264,7 @@ module.exports = function (app) {
     req.params.id = req.originalUrl.substring(6),
     str = req.originalUrl.substring(6),
     str = str.replace(/-/g, " "),
+    str = str.replace(/\s\s\s/g, " - "),
 
     console.log("Before: ", str),
     

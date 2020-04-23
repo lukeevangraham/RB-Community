@@ -23,6 +23,7 @@ app.engine(
       changeSpacesToDashes: function(str) {
         console.log("HELPER START: ", str)
         str = str.replace(/\s+/g, "-")
+        // str = str.replace(/---/g, " - ")
         console.log("HELPER END: ", str)
         return str
       },
