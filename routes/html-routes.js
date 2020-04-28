@@ -266,7 +266,12 @@ module.exports = function (app) {
     str = str.replace(/-/g, " "),
     str = str.replace(/\s\s\s/g, " - "),
 
-    console.log("Before: ", str),
+    console.log("Before: ", str.indexOf('?')),
+    str.indexOf('?') > 0 ? str = str.substring(0, str.indexOf('?')) : '',
+    // questionIndex = str.indexOf('?')+1,
+    // console.log("After: ", str.substring(0, questionIndex)),
+    // str = str.substring(0, questionIndex),
+    console.log("AFTER: ", str),
     
   // newRes = str.replace(/%20/g, " "),
   newRes = decodeURI(str),
@@ -275,7 +280,7 @@ module.exports = function (app) {
 
     client.getEntries({
       content_type: "blog",
-      "fields.title": newRes,
+      "fields.title[match]": newRes,
     }).then(function (entry) {
       // console.log("ENTRY no#: ", entry.items[0])
       // blogEntry = entry.items[0]
