@@ -1,4 +1,5 @@
 require("dotenv").config();
+let axios = require("axios")
 let keys = require("../keys.js");
 var request = require("request");
 var moment = require("moment");
@@ -480,56 +481,58 @@ module.exports = function (app) {
   // })
 
   app.get("/events", function (req, res) {
-    client
-      .getEntries({
-        content_type: "events",
-        "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
-        order: "fields.date",
-      })
+    // client
+    //   .getEntries({
+    //     content_type: "events",
+    //     "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
+    //     order: "fields.date",
+    //   })
+      axios.get("https://admin.rbcommunity.org/events")
       .then(function (dbEvent) {
-        var items = dbEvent.items;
+        // console.log("LOOK HERE: ", dbEvent)
+        var items = dbEvent.data;
         var topItem = [];
 
         // Converting times for template
         items.forEach((item) => {
-          if (item.fields.featured) {
-            topItem.push(item);
-          }
-          Object.assign(item.fields, {
-            shortMonth: moment(item.fields.date).format("MMM"),
+          // if (item.fields.featured) {
+            // topItem.push(item);
+          // }
+          Object.assign(item, {
+            shortMonth: moment(item.StartDate).format("MMM"),
           });
-          Object.assign(item.fields, {
-            shortDay: moment(item.fields.date).format("DD"),
-            dayOfWeek: moment(item.fields.date).format("ddd"),
+          Object.assign(item, {
+            shortDay: moment(item.StartDate).format("DD"),
+            dayOfWeek: moment(item.StartDate).format("ddd"),
           });
           // if (item.fields.featured) {
-          Object.assign(item.fields, {
-            dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
+          Object.assign(item, {
+            dateToCountTo: moment(item.StartDate).format("MMMM D, YYYY"),
           });
           // CONVERT MARKDOWN TO HTML
-          if (item.fields.description) {
-            item.fields.description = marked(item.fields.description);
+          if (item.Description) {
+            item.Description = marked(item.Description);
           }
           // }
 
           // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
-          if (item.fields.repeatsEveryDays > 0) {
+          if (item.RepeatsEvery____Days > 0) {
             if (
-              moment(item.fields.date).isBefore(moment().format("YYYY-MM-DD"))
+              moment(item.StartDate).isBefore(moment().format("YYYY-MM-DD"))
             ) {
-              let start = moment(item.fields.date);
+              let start = moment(item.StartDate);
               let end = moment().format("YYYY-MM-DD");
 
               while (start.isBefore(end)) {
-                start.add(item.fields.repeatsEveryDays, "day");
+                start.add(item.RepeatsEvery____Days, "day");
               }
               // console.log(start.format("MM DD YYYY"));
-              item.fields.date = start.format("YYYY-MM-DD");
-              item.fields.shortMonth = start.format("MMM");
-              item.fields.shortDay = start.format("DD");
+              item.StartDate = start.format("YYYY-MM-DD");
+              item.shortMonth = start.format("MMM");
+              item.shortDay = start.format("DD");
             }
-            Object.assign(item.fields, {
-              dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
+            Object.assign(item, {
+              dateToCountTo: moment(item.StartDate).format("MMMM D, YYYY"),
             });
           }
         });
@@ -540,7 +543,7 @@ module.exports = function (app) {
         // console.log("LOOK HERE: ", topItem)
 
         var hbsObject = {
-          events: dbEvent.items,
+          events: items,
           topEvent: topItem,
           active: { events: true },
           headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
