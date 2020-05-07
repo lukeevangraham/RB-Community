@@ -159,9 +159,12 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
 }
 
 function renderSingleBlog(entry, res) {
+  // console.log("ENTRY: ", entry)
   var bloghbsObject = {
     article: entry,
     active: { news: true },
+    metaTitle: entry.fields.metaTitle,
+    metaDescription: entry.fields.metaDescription,
     headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
               <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`,
     title: entry.fields.title,
@@ -247,8 +250,8 @@ module.exports = function (app) {
   });
 
   app.get("/blog:id", function (req, res) {
-    console.log("ORG URL: ", req.originalUrl)
-    console.log("ID: ", req.params.id)
+    // console.log("ORG URL: ", req.originalUrl)
+    // console.log("ID: ", req.params.id)
     // console.log("LOOK HERE: ", req.params.id.match(/_single:/g).length)
     req.params.id.match(/_single:/g) ? (
       console.log("_blog_single: detected!!"),
@@ -266,17 +269,17 @@ module.exports = function (app) {
     str = str.replace(/-/g, " "),
     str = str.replace(/\s\s\s/g, " - "),
 
-    console.log("Before: ", str.indexOf('?')),
+    // console.log("Before: ", str.indexOf('?')),
     str.indexOf('?') > 0 ? str = str.substring(0, str.indexOf('?')) : '',
     // questionIndex = str.indexOf('?')+1,
     // console.log("After: ", str.substring(0, questionIndex)),
     // str = str.substring(0, questionIndex),
-    console.log("AFTER: ", str),
+    // console.log("AFTER: ", str),
     
   // newRes = str.replace(/%20/g, " "),
   newRes = decodeURI(str),
 
-    console.log("LOOK HERE: ", newRes),
+    // console.log("LOOK HERE: ", newRes),
 
     client.getEntries({
       content_type: "blog",
