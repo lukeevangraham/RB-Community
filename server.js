@@ -11,7 +11,7 @@ var app = express();
 // COMMENTED OUT TO REMOVE SEQUELIZE ON 9/9/19
 // var db = require("./models");
 
-var PORT = process.env.PORT || 3000;
+var PORT = process.env.PORT || 7000;
 
 app.engine(
   "handlebars",

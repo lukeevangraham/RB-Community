@@ -21,7 +21,6 @@
 		</div>
 	</div>
 
-
 	{{#if this.topEvent}}
 	{{#each this.topEvent}}
 	{{log this}}
@@ -131,29 +130,31 @@
 {{#each events}}
 {{#unless this.fields.featured}}
 
+{{log this}}
+
 			<!-- Event -->
 
 			<div class="events_item">
-				<div class="events_item_image"><a href="/event:{{this.sys.id}}"><img
-							data-src="{{this.fields.eventImage.fields.file.url}}" class="lazyload" alt=""></a></div>
+				<div class="events_item_image"><a href="/event:{{this.id}}"><img
+							data-src="https://admin.rbcommunity.org{{this.Image.formats.medium.url}}" class="lazyload" alt=""></a></div>
 				<div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
 					<div class="event_date">
 						<div class="d-flex flex-column align-items-center justify-content-center">
-							<div class="event_month">{{this.fields.shortMonth}}</div>
-							<div class="event_day">{{this.fields.shortDay}}</div>
-							<div class="event_day_of_week">{{this.fields.dayOfWeek}}</div>
+							<div class="event_month">{{this.shortMonth}}</div>
+							<div class="event_day">{{this.shortDay}}</div>
+							<div class="event_day_of_week">{{this.dayOfWeek}}</div>
 						</div>
 					</div>
 					<div class="event_content">
-						<div class="event_title"><a href="/event:{{this.sys.id}}">{{this.fields.title}}</a></div>
+						<div class="event_title"><a href="/event:{{this.id}}">{{this.Title}}</a></div>
 						<ul class="event_row">
 							<li>
 								<div class="event_icon"><img src="images/calendar.png" alt=""></div>
-								<span>{{this.fields.time}}</span>
+								<span>{{this.Time}}</span>
 							</li>
 							<li>
 								<div class="event_icon"><img src="images/location.png" alt=""></div>
-								<span>{{this.fields.location}}</span>
+								<span>{{this.Location}}</span>
 							</li>
 						</ul>
 					</div>
