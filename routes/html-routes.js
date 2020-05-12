@@ -160,11 +160,13 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
 
 function renderSingleBlog(entry, res) {
   // console.log("ENTRY: ", entry)
+  let newMetaDescription
+  entry.fields.metaDescription ? newMetaDescription = entry.fields.metaDescription : newMetaDescription = "Hello there"
   var bloghbsObject = {
     article: entry,
     active: { news: true },
-    metaTitle: entry.fields.metaTitle,
-    metaDescription: entry.fields.metaDescription,
+    metaTitle: entry.fields.title,
+    metaDescription: newMetaDescription,
     headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
               <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`,
     title: entry.fields.title,
