@@ -963,6 +963,10 @@ module.exports = function (app) {
     res.redirect("/ministry:Arabic%20Ministries");
   });
 
+  app.get("/families", function (req, res) {
+    res.redirect("/ministry:Family%20Ministries")
+  })
+
   app.use(function (req, res) {
     var bloghbsObject = {
       // article: entry.fields,
