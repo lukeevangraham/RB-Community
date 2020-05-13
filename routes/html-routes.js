@@ -164,6 +164,8 @@ function renderSingleBlog(entry, res) {
   entry.fields.metaDescription ? newMetaDescription = entry.fields.metaDescription : newMetaDescription = "";
   let newMetaTitle
   entry.fields.metaTitle ? newMetaTitle = entry.fields.metaTitle : newMetaTitle = entry.fields.title;
+  let browserTitle
+  entry.fields.metaTitle ? browserTitle = entry.fields.metaTitle : browserTitle = entry.fields.title;
   var bloghbsObject = {
     article: entry,
     active: { news: true },
@@ -171,7 +173,7 @@ function renderSingleBlog(entry, res) {
     metaDescription: newMetaDescription,
     headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
               <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`,
-    title: entry.fields.title,
+    title: browserTitle,
   };
   // console.log("hbsObject:  ", bloghbsObject.article);
   res.render("blog_single", bloghbsObject);
