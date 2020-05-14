@@ -45,12 +45,6 @@ app.use(express.json());
 // Static directory
 app.use(express.static("public"));
 
-// sending all requests to rbcommunity.org
-app.get("*", function(req, res) {
-  res.redirect('https://rbcommunity.org' + req.url)
-  // res.redirect('https://rbcommunity.org'+ req.url)
-})
-
 // Routes
 // =============================================================
 // require("./routes/api-routes.js")(app);
