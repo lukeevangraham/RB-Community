@@ -4,6 +4,8 @@ Deployed at https://rbcommunity.org
 
 ![Home](./readme-images/home.png)
 
+RB Community Church's website was built with JavaScript, Node.js and Handlebars using the Contentful CMS.  Much of the site's information is built from two Database tables: one for events and another for blog entries.  Additionaly the site sources videos from Vimeo and places them throughout the site in specific places.  Below are instructions for church leaders to edit the website.
+
 ## Accessing site tools:
 http://be.contentful.com
 
