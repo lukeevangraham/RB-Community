@@ -325,24 +325,28 @@ module.exports = function (app) {
 
         // a = vimeoAnnRecord.data[0].link;
         var items = vimeoAnnRecord.data;
-        // console.log("ITEMS: ", items)
-        let trimmedURL = getIdFromVimeoURL(items[0].link);
-
-        let editedEmbed = items[0].embed.html;
-        // console.log("TRIMMED URL: ", trimmedURL)
-        editedEmbed = editedEmbed.replace(
-          `" `,
-          `" data-aos="fade-right" class="about_image" `
-        );
-        // a = a.replace(`https://`,`//`)
-        // console.log("HERE: ", a)
-        // console.log(vimeoAnnRecord)
-
-        // vimeoAnnURL = getIdFromVimeoURL(a);
-        // vimeoAnnURL = trimmedURL;
-        // vimeoAnnURL = items[0].embed.html;
-        vimeoAnnURL = editedEmbed;
-        // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
+        if (items.length > 0) {
+          console.log("ITEMS: ", items)
+          // console.log("ITEMS: ", items)
+          let trimmedURL = getIdFromVimeoURL(items[0].link);
+  
+          let editedEmbed = items[0].embed.html;
+          // console.log("TRIMMED URL: ", trimmedURL)
+          editedEmbed = editedEmbed.replace(
+            `" `,
+            `" data-aos="fade-right" class="about_image" `
+          );
+          // a = a.replace(`https://`,`//`)
+          // console.log("HERE: ", a)
+          // console.log(vimeoAnnRecord)
+  
+          // vimeoAnnURL = getIdFromVimeoURL(a);
+          // vimeoAnnURL = trimmedURL;
+          // vimeoAnnURL = items[0].embed.html;
+          vimeoAnnURL = editedEmbed;
+          // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
+          
+        }
 
         client
           .getEntries({
