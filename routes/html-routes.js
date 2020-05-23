@@ -971,6 +971,10 @@ module.exports = function (app) {
     res.redirect("/ministry:Family%20Ministries")
   })
 
+  app.get("/survey", function (req, res) {
+    res.redirect("https://assessments.gloo.us/a/RGVwbG95bWVudENvbmZpZ3wxNjg4NDMyMTk3NDc4OTA5MzQz")
+  })
+
   app.use(function (req, res) {
     var bloghbsObject = {
       // article: entry.fields,
