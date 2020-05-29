@@ -466,6 +466,7 @@ module.exports = function (app) {
                     vimeoAnn: vimeoAnnURL,
                     blogpost: thirdRecord,
                     homeWelcome: welcomeRecord.fields.renderedHtml,
+                    metaTitle: "Rancho Bernardo Community Presbyterian Church | RBCPC San Diego",
                     headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
               <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
                     title: `Home`,
@@ -570,7 +571,8 @@ module.exports = function (app) {
       active: { about: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
         <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
-      title: `About`,
+      metaTitle: "Join Our Family | RB Community Presbyterian Church",
+        title: `About`,
     });
   });
 
@@ -639,6 +641,7 @@ module.exports = function (app) {
         headContent: `<link rel="stylesheet" type="text/css" href="styles/sermons.css">
                 <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`,
         title: `Sermons | Page ` + vimeoOptions.qs.page,
+        metaTitle: "Sermons | RB Community Presbyterian Church",
         nextSermonPage: vimeoOptions.qs.page + 1,
       };
 
@@ -673,6 +676,7 @@ module.exports = function (app) {
       headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
         <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">`,
       title: `Ministries`,
+      metaTitle: `Ministries | RB Community Presbyterian Church San Diego`
     });
   });
 
