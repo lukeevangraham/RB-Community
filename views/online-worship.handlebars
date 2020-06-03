@@ -38,9 +38,10 @@
 				</div> --}}
                 <div class="col-md-8 mb-3">
                     <div class="embed-responsive embed-responsive-16by9">
-                    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/lJBWhulYc9w"
-                        frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen></iframe>
+                        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/lJBWhulYc9w"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
 
                     </div>
                 </div>
@@ -48,20 +49,29 @@
                     <div class="page_nav mt-0">
                         <ul class="nav nav-tabs">
                             <li class="nav-item">
-                                <a class="side-nav" data-name="chat" href="#">Chat</a>
+                                <a class="side-nav" data-name="chat" href="#/">Chat</a>
                             </li>
                             <li class="nav-item" data-name="giving">
-                                <a class="side-nav" data-name="giving" href="#" >Giving</a>
+                                <a class="side-nav" data-name="giving" href="#/">Giving</a>
                             </li>
                             <li class="nav-item">
-                                <a class="side-nav" data-name="prayer" href="#" >Prayer</a>
+                                <a class="side-nav" data-name="prayer" href="#/">Prayer</a>
                             </li>
                             <li class="nav-item">
-                                <a class="side-nav" data-name="info" href="#" >Info</a>
+                                <a class="side-nav" data-name="info" href="#/">Info</a>
                             </li>
                         </ul>
                     </div>
-                    <div id="sidebar"></div>
+                    <div id="sidebarMain">
+                        <ul id="messages"></ul>
+                        <form id="messageForm" action="">
+                            <input id="m" autocomplete="off" /><button>Send</button>
+                        </form>
+                    </div>
+
+
+
+
                 </div>
             </div>
         </div>

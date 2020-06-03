@@ -855,7 +855,7 @@ section {
 }
 
 .invisible {
-	display: none;
+  display: none;
 }
 
 /*********************************
@@ -1121,4 +1121,14 @@ section {
 }
 .blog_social ul li a i:hover {
   color: #327091;
+}
+
+#chat-messages {
+  height: 200px;
+  overflow-y: auto;
+}
+
+#messages {
+  height: 300px;
+  overflow-y: auto;
 }
