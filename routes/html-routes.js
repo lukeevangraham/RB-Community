@@ -123,12 +123,8 @@ function compare(a, b) {
 }
 
 function prepareBlogEntryForSinglePage(entry, requestId) {
-
-
   Object.assign(entry.fields, {
-    shortMonth: moment(entry.fields.datePosted)
-      .format("MMM")
-      .toUpperCase(),
+    shortMonth: moment(entry.fields.datePosted).format("MMM").toUpperCase(),
   });
   Object.assign(entry.fields, {
     shortDay: moment(entry.fields.datePosted).format("DD"),
@@ -160,12 +156,18 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
 
 function renderSingleBlog(entry, res) {
   // console.log("ENTRY: ", entry)
-  let newMetaDescription
-  entry.fields.metaDescription ? newMetaDescription = entry.fields.metaDescription : newMetaDescription = "";
-  let newMetaTitle
-  entry.fields.metaTitle ? newMetaTitle = entry.fields.metaTitle : newMetaTitle = entry.fields.title;
-  let browserTitle
-  entry.fields.metaTitle ? browserTitle = entry.fields.metaTitle : browserTitle = entry.fields.title;
+  let newMetaDescription;
+  entry.fields.metaDescription
+    ? (newMetaDescription = entry.fields.metaDescription)
+    : (newMetaDescription = "");
+  let newMetaTitle;
+  entry.fields.metaTitle
+    ? (newMetaTitle = entry.fields.metaTitle)
+    : (newMetaTitle = entry.fields.title);
+  let browserTitle;
+  entry.fields.metaTitle
+    ? (browserTitle = entry.fields.metaTitle)
+    : (browserTitle = entry.fields.title);
   var bloghbsObject = {
     article: entry,
     active: { news: true },
@@ -259,45 +261,43 @@ module.exports = function (app) {
     // console.log("ORG URL: ", req.originalUrl)
     // console.log("ID: ", req.params.id)
     // console.log("LOOK HERE: ", req.params.id.match(/_single:/g).length)
-    req.params.id.match(/_single:/g) ? (
-      console.log("_blog_single: detected!!"),
-      req.params.id = req.params.id.substring(8),
-      client.getEntry(req.params.id).then(function (entry) {
-        // console.log("ENTRY #: ", entry),
-        // blogEntry = entry;
-        prepareBlogEntryForSinglePage(entry, req.params.id)
-          renderSingleBlog(entry, res)
-      })
-    ) : (
-    // req.params.id.substring,
-    req.params.id = req.originalUrl.substring(6),
-    str = req.originalUrl.substring(6),
-    str = str.replace(/-/g, " "),
-    str = str.replace(/\s\s\s/g, " - "),
+    req.params.id.match(/_single:/g)
+      ? (console.log("_blog_single: detected!!"),
+        (req.params.id = req.params.id.substring(8)),
+        client.getEntry(req.params.id).then(function (entry) {
+          // console.log("ENTRY #: ", entry),
+          // blogEntry = entry;
+          prepareBlogEntryForSinglePage(entry, req.params.id);
+          renderSingleBlog(entry, res);
+        }))
+      : // req.params.id.substring,
+        ((req.params.id = req.originalUrl.substring(6)),
+        (str = req.originalUrl.substring(6)),
+        (str = str.replace(/-/g, " ")),
+        (str = str.replace(/\s\s\s/g, " - ")),
+        // console.log("Before: ", str.indexOf('?')),
+        str.indexOf("?") > 0 ? (str = str.substring(0, str.indexOf("?"))) : "",
+        // questionIndex = str.indexOf('?')+1,
+        // console.log("After: ", str.substring(0, questionIndex)),
+        // str = str.substring(0, questionIndex),
+        // console.log("AFTER: ", str),
 
-    // console.log("Before: ", str.indexOf('?')),
-    str.indexOf('?') > 0 ? str = str.substring(0, str.indexOf('?')) : '',
-    // questionIndex = str.indexOf('?')+1,
-    // console.log("After: ", str.substring(0, questionIndex)),
-    // str = str.substring(0, questionIndex),
-    // console.log("AFTER: ", str),
-    
-  // newRes = str.replace(/%20/g, " "),
-  newRes = decodeURI(str),
+        // newRes = str.replace(/%20/g, " "),
+        (newRes = decodeURI(str)),
+        // console.log("LOOK HERE: ", newRes),
 
-    // console.log("LOOK HERE: ", newRes),
-
-    client.getEntries({
-      content_type: "blog",
-      "fields.title[match]": newRes,
-    }).then(function (entry) {
-      // console.log("ENTRY no#: ", entry.items[0])
-      // blogEntry = entry.items[0]
-      prepareBlogEntryForSinglePage(entry.items[0], req.params.id)
-      renderSingleBlog(entry.items[0], res)
-    })
-    )
-  })
+        client
+          .getEntries({
+            content_type: "blog",
+            "fields.title[match]": newRes,
+          })
+          .then(function (entry) {
+            // console.log("ENTRY no#: ", entry.items[0])
+            // blogEntry = entry.items[0]
+            prepareBlogEntryForSinglePage(entry.items[0], req.params.id);
+            renderSingleBlog(entry.items[0], res);
+          }));
+  });
 
   app.get(["/", "/index.html", "/home"], function (req, res) {
     var vimeoRecord = null;
@@ -326,10 +326,10 @@ module.exports = function (app) {
         // a = vimeoAnnRecord.data[0].link;
         var items = vimeoAnnRecord.data;
         if (items.length > 0) {
-          console.log("ITEMS: ", items)
+          console.log("ITEMS: ", items);
           // console.log("ITEMS: ", items)
           let trimmedURL = getIdFromVimeoURL(items[0].link);
-  
+
           let editedEmbed = items[0].embed.html;
           // console.log("TRIMMED URL: ", trimmedURL)
           editedEmbed = editedEmbed.replace(
@@ -339,13 +339,12 @@ module.exports = function (app) {
           // a = a.replace(`https://`,`//`)
           // console.log("HERE: ", a)
           // console.log(vimeoAnnRecord)
-  
+
           // vimeoAnnURL = getIdFromVimeoURL(a);
           // vimeoAnnURL = trimmedURL;
           // vimeoAnnURL = items[0].embed.html;
           vimeoAnnURL = editedEmbed;
           // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
-          
         }
 
         client
@@ -466,7 +465,8 @@ module.exports = function (app) {
                     vimeoAnn: vimeoAnnURL,
                     blogpost: thirdRecord,
                     homeWelcome: welcomeRecord.fields.renderedHtml,
-                    metaTitle: "Rancho Bernardo Community Presbyterian Church | RBCPC San Diego",
+                    metaTitle:
+                      "Rancho Bernardo Community Presbyterian Church | RBCPC San Diego",
                     headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
               <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
                     title: `Home`,
@@ -572,7 +572,7 @@ module.exports = function (app) {
       headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
         <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
       metaTitle: "Join Our Family | RB Community Presbyterian Church",
-        title: `About`,
+      title: `About`,
     });
   });
 
@@ -676,7 +676,7 @@ module.exports = function (app) {
       headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
         <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">`,
       title: `Ministries`,
-      metaTitle: `Ministries | RB Community Presbyterian Church San Diego`
+      metaTitle: `Ministries | RB Community Presbyterian Church San Diego`,
     });
   });
 
@@ -972,12 +972,24 @@ module.exports = function (app) {
   });
 
   app.get("/families", function (req, res) {
-    res.redirect("/ministry:Family%20Ministries")
-  })
+    res.redirect("/ministry:Family%20Ministries");
+  });
 
   app.get("/survey", function (req, res) {
-    res.redirect("https://assessments.gloo.us/a/RGVwbG95bWVudENvbmZpZ3wxNjg4NDMyMTk3NDc4OTA5MzQz")
-  })
+    res.redirect(
+      "https://assessments.gloo.us/a/RGVwbG95bWVudENvbmZpZ3wxNjg4NDMyMTk3NDc4OTA5MzQz"
+    );
+  });
+
+  app.get("/online-worship", (req, res) => {
+    let hbsObject = {
+      active: { events: true },
+      headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
+                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+      title: `Online Worship`,
+    };
+    res.render("online-worship", hbsObject);
+  });
 
   app.use(function (req, res) {
     var bloghbsObject = {
