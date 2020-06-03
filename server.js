@@ -1,9 +1,12 @@
-var express = require("express");
+var app = require("express")();
+let http = require('http').createServer(app);
 var exphbs = require("express-handlebars");
+let io = require('socket.io')(http)
+let express = require("express");
 // var MomentHandler = require("handlebars.moment")
 // MomentHandler.registerHelpers(exphbs)
 
-var app = express();
+// var app = express();
 
 // var MomentHandler = require("handlebars.moment")
 // MomentHandler.registerHelpers(exphbs);
@@ -50,6 +53,17 @@ app.use(express.static("public"));
 // require("./routes/api-routes.js")(app);
 require("./routes/html-routes.js")(app);
 
-app.listen(PORT, function() {
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  socket.on('chat message', (msg) => {
+    console.log('message: ' + msg);
+    io.emit('chat message', msg)
+  })
+  socket.on('disconnect', () => {
+    console.log('user disconnected')
+  })
+})
+
+http.listen(PORT, function() {
   console.log("Listening on port %s", PORT);
 });
