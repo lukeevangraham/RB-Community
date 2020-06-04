@@ -820,7 +820,7 @@ section {
 }
 .page_nav ul li {
   display: inline-block;
-  width: 65px;
+  width: 60px;
   height: 50px;
   background: #e1e1e1;
   border-radius: 3px;
@@ -1131,4 +1131,19 @@ section {
 #messages {
   height: 300px;
   overflow-y: auto;
+}
+
+.form_submit_button {
+  /* width: 170px; */
+  height: 40px;
+  cursor: pointer;
+  background: #327091;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: none;
+  outline: none;
+  border-radius: 3px;
+  /* margin-top: 24px; */
 }
