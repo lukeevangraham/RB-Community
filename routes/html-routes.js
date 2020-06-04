@@ -981,6 +981,10 @@ module.exports = function (app) {
     );
   });
 
+  app.get("/temp", function (req, res) {
+    res.redirect("https://www.shelbygiving.com/App/Form/c05b9e9b-e27d-4617-bd81-c55409037d94");
+  })
+
   app.get("/online-worship", (req, res) => {
     let hbsObject = {
       active: { events: true },
