@@ -271,7 +271,7 @@ module.exports = function (app) {
           renderSingleBlog(entry, res);
         }))
       : // req.params.id.substring,
-        ((req.params.id = req.originalUrl.substring(6)),
+      ((req.params.id = req.originalUrl.substring(6)),
         (str = req.originalUrl.substring(6)),
         (str = str.replace(/-/g, " ")),
         (str = str.replace(/\s\s\s/g, " - ")),
@@ -911,6 +911,15 @@ module.exports = function (app) {
       //    renderedHtml: documentToHtmlString(rawRichTextField)
       //   });
       // console.log(dbEvent.fields.renderedHtml)
+
+      // SETUP SHELBY GIVING FORM EMBED
+      console.log("LOOK HERE: ", dbEvent.fields.embedItem.substring(0, 31))
+
+      if (dbEvent.fields.embedItem.substring(0, 31) === '<script src="/embed.aspx?formId') {
+        console.log("MATCH!")
+        console.log(dbEvent.fields.embedItem.slice(0, 13) + 'https://forms.ministryforms.net' + dbEvent.fields.embedItem.slice(13))
+        dbEvent.fields.embedItem = dbEvent.fields.embedItem.slice(0, 13) + 'https://forms.ministryforms.net' + dbEvent.fields.embedItem.slice(13)
+      }
 
       var hbsObject = {
         events: dbEvent,
