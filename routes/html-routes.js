@@ -913,9 +913,12 @@ module.exports = function (app) {
       // console.log(dbEvent.fields.renderedHtml)
 
       // SETUP SHELBY GIVING FORM EMBED
-      if (dbEvent.fields.embedItem.substring(0, 31) === '<script src="/embed.aspx?formId') {
-        dbEvent.fields.embedItem = dbEvent.fields.embedItem.slice(0, 13) + 'https://forms.ministryforms.net' + dbEvent.fields.embedItem.slice(13)
+      if (dbEvent.fields.embedItem) {
+        if (dbEvent.fields.embedItem.substring(0, 31) === '<script src="/embed.aspx?formId') {
+          dbEvent.fields.embedItem = dbEvent.fields.embedItem.slice(0, 13) + 'https://forms.ministryforms.net' + dbEvent.fields.embedItem.slice(13)
+        }
       }
+       
 
       var hbsObject = {
         events: dbEvent,
