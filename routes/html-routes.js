@@ -913,11 +913,7 @@ module.exports = function (app) {
       // console.log(dbEvent.fields.renderedHtml)
 
       // SETUP SHELBY GIVING FORM EMBED
-      console.log("LOOK HERE: ", dbEvent.fields.embedItem.substring(0, 31))
-
       if (dbEvent.fields.embedItem.substring(0, 31) === '<script src="/embed.aspx?formId') {
-        console.log("MATCH!")
-        console.log(dbEvent.fields.embedItem.slice(0, 13) + 'https://forms.ministryforms.net' + dbEvent.fields.embedItem.slice(13))
         dbEvent.fields.embedItem = dbEvent.fields.embedItem.slice(0, 13) + 'https://forms.ministryforms.net' + dbEvent.fields.embedItem.slice(13)
       }
 
