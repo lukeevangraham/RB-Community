@@ -572,7 +572,7 @@ module.exports = function (app) {
       headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
         <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
       metaTitle: "Join Our Family | RB Community Presbyterian Church",
-      title: `About`,
+      title: `Join Our Family | RB Community Presbyterian Church`
     });
   });
 
@@ -640,7 +640,7 @@ module.exports = function (app) {
         active: { sermons: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/sermons.css">
                 <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`,
-        title: `Sermons | Page ` + vimeoOptions.qs.page,
+        title: `Sermons | RB Community Presbyterian Church | Page ` + vimeoOptions.qs.page,
         metaTitle: "Sermons | RB Community Presbyterian Church",
         nextSermonPage: vimeoOptions.qs.page + 1,
       };
