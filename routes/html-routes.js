@@ -675,7 +675,7 @@ module.exports = function (app) {
       active: { ministries: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
         <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">`,
-      title: `Ministries`,
+      title: `Ministries | RB Community Presbyterian Church San Diego`,
       metaTitle: `Ministries | RB Community Presbyterian Church San Diego`,
     });
   });
