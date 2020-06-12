@@ -469,7 +469,7 @@ module.exports = function (app) {
                       "Rancho Bernardo Community Presbyterian Church | RBCPC San Diego",
                     headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
               <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
-                    title: `Home`,
+                    title: `Rancho Bernardo Community Presbyterian Church | RBCPC San Diego`,
                   };
 
                   res.render("home", hbsObject);
