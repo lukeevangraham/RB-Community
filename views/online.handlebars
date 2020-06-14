@@ -38,15 +38,12 @@
 				</div> --}}
                 <div class="col-md-8 mb-3">
                     <div class="embed-responsive embed-responsive-16by9">
-                        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/eYieHAsBEzw"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen></iframe>
+                        {{{pieces.embedCode}}}
 
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="page_nav mt-0">
+                    <div class="page_nav mt-0 mb-1">
                         <ul class="nav nav-tabs">
                             <li class="nav-item">
                                 <a class="side-nav" data-name="chat" href="#/">Chat</a>
@@ -63,6 +60,17 @@
                         </ul>
                     </div>
                     <div id="sidebarMain">
+                        {{!-- <form action="">
+
+                            <div class="form-group">
+                                <h5>Enter a username to chat</h5>
+                                <input type="text" class="form-control mt-5" id="un"
+                                    placeholder="Enter username"><button class="form_submit_button px-2 mt-2"
+                                    id="unSubmit">Submit</button>
+                            </div>
+                        </form> --}}
+
+
                         {{!-- <ul id="messages"></ul>
                         <form id="messageForm" action="">
                             <div class="form-row">
@@ -137,17 +145,3 @@
     <script src="js/events.js"></script>
     <script src="js/online-worship.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-        $(function () {
-            var socket = io();
-            $('form').submit(function (e) {
-                e.preventDefault();
-                socket.emit('chat message', $('#m').val());
-                $('#m').val('');
-                return false;
-            });
-            socket.on('chat message', function (msg) {
-                $("#messages").append($('<li>').text(msg));
-            });
-        });
-    </script>

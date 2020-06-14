@@ -40,6 +40,11 @@
 2. Body and some general stuff
 *********************************/
 
+ul.m {
+  font-size: 15px;
+  color: #181818;
+}
+
 * {
   margin: 0;
   padding: 0;

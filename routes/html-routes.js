@@ -918,7 +918,7 @@ module.exports = function (app) {
           dbEvent.fields.embedItem = dbEvent.fields.embedItem.slice(0, 13) + 'https://forms.ministryforms.net' + dbEvent.fields.embedItem.slice(13)
         }
       }
-       
+
 
       var hbsObject = {
         events: dbEvent,
@@ -993,14 +993,21 @@ module.exports = function (app) {
     res.redirect("https://www.shelbygiving.com/App/Form/c05b9e9b-e27d-4617-bd81-c55409037d94");
   })
 
-  app.get("/online-worship", (req, res) => {
-    let hbsObject = {
-      active: { events: true },
-      headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
-                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-      title: `Online Worship`,
-    };
-    res.render("online-worship", hbsObject);
+  app.get("/online", (req, res) => {
+    client.getEntries({
+      content_type: "randomPagePieces",
+      "fields.title": "Online Worship"
+    }).then(pieces => {
+      console.log("PIECES: ", pieces.items[0].fields)
+      let hbsObject = {
+        active: { events: true },
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
+                      <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+        title: `Online Worship`,
+        pieces: pieces.items[0].fields
+      };
+      res.render("online", hbsObject);
+    })
   });
 
   app.use(function (req, res) {
