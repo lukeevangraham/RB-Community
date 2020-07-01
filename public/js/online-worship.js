@@ -19,7 +19,7 @@ function processUsername() {
 }
 
 function loadChat() {
-  if ((moment().format('ddd' === 'Sun') && (moment().isBetween(moment('09:30', 'H:mm'), moment('11:30', 'H:mm'))))) {
+  if ((moment().format('ddd') === 'Wed') && (moment().isBetween(moment('09:30', 'H:mm'), moment('17:30', 'H:mm')))) {
     if (!username) {
       $("#sidebarMain").html(`<h4 class="mt-5 mb-2" style="color:black">Enter a username to chat</h4><form action=""><div class="form-group"><input type="text" class="form-control" id="un" placeholder="Enter username"><button class="form_submit_button px-2 mt-2" id="unSubmit">Submit</button></div></form>`)
     } else {
@@ -31,7 +31,7 @@ function loadChat() {
 }
 
 function loadGiving() {
-$("#sidebarMain").html(`<h4 class="m-3"><a target="_blank" href="https://www.shelbygiving.com/App/Form/c22e10fa-1c2b-4a81-ada5-b64465d6ca94">Click here to give to RB Community church</a></h4>`)
+  $("#sidebarMain").html(`<h4 class="m-3"><a target="_blank" href="https://www.shelbygiving.com/App/Form/c22e10fa-1c2b-4a81-ada5-b64465d6ca94">Click here to give to RB Community church</a></h4>`)
 }
 
 $(document).ready(function () {
@@ -48,7 +48,8 @@ $(document).ready(function () {
     return false;
   })
   socket.on('chat message', function (msg) {
-    $("#messages").append($('<li class="mb-2">').text(msg));
+    console.log("MSG: ", msg.split(/:(.+)/)[1])
+    $("#messages").append($('<li class="mb-2">').html( "<b>" + msg.split(/:(.+)/)[0] + ": </b>" + msg.split(/:(.+)/)[1]));
 
     $(`#messages`).scrollTop($(`#messages`)[0].scrollHeight);
   });
