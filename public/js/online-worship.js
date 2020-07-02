@@ -26,6 +26,15 @@ function loadChat() {
       $("#sidebarMain").html(`<h4 class="mt-5 mb-2" style="color:black">Enter a username to chat</h4><form action=""><div class="form-group"><input type="text" class="form-control" id="un" placeholder="Enter username"><button class="form_submit_button px-2 mt-2" id="unSubmit">Submit</button></div></form>`)
     } else {
       $("#sidebarMain").html(`<ul id="messages" class="m"></ul><form id="messageForm" action=""><div class="form-row"><div class="col-10"><input type="text" class="form-control" placeholder="Enter message" id="m"autocomplete="off" /></div><div class="col-2"><div class="input-group-append"><button class="form_submit_button px-2">Send</button></div></div></div></form>`);
+      $.ajax({
+        url: "/api/comments",
+        method: "GET"
+      }).then(comments => {
+        comments.forEach(comment => {
+          $("#messages").append($('<li class="mb-2">').html( "<b>" + comment.comment.split(/:(.+)/)[0] + ": </b>" + comment.comment.split(/:(.+)/)[1]));
+        });
+        $(`#messages`).scrollTop($(`#messages`)[0].scrollHeight);
+      })
     }
   } else {
     $("#sidebarMain").html(`<h4 class="m-3">Chat is available on Sundays from 9:30am until 11:30am.</h4>`)
@@ -55,13 +64,13 @@ $(document).ready(function () {
     return false;
   })
   socket.on('chat message', function (msg) {
-    console.log("MSG: ", msg.split(/:(.+)/)[1])
+    // console.log("MSG: ", msg.split(/:(.+)/)[1])
     $("#messages").append($('<li class="mb-2">').html( "<b>" + msg.split(/:(.+)/)[0] + ": </b>" + msg.split(/:(.+)/)[1]));
 
     $(`#messages`).scrollTop($(`#messages`)[0].scrollHeight);
   });
   socket.on('new user', function (username) {
-    console.log("USR: ", username)
+    // console.log("USR: ", username)
     $("#messages").append($('<li class="mb-3">').html( "<i class='userJoin rounded'>" + username + " has joined the chat</i>" ));
     $(`#messages`).scrollTop($(`#messages`)[0].scrollHeight);
   })

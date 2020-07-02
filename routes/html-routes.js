@@ -13,7 +13,7 @@ marked.setOptions({
 });
 
 // Import the model (event.js) to use its database functions
-var db = require("../models/");
+// var db = require("../models/");
 
 var contentful = require("contentful");
 
