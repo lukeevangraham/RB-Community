@@ -62,6 +62,10 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('user disconnected')
   })
+  socket.on('new username', (username) => {
+    console.log('new user: ', username);
+    io.emit('new user', username)
+  })
 })
 
 http.listen(PORT, function() {

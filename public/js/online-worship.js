@@ -1,5 +1,6 @@
 let username
 
+
 function respondToNavClick() {
   if ($(this).attr("data-name") === "chat") {
     loadChat();
@@ -15,11 +16,12 @@ function respondToNavClick() {
 
 function processUsername() {
   username = $("#un").val()
+  console.log("look here: ", username)
   loadChat()
 }
 
 function loadChat() {
-  if ((moment().format('ddd') === 'Wed') && (moment().isBetween(moment('09:30', 'H:mm'), moment('17:30', 'H:mm')))) {
+  if ((moment().format('ddd') === 'Thu') && (moment().isBetween(moment('09:30', 'H:mm'), moment('17:30', 'H:mm')))) {
     if (!username) {
       $("#sidebarMain").html(`<h4 class="mt-5 mb-2" style="color:black">Enter a username to chat</h4><form action=""><div class="form-group"><input type="text" class="form-control" id="un" placeholder="Enter username"><button class="form_submit_button px-2 mt-2" id="unSubmit">Submit</button></div></form>`)
     } else {
@@ -39,7 +41,12 @@ $(document).ready(function () {
 
   var socket = io();
   // When someone submits their username
-  $(document).on("click", "#unSubmit", processUsername)
+  // $(document).on("click", "#unSubmit", processUsername)
+  $(document).on("click", "#unSubmit", function(e) {
+    username = $("#un").val()
+  socket.emit('new username', username)
+  loadChat()
+  })
 
   //When someone submits a new message
   $(document).on("submit", "form", function (e) {
@@ -53,6 +60,11 @@ $(document).ready(function () {
 
     $(`#messages`).scrollTop($(`#messages`)[0].scrollHeight);
   });
+  socket.on('new user', function (username) {
+    console.log("USR: ", username)
+    $("#messages").append($('<li class="mb-3">').html( "<i class='userJoin rounded'>" + username + " has joined the chat</i>" ));
+    $(`#messages`).scrollTop($(`#messages`)[0].scrollHeight);
+  })
 });
 
 $(`.side-nav`).click(respondToNavClick);
