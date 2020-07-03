@@ -1158,3 +1158,9 @@ section {
   color: white;
   padding: 5px 15px;
 }
+
+.chat-entry {
+  background: #eaeaea;
+  padding: 5px 8px;
+  border-radius: 15px;
+}

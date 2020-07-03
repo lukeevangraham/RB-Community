@@ -30,7 +30,7 @@ function loadChat() {
         method: "GET"
       }).then(comments => {
         comments.forEach(comment => {
-          $("#messages").append($('<li class="mb-2">').html( "<b>" + comment.comment.split(/:(.+)/)[0] + ": </b>" + comment.comment.split(/:(.+)/)[1]));
+          $("#messages").append($('<li class="mb-2 chat-entry">').html( "<b>" + comment.comment.split(/:(.+)/)[0] + ": </b>" + comment.comment.split(/:(.+)/)[1]));
         });
         $(`#messages`).scrollTop($(`#messages`)[0].scrollHeight);
       })
@@ -64,7 +64,7 @@ $(document).ready(function () {
   })
   socket.on('chat message', function (msg) {
     // console.log("MSG: ", msg.split(/:(.+)/)[1])
-    $("#messages").append($('<li class="mb-2">').html( "<b>" + msg.split(/:(.+)/)[0] + ": </b>" + msg.split(/:(.+)/)[1]));
+    $("#messages").append($('<li class="mb-2 chat-entry">').html( "<b>" + msg.split(/:(.+)/)[0] + ": </b>" + msg.split(/:(.+)/)[1]));
 
     $(`#messages`).scrollTop($(`#messages`)[0].scrollHeight);
   });
