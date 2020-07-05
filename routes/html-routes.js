@@ -13,7 +13,7 @@ marked.setOptions({
 });
 
 // Import the model (event.js) to use its database functions
-var db = require("../models/");
+// var db = require("../models/");
 
 var contentful = require("contentful");
 
@@ -271,7 +271,7 @@ module.exports = function (app) {
           renderSingleBlog(entry, res);
         }))
       : // req.params.id.substring,
-        ((req.params.id = req.originalUrl.substring(6)),
+      ((req.params.id = req.originalUrl.substring(6)),
         (str = req.originalUrl.substring(6)),
         (str = str.replace(/-/g, " ")),
         (str = str.replace(/\s\s\s/g, " - ")),
@@ -469,7 +469,7 @@ module.exports = function (app) {
                       "Rancho Bernardo Community Presbyterian Church | RBCPC San Diego",
                     headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
               <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
-                    title: `Home`,
+                    title: `Rancho Bernardo Community Presbyterian Church | RBCPC San Diego`,
                   };
 
                   res.render("home", hbsObject);
@@ -572,7 +572,7 @@ module.exports = function (app) {
       headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
         <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
       metaTitle: "Join Our Family | RB Community Presbyterian Church",
-      title: `About`,
+      title: `Join Our Family | RB Community Presbyterian Church`
     });
   });
 
@@ -640,7 +640,7 @@ module.exports = function (app) {
         active: { sermons: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/sermons.css">
                 <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`,
-        title: `Sermons | Page ` + vimeoOptions.qs.page,
+        title: `Sermons | RB Community Presbyterian Church | Page ` + vimeoOptions.qs.page,
         metaTitle: "Sermons | RB Community Presbyterian Church",
         nextSermonPage: vimeoOptions.qs.page + 1,
       };
@@ -675,7 +675,7 @@ module.exports = function (app) {
       active: { ministries: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
         <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">`,
-      title: `Ministries`,
+      title: `Ministries | RB Community Presbyterian Church San Diego`,
       metaTitle: `Ministries | RB Community Presbyterian Church San Diego`,
     });
   });
@@ -912,6 +912,14 @@ module.exports = function (app) {
       //   });
       // console.log(dbEvent.fields.renderedHtml)
 
+      // SETUP SHELBY GIVING FORM EMBED
+      if (dbEvent.fields.embedItem) {
+        if (dbEvent.fields.embedItem.substring(0, 31) === '<script src="/embed.aspx?formId') {
+          dbEvent.fields.embedItem = dbEvent.fields.embedItem.slice(0, 13) + 'https://forms.ministryforms.net' + dbEvent.fields.embedItem.slice(13)
+        }
+      }
+
+
       var hbsObject = {
         events: dbEvent,
         active: { events: true },
@@ -985,14 +993,22 @@ module.exports = function (app) {
     res.redirect("https://www.shelbygiving.com/App/Form/c05b9e9b-e27d-4617-bd81-c55409037d94");
   })
 
-  app.get("/online-worship", (req, res) => {
-    let hbsObject = {
-      active: { events: true },
-      headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
-                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-      title: `Online Worship`,
-    };
-    res.render("online-worship", hbsObject);
+  app.get("/online", (req, res) => {
+    client.getEntries({
+      content_type: "randomPagePieces",
+      "fields.title": "Online Worship"
+    }).then(pieces => {
+      console.log("PIECES: ", pieces.items[0].fields)
+      let hbsObject = {
+        active: { events: true },
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
+                      <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">
+                      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
+        title: `Online Worship`,
+        pieces: pieces.items[0].fields
+      };
+      res.render("online", hbsObject);
+    })
   });
 
   app.use(function (req, res) {

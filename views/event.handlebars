@@ -1,7 +1,6 @@
 <div class="super_container">
 
 
-
 	<!-- Home -->
 
 	<div class="home">
@@ -38,7 +37,8 @@
 				<div class="col">
 					<div data-aos="fade-down" class="section_title_container text-center">
 						<div class="section_title">upcoming event</div>
-						<div class="section_subtitle">“We are being transformed into his image.”  2 Corinthians 3:18</div>
+						<div class="section_subtitle">“We are being transformed into his image.” 2 Corinthians 3:18
+						</div>
 					</div>
 				</div>
 			</div>
@@ -72,10 +72,10 @@
 					</div>
 					<div class="event_text">
 						<p>{{{events.fields.description}}}</p>
-					
+
 					</div>
 
-{{#if events.fields.dateToCountTo }}
+					{{#if events.fields.dateToCountTo }}
 
 					<!-- Event Timer -->
 					<div class="event_timer_container ml-lg-auto">
@@ -98,38 +98,45 @@
 								<div class="event_ss">sec</div>
 							</li>
 						</ul>
-					{{/if}}
+						{{/if}}
 						<div class="event_container">
-							<div class="social_and_tags d-flex flex-lg-row flex-column align-items-start justify-content-start">
-						<div class="blog_social">
-							<ul>
-								<li><a href=""><i class="fa fa-facebook" aria-hidden="true" id="fb_share" value="{{this.id}}"></i></a></li>
-								{{!-- <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li> --}}
-								{{!-- <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li> --}}
-								{{!-- <li><a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a></li> --}}
-								{{!-- <li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li> --}}
-								{{!-- <li><a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li> --}}
-							</ul>
-						</div>
-						<div class="blog_post_tags ml-lg-auto">
-							<ul>{{#each ministry}}
-								{{!-- <li><a href="#">faithful</a></li> --}}
-								<li><a href="/ministry:{{this}}">{{this}}</a></li>
-								{{!-- <li><a href="#">news</a></li> --}}
-								{{/each}}
-							</ul>
-						</div>
-					</div>
+							<div
+								class="social_and_tags d-flex flex-lg-row flex-column align-items-start justify-content-start">
+								<div class="blog_social">
+									<ul>
+										<li><a href=""><i class="fa fa-facebook" aria-hidden="true" id="fb_share"
+													value="{{this.id}}"></i></a></li>
+										{{!-- <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li> --}}
+										{{!-- <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li> --}}
+										{{!-- <li><a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a></li> --}}
+										{{!-- <li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li> --}}
+										{{!-- <li><a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li> --}}
+									</ul>
+								</div>
+								<div class="blog_post_tags ml-lg-auto">
+									<ul>{{#each ministry}}
+										{{!-- <li><a href="#">faithful</a></li> --}}
+										<li><a href="/ministry:{{this}}">{{this}}</a></li>
+										{{!-- <li><a href="#">news</a></li> --}}
+										{{/each}}
+									</ul>
+								</div>
+							</div>
 						</div>
 					</div>
 
 
-					
 
 
 
 				</div>
 			</div>
+				<div class="row justify-content-center">
+					<div class="col-md-12">
+						{{{events.fields.embedItem}}}
+
+					</div>
+				</div>
 		</div>
 	</div>
 
@@ -192,8 +199,8 @@
 			{{/each}} --}}
 
 
-			<!-- Page Nav -->
-			{{!-- <div class="container">
+	<!-- Page Nav -->
+	{{!-- <div class="container">
 				<div class="row">
 					<div class="col">
 						<div class="page_nav">
@@ -206,30 +213,30 @@
 					</div>
 				</div>
 			</div> --}}
-		</div>
+</div>
 
-			<!-- Quote -->
+<!-- Quote -->
 
-			<div class="quote">
-			<div class="container">
-				<div class="row">
-					<div class="col">
-						<div class="quote_container text-center">
-							<div data-aos="fade-down" class="quote_quote">“Our guiding vision comes from the words of Jesus. ‘From the believers will flow living waters.’ - John 7:38”</div>
-							<div class="quote_icon"><img src="images/quote_2.png" alt=""></div>
-							{{!-- <div class="quote_source">Ignatius of Antioch</div> --}}
-						</div>
-					</div>
+<div class="quote">
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<div class="quote_container text-center">
+					<div data-aos="fade-down" class="quote_quote">“Our guiding vision comes from the words of Jesus.
+						‘From the believers will flow living waters.’ - John 7:38”</div>
+					<div class="quote_icon"><img src="images/quote_2.png" alt=""></div>
+					{{!-- <div class="quote_source">Ignatius of Antioch</div> --}}
 				</div>
 			</div>
 		</div>
+	</div>
+</div>
 
 
-		</div>
+</div>
 
 
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.0/moment.min.js"
-			type="text/javascript"></script>
-		<script src="/js/jquery-3.2.1.min.js"></script>
-		<script src="js/events.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.0/moment.min.js" type="text/javascript"></script>
+<script src="/js/jquery-3.2.1.min.js"></script>
+<script src="js/events.js"></script>
