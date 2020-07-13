@@ -638,7 +638,7 @@ section {
 
 .latest {
   padding-top: 89px;
-  padding-bottom: 100px;
+  padding-bottom: 45px;
   background: #f7f7f7;
 }
 .section_title {
@@ -760,7 +760,7 @@ section {
 *********************************/
 
 .sermons {
-  padding-top: 89px;
+  padding-top: 45px;
   padding-bottom: 100px;
   background: #ffffff;
 }
