@@ -1011,6 +1011,17 @@ module.exports = function (app) {
     })
   });
 
+  app.get("/memorial", (req, res) => {
+    let hbsObject = {
+      active: { events: true },
+      headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
+                      <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">
+                      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
+      title: "Mark Moffet Memorial"
+    }
+    res.render("memorial", hbsObject)
+  })
+
   app.use(function (req, res) {
     var bloghbsObject = {
       // article: entry.fields,
