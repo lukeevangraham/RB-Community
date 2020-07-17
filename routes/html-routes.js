@@ -1022,6 +1022,10 @@ module.exports = function (app) {
     res.render("memorial", hbsObject)
   })
 
+  app.get("/service", (req, res) => {
+    res.redirect("/blog-Courtyard-Worship-Service-Bulletin");
+  })
+
   app.use(function (req, res) {
     var bloghbsObject = {
       // article: entry.fields,
