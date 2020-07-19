@@ -998,7 +998,7 @@ module.exports = function (app) {
       content_type: "randomPagePieces",
       "fields.title": "Online Worship"
     }).then(pieces => {
-      console.log("PIECES: ", pieces.items[0].fields)
+      // console.log("PIECES: ", pieces.items[0])
       let hbsObject = {
         active: { events: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
