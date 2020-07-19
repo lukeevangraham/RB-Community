@@ -20,7 +20,7 @@ function processUsername() {
 }
 
 function loadChat() {
-  if ((moment().format('ddd') === 'Sat') && (moment().isBetween(moment('09:30', 'H:mm'), moment('23:30', 'H:mm')))) {
+  if ((moment().format('ddd') === 'Sun') && (moment().isBetween(moment('09:30', 'H:mm'), moment('11:30', 'H:mm')))) {
     if (!username) {
       $("#sidebarMain").html(`<h4 class="mt-5 mb-2" style="color:black">Enter a username to chat</h4><form action=""><div class="form-group"><input type="text" class="form-control" id="un" placeholder="Enter username"><button class="form_submit_button px-2 mt-2" id="unSubmit">Submit</button></div></form>`)
     } else {
