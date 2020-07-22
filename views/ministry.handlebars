@@ -48,7 +48,7 @@
 
 
 
-{{#if blogpost.multipleEntries}}
+		{{#if blogpost.multipleEntries}}
 
 
 		<div class="row pt-5 pb-2">
@@ -61,7 +61,7 @@
 		</div>
 
 
-{{/if}}
+		{{/if}}
 
 
 
@@ -90,7 +90,9 @@
 							</ul>
 						</div>
 						<div class="news_post_text">
+							{{#if fields.excerpt}}
 							<p>{{this.fields.excerpt}}...</p>
+							{{/if}}
 						</div>
 					</div>
 				</div>
