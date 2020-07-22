@@ -445,9 +445,9 @@ module.exports = function (app) {
                     Object.assign(item.fields, {
                       excerpt: truncatedString,
                     });
-                  });
                     
                   }
+                });
 
                 thirdRecord = items;
 
