@@ -1007,6 +1007,7 @@ module.exports = function (app) {
       "fields.title": "Online Worship"
     }).then(pieces => {
       // console.log("PIECES: ", pieces.items[0])
+      pieces.items[0].fields.bodyHTML = documentToHtmlString(pieces.items[0].fields.body)
       let hbsObject = {
         active: { events: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
