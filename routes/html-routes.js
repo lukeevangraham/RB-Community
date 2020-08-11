@@ -967,6 +967,10 @@ module.exports = function (app) {
     res.redirect("/ministry:Middle%20School");
   });
 
+  app.get("/kids", function (req, res) {
+    res.redirect("https://rbcommunity.org/ministry:Children");
+  })
+
   app.get("/missions", function (req, res) {
     res.redirect("/ministry:Missions");
   });
