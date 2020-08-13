@@ -295,6 +295,51 @@
 			</div>
 		</div> --}}
 
+
+		{{#if youTubeVideos}}
+		<div class="row pt-5 pb-2">
+			<div class="col">
+				<div class="section_title_container text-center">
+					<div class="section_title">Latest Videos</div>
+					<div class="section_subtitle">Our latest online materials</div>
+				</div>
+			</div>
+		</div>
+
+<div
+			class="events_items d-flex flex-lg-row flex-column align-items-lg-start align-items-center justify-content-lg-between justify-content-center flex-wrap px-0">
+		{{#each youTubeVideos.items}}
+		{{log this}}
+
+		<div class="events_item">
+				<div class="events_item_image"><a href="http://youtube.com/watch?v={{contentDetails.videoId}}"><img
+							src="{{snippet.thumbnails.maxres.url}}" alt=""></a></div>
+				<div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
+					{{!-- <div class="event_date">
+						<div class="d-flex flex-column align-items-center justify-content-center">
+							<div class="event_day">{{this.fields.shortDay}}</div>
+							<div class="event_month">{{this.fields.shortMonth}}</div>
+						</div>
+					</div> --}}
+					<div class="event_content pl-0">
+						<div class="event_title"><a href="http://youtube.com/watch?v={{contentDetails.videoId}}">{{snippet.title}}</a></div>
+	<div class="news_post_text">
+								<p>{{snippet.description}}</p>
+							</div>
+					</div>
+				</div>
+			</div>
+
+		{{/each}}
+
+		</div>
+
+		{{/if}}
+
+
+
+
+
 	</div>
 
 

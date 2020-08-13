@@ -33,6 +33,21 @@ var client = contentful.createClient({
   accessToken: contentfulAccessToken,
 });
 
+var youTubeOptions = {
+  method: "GET",
+  url: "https://www.googleapis.com/youtube/v3/playlistItems",
+  qs: {
+    key: process.env.key,
+    playlistId: "PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ",
+    part:
+      "snippet,contentDetails",
+    maxResults: "3",
+  },
+  // headers: {
+  //   Authorization: "Bearer " + vimeoPass,
+  // },
+};
+
 var vimeoOptions = {
   method: "GET",
   url: "https://api.vimeo.com/users/14320074/videos",
@@ -689,6 +704,7 @@ module.exports = function (app) {
     var firstRecord = null;
     var secondRecord = null;
     var thirdRecord = null;
+    let youTubeRecord = null;
 
     client
       .getEntries({
@@ -727,7 +743,7 @@ module.exports = function (app) {
 
         // Converting times for template
         items.forEach((item) => {
-          console.log("LOOK HERE: ", item)
+          // console.log("LOOK HERE: ", item)
           // Converting Date info
           Object.assign(item.fields, {
             formattedDate: moment(item.fields.datePosted)
@@ -842,9 +858,27 @@ module.exports = function (app) {
 
                 thirdRecord = item;
 
+                if (req.params.id === 'Children') {
+                  
+                  request(youTubeOptions, function (error, response, body) {
+                    if (error) throw new Error(error);
+              
+                    youTubeRecord = JSON.parse(body);
+              
+                    // console.log("LOOK HERE: ", youTubeRecord)
+                    prepMinistryPage();
+                  
+                })
+              } else {
+                prepMinistryPage()
+              }
+
                 // console.log("SECOND RECORD: ", secondRecord);
 
                 // console.log("LOOK HERE", entry)
+
+                function prepMinistryPage() {
+                
 
                 var bloghbsObject = {
                   blogpost: firstRecord,
@@ -855,9 +889,12 @@ module.exports = function (app) {
                   headContent: `<link rel="stylesheet" type="text/css" href="styles/ministry.css">
               <link rel="stylesheet" type="text/css" href="styles/ministry_responsive.css">`,
                   title: req.params.id,
+                  youTubeVideos: youTubeRecord
                 };
                 // console.log("hbsObject:  ", bloghbsObject.blogpost);
                 res.render("ministry", bloghbsObject);
+                }
+                
               });
           });
       });
@@ -968,7 +1005,7 @@ module.exports = function (app) {
   });
 
   app.get("/kids", function (req, res) {
-    res.redirect("https://rbcommunity.org/ministry:Children");
+    res.redirect("/ministry:Children");
   })
 
   app.get("/missions", function (req, res) {
