@@ -147,7 +147,7 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
   const rawRichTextField = entry.fields.body;
   // let renderedHtml = documentToHtmlString(rawRichTextField);
   Object.assign(entry.fields, {
-    renderedHtml: documentToHtmlString(rawRichTextField, options),
+    renderedHtml: documentToHtmlString(rawRichTextField, options).replace("RBCC", "RB Community"),
     id: requestId,
   });
   // renderSingleBlog(entry)
@@ -155,7 +155,7 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
 }
 
 function renderSingleBlog(entry, res) {
-  // console.log("ENTRY: ", entry)
+  console.log("ENTRY: ", entry)
   let newMetaDescription;
   entry.fields.metaDescription
     ? (newMetaDescription = entry.fields.metaDescription)
