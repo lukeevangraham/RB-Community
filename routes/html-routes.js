@@ -37,7 +37,7 @@ var youTubeOptions = {
   method: "GET",
   url: "https://www.googleapis.com/youtube/v3/playlistItems",
   qs: {
-    key: process.env.key,
+    key: process.env.GOOGLE_KEY,
     playlistId: "PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ",
     part:
       "snippet,contentDetails",
@@ -865,7 +865,7 @@ module.exports = function (app) {
               
                     youTubeRecord = JSON.parse(body);
               
-                    // console.log("LOOK HERE: ", youTubeRecord)
+                    console.log("LOOK HERE: ", youTubeRecord)
                     prepMinistryPage();
                   
                 })
