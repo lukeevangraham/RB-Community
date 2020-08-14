@@ -162,7 +162,7 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
   const rawRichTextField = entry.fields.body;
   // let renderedHtml = documentToHtmlString(rawRichTextField);
   Object.assign(entry.fields, {
-    renderedHtml: documentToHtmlString(rawRichTextField, options).replace("RBCC", "RB Community"),
+    renderedHtml: documentToHtmlString(rawRichTextField, options).replace(/RBCC/g, "RB Community"),
     id: requestId,
   });
   // renderSingleBlog(entry)
@@ -170,7 +170,7 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
 }
 
 function renderSingleBlog(entry, res) {
-  console.log("ENTRY: ", entry)
+  // console.log("ENTRY: ", entry)
   let newMetaDescription;
   entry.fields.metaDescription
     ? (newMetaDescription = entry.fields.metaDescription)
@@ -242,7 +242,7 @@ module.exports = function (app) {
               truncatedString = truncatedString.substring(
                 1,
                 truncatedLength - 1
-              );
+              ).replace(/RBCC/g, "RB Community");
             }
           }
 
@@ -760,7 +760,7 @@ module.exports = function (app) {
               )
             );
             var truncatedLength = truncatedString.length;
-            truncatedString = truncatedString.substring(1, truncatedLength - 1);
+            truncatedString = truncatedString.substring(1, truncatedLength - 1).replace(/RBCC/g, "RB Community");
   
             Object.assign(item.fields, {
               excerpt: truncatedString,
