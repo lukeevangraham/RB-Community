@@ -946,7 +946,7 @@ module.exports = function (app) {
 
       // CONVERT MARKDOWN TO HTML
       if (dbEvent.fields.description) {
-        dbEvent.fields.description = marked(dbEvent.fields.description);
+        dbEvent.fields.description = marked(dbEvent.fields.description).replace(/RBCC/g, "RB Community");
       }
 
       // RENDER HTML FOR DESCRIPTION
