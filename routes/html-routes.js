@@ -858,17 +858,34 @@ module.exports = function (app) {
 
                 thirdRecord = item;
 
-                if (req.params.id === 'Children') {
+                if (req.params.id === 'Children' || req.params.id == 'Family Ministries') {
                   
                   request(youTubeOptions, function (error, response, body) {
                     if (error) throw new Error(error);
               
                     youTubeRecord = JSON.parse(body);
               
-                    console.log("LOOK HERE: ", youTubeRecord)
+                    // console.log("LOOK HERE: ", youTubeRecord)
                     prepMinistryPage();
                   
                 })
+              } else if (req.params.id === 'Adult Education') {
+
+                const customYouTubeOptions = Object.assign({}, youTubeOptions)
+
+                customYouTubeOptions.qs.playlistId = 'PLZ13IHPbJRZ6Iz2cphwea8AzUqUqFiPUw';
+
+                request(customYouTubeOptions, function (error, response, body) {
+                  if (error) throw new Error(error);
+            
+                  youTubeRecord = JSON.parse(body);
+            
+                  // console.log("LOOK HERE: ", youTubeRecord)
+                  prepMinistryPage();
+                })
+
+                // console.log('BIG TIME: ', customYouTubeOptions)
+
               } else {
                 prepMinistryPage()
               }
