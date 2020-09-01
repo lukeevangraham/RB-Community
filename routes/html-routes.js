@@ -33,12 +33,13 @@ var client = contentful.createClient({
   accessToken: contentfulAccessToken,
 });
 
-var youTubeOptions = {
-  method: "GET",
+let newYouTubeOptions = (playlistId) => {
+  return {
+    method: "GET",
   url: "https://www.googleapis.com/youtube/v3/playlistItems",
   qs: {
     key: process.env.GOOGLE_KEY,
-    playlistId: "PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ",
+    playlistId: playlistId,
     part:
       "snippet,contentDetails",
     maxResults: "3",
@@ -46,7 +47,8 @@ var youTubeOptions = {
   // headers: {
   //   Authorization: "Bearer " + vimeoPass,
   // },
-};
+  }
+}
 
 var vimeoOptions = {
   method: "GET",
@@ -859,8 +861,10 @@ module.exports = function (app) {
                 thirdRecord = item;
 
                 if (req.params.id === 'Children' || req.params.id == 'Family Ministries') {
+
+
                   
-                  request(youTubeOptions, function (error, response, body) {
+                  request(newYouTubeOptions('PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ'), function (error, response, body) {
                     if (error) throw new Error(error);
               
                     youTubeRecord = JSON.parse(body);
@@ -871,11 +875,7 @@ module.exports = function (app) {
                 })
               } else if (req.params.id === 'Adult Education') {
 
-                const customYouTubeOptions = Object.assign({}, youTubeOptions)
-
-                customYouTubeOptions.qs.playlistId = 'PLZ13IHPbJRZ6Iz2cphwea8AzUqUqFiPUw';
-
-                request(customYouTubeOptions, function (error, response, body) {
+                request(newYouTubeOptions('PLZ13IHPbJRZ6Iz2cphwea8AzUqUqFiPUw'), function (error, response, body) {
                   if (error) throw new Error(error);
             
                   youTubeRecord = JSON.parse(body);
