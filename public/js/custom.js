@@ -123,11 +123,13 @@ $(document).ready(function() {
       let dateToCountTo;
 
       dateToCountTo = $("#dateToCountTo").text();
+
       // console.log("TYPE OF: ", typeof dateToCountTo)
       // console.log("DATE: ", dateToCountTo)
-
+      
       // Uncomment line below and replace date
-      var target_date = new Date(dateToCountTo).getTime();
+      var target_date = new Date(dateToCountTo).getTime() + 36000000;
+      console.log("Count to", target_date)
 
       // comment lines below
       // var date = new Date();
@@ -162,11 +164,11 @@ $(document).ready(function() {
         days = parseInt(seconds_left / 86400);
         seconds_left = seconds_left % 86400;
 
-        hours = parseInt((seconds_left / 3600) + 10);
+        hours = parseInt((seconds_left / 3600));
         seconds_left = seconds_left % 3600;
 
-        minutes = parseInt((seconds_left / 60)+60);
-		seconds = parseInt((seconds_left % 60)+60);
+        minutes = parseInt((seconds_left / 60));
+		seconds = parseInt((seconds_left % 60));
 
         // display result
         d.text(days);
