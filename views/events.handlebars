@@ -24,7 +24,6 @@
 
 	{{#if this.topEvent}}
 	{{#each this.topEvent}}
-	{{log this}}
 
 
 	<!-- Upcoming Event -->
@@ -35,13 +34,14 @@
 				<div class="col">
 					<div data-aos="fade-down" class="section_title_container text-center">
 						<div class="section_title">upcoming event</div>
-						<div class="section_subtitle">“We are being transformed into his image.”  2 Corinthians 3:18</div>
+						<div class="section_subtitle">“We are being transformed into his image.” 2 Corinthians 3:18
+						</div>
 					</div>
 				</div>
 			</div>
 			<div class="row about_row">
 				<div data-aos="fade-right" class="col-lg-6">
-					<div class="upcoming_image"><a href="/event:{{this.sys.id}}"><img
+					<div class="upcoming_image"><a href="/event-{{changeSpacesToDashes this.fields.title}}"><img
 								src="{{this.fields.eventImage.fields.file.url}}" alt=""></a></div>
 				</div>
 				<div data-aos="fade-left" class="col-lg-6">
@@ -54,7 +54,7 @@
 							</div>
 						</div>
 						<div class="event_content">
-							<div class="event_title"><a href="/event:{{this.sys.id}}">{{this.fields.title}}</a></div>
+							<div class="event_title"><a href="/event-{{changeSpacesToDashes this.fields.title}}">{{this.fields.title}}</a></div>
 							<ul class="event_row">
 								<li>
 									<div class="event_icon"><img src="images/calendar.png" alt=""></div>
@@ -100,11 +100,11 @@
 		</div>
 	</div>
 
-{{/each}}
+	{{/each}}
 	{{/if}}
 
 	<!-- Events -->
-	
+
 
 
 
@@ -115,7 +115,8 @@
 					<div data-aos="fade-down" class="section_title_container text-center">
 						<div class="section_title">list of events</div>
 						<h1 class="invisible">list of events</h1>
-						<div class="section_subtitle">“If anyone is in Christ, they are a new creation.” 2 Corinthians 5:17</div>
+						<div class="section_subtitle">“If anyone is in Christ, they are a new creation.” 2 Corinthians
+							5:17</div>
 					</div>
 				</div>
 			</div>
@@ -128,13 +129,13 @@
 
 
 
-{{#each events}}
-{{#unless this.fields.featured}}
+			{{#each events}}
+			{{#unless this.fields.featured}}
 
 			<!-- Event -->
 
 			<div class="events_item">
-				<div class="events_item_image"><a href="/event:{{this.sys.id}}"><img
+				<div class="events_item_image"><a href="/event-{{changeSpacesToDashes this.fields.title}}"><img
 							data-src="{{this.fields.eventImage.fields.file.url}}" class="lazyload" alt=""></a></div>
 				<div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
 					<div class="event_date">
@@ -145,7 +146,7 @@
 						</div>
 					</div>
 					<div class="event_content">
-						<div class="event_title"><a href="/event:{{this.sys.id}}">{{this.fields.title}}</a></div>
+						<div class="event_title"><a href="/event-{{changeSpacesToDashes this.fields.title}}">{{this.fields.title}}</a></div>
 						<ul class="event_row">
 							<li>
 								<div class="event_icon"><img src="images/calendar.png" alt=""></div>
@@ -160,7 +161,7 @@
 				</div>
 			</div>
 
-{{/unless}}
+			{{/unless}}
 			{{/each}}
 
 
@@ -181,21 +182,22 @@
 		</div>
 	</div>
 
-		<!-- Quote -->
+	<!-- Quote -->
 
-		<div class="quote">
-			<div class="container">
-				<div class="row">
-					<div class="col">
-						<div class="quote_container text-center">
-							<div data-aos="fade-down" class="quote_quote">“We believe encounters with Jesus transform lives.”</div>
-							<div class="quote_icon"><img src="images/quote.png" alt=""></div>
-							{{!-- <div class="quote_source">Ignatius of Antioch</div> --}}
-						</div>
+	<div class="quote">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="quote_container text-center">
+						<div data-aos="fade-down" class="quote_quote">“We believe encounters with Jesus transform
+							lives.”</div>
+						<div class="quote_icon"><img src="images/quote.png" alt=""></div>
+						{{!-- <div class="quote_source">Ignatius of Antioch</div> --}}
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
 
 
 

@@ -36,19 +36,18 @@ var client = contentful.createClient({
 let newYouTubeOptions = (playlistId) => {
   return {
     method: "GET",
-  url: "https://www.googleapis.com/youtube/v3/playlistItems",
-  qs: {
-    key: process.env.GOOGLE_KEY,
-    playlistId: playlistId,
-    part:
-      "snippet,contentDetails",
-    maxResults: "3",
-  },
-  // headers: {
-  //   Authorization: "Bearer " + vimeoPass,
-  // },
-  }
-}
+    url: "https://www.googleapis.com/youtube/v3/playlistItems",
+    qs: {
+      key: process.env.GOOGLE_KEY,
+      playlistId: playlistId,
+      part: "snippet,contentDetails",
+      maxResults: "3",
+    },
+    // headers: {
+    //   Authorization: "Bearer " + vimeoPass,
+    // },
+  };
+};
 
 var vimeoOptions = {
   method: "GET",
@@ -164,7 +163,10 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
   const rawRichTextField = entry.fields.body;
   // let renderedHtml = documentToHtmlString(rawRichTextField);
   Object.assign(entry.fields, {
-    renderedHtml: documentToHtmlString(rawRichTextField, options).replace(/RBCC/g, "RB Community"),
+    renderedHtml: documentToHtmlString(rawRichTextField, options).replace(
+      /RBCC/g,
+      "RB Community"
+    ),
     id: requestId,
   });
   // renderSingleBlog(entry)
@@ -241,10 +243,9 @@ module.exports = function (app) {
                 )
               );
               var truncatedLength = truncatedString.length;
-              truncatedString = truncatedString.substring(
-                1,
-                truncatedLength - 1
-              ).replace(/RBCC/g, "RB Community");
+              truncatedString = truncatedString
+                .substring(1, truncatedLength - 1)
+                .replace(/RBCC/g, "RB Community");
             }
           }
 
@@ -288,7 +289,7 @@ module.exports = function (app) {
           renderSingleBlog(entry, res);
         }))
       : // req.params.id.substring,
-      ((req.params.id = req.originalUrl.substring(6)),
+        ((req.params.id = req.originalUrl.substring(6)),
         (str = req.originalUrl.substring(6)),
         (str = str.replace(/-/g, " ")),
         (str = str.replace(/\s\s\s/g, " - ")),
@@ -343,7 +344,6 @@ module.exports = function (app) {
         // a = vimeoAnnRecord.data[0].link;
         var items = vimeoAnnRecord.data;
         if (items.length > 0) {
-          console.log("ITEMS: ", items);
           // console.log("ITEMS: ", items)
           let trimmedURL = getIdFromVimeoURL(items[0].link);
 
@@ -445,7 +445,6 @@ module.exports = function (app) {
                       .toUpperCase(),
                   });
 
-
                   if (item.fields.body) {
                     var truncatedString = JSON.stringify(
                       item.fields.body.content[0].content[0].value.replace(
@@ -458,11 +457,10 @@ module.exports = function (app) {
                       1,
                       truncatedLength - 1
                     );
-  
+
                     Object.assign(item.fields, {
                       excerpt: truncatedString,
                     });
-                    
                   }
                 });
 
@@ -593,7 +591,7 @@ module.exports = function (app) {
       headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
         <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
       metaTitle: "Join Our Family | RB Community Presbyterian Church",
-      title: `Join Our Family | RB Community Presbyterian Church`
+      title: `Join Our Family | RB Community Presbyterian Church`,
     });
   });
 
@@ -661,7 +659,9 @@ module.exports = function (app) {
         active: { sermons: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/sermons.css">
                 <link rel="stylesheet" type="text/css" href="styles/sermons_responsive.css">`,
-        title: `Sermons | RB Community Presbyterian Church | Page ` + vimeoOptions.qs.page,
+        title:
+          `Sermons | RB Community Presbyterian Church | Page ` +
+          vimeoOptions.qs.page,
         metaTitle: "Sermons | RB Community Presbyterian Church",
         nextSermonPage: vimeoOptions.qs.page + 1,
       };
@@ -762,12 +762,13 @@ module.exports = function (app) {
               )
             );
             var truncatedLength = truncatedString.length;
-            truncatedString = truncatedString.substring(1, truncatedLength - 1).replace(/RBCC/g, "RB Community");
-  
+            truncatedString = truncatedString
+              .substring(1, truncatedLength - 1)
+              .replace(/RBCC/g, "RB Community");
+
             Object.assign(item.fields, {
               excerpt: truncatedString,
             });
-            
           }
 
           // Render HTML if featured on requested ministry
@@ -860,58 +861,58 @@ module.exports = function (app) {
 
                 thirdRecord = item;
 
-                if (req.params.id === 'Children' || req.params.id == 'Family Ministries') {
+                if (
+                  req.params.id === "Children" ||
+                  req.params.id == "Family Ministries"
+                ) {
+                  request(
+                    newYouTubeOptions("PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ"),
+                    function (error, response, body) {
+                      if (error) throw new Error(error);
 
+                      youTubeRecord = JSON.parse(body);
 
-                  
-                  request(newYouTubeOptions('PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ'), function (error, response, body) {
-                    if (error) throw new Error(error);
-              
-                    youTubeRecord = JSON.parse(body);
-              
-                    // console.log("LOOK HERE: ", youTubeRecord)
-                    prepMinistryPage();
-                  
-                })
-              } else if (req.params.id === 'Adult Education') {
+                      // console.log("LOOK HERE: ", youTubeRecord)
+                      prepMinistryPage();
+                    }
+                  );
+                } else if (req.params.id === "Adult Education") {
+                  request(
+                    newYouTubeOptions("PLZ13IHPbJRZ6Iz2cphwea8AzUqUqFiPUw"),
+                    function (error, response, body) {
+                      if (error) throw new Error(error);
 
-                request(newYouTubeOptions('PLZ13IHPbJRZ6Iz2cphwea8AzUqUqFiPUw'), function (error, response, body) {
-                  if (error) throw new Error(error);
-            
-                  youTubeRecord = JSON.parse(body);
-            
-                  // console.log("LOOK HERE: ", youTubeRecord)
+                      youTubeRecord = JSON.parse(body);
+
+                      // console.log("LOOK HERE: ", youTubeRecord)
+                      prepMinistryPage();
+                    }
+                  );
+
+                  // console.log('BIG TIME: ', customYouTubeOptions)
+                } else {
                   prepMinistryPage();
-                })
-
-                // console.log('BIG TIME: ', customYouTubeOptions)
-
-              } else {
-                prepMinistryPage()
-              }
+                }
 
                 // console.log("SECOND RECORD: ", secondRecord);
 
                 // console.log("LOOK HERE", entry)
 
                 function prepMinistryPage() {
-                
-
-                var bloghbsObject = {
-                  blogpost: firstRecord,
-                  request: req.params.id,
-                  events: secondRecord,
-                  header: thirdRecord,
-                  active: { ministries: true },
-                  headContent: `<link rel="stylesheet" type="text/css" href="styles/ministry.css">
+                  var bloghbsObject = {
+                    blogpost: firstRecord,
+                    request: req.params.id,
+                    events: secondRecord,
+                    header: thirdRecord,
+                    active: { ministries: true },
+                    headContent: `<link rel="stylesheet" type="text/css" href="styles/ministry.css">
               <link rel="stylesheet" type="text/css" href="styles/ministry_responsive.css">`,
-                  title: req.params.id,
-                  youTubeVideos: youTubeRecord
-                };
-                // console.log("hbsObject:  ", bloghbsObject.blogpost);
-                res.render("ministry", bloghbsObject);
+                    title: req.params.id,
+                    youTubeVideos: youTubeRecord,
+                  };
+                  // console.log("hbsObject:  ", bloghbsObject.blogpost);
+                  res.render("ministry", bloghbsObject);
                 }
-                
               });
           });
       });
@@ -919,8 +920,8 @@ module.exports = function (app) {
 
   // Page for individual events
   app.get("/event:id", function (req, res) {
-    req.params.id = req.params.id.substring(1);
-    client.getEntry(req.params.id).then(function (dbEvent) {
+    renderSingleEvent = (oldDbEvent) => {
+      let dbEvent = oldDbEvent.items[0];
       // Converting times for template
       Object.assign(dbEvent.fields, {
         shortMonth: moment(dbEvent.fields.date).format("MMM"),
@@ -963,7 +964,10 @@ module.exports = function (app) {
 
       // CONVERT MARKDOWN TO HTML
       if (dbEvent.fields.description) {
-        dbEvent.fields.description = marked(dbEvent.fields.description).replace(/RBCC/g, "RB Community");
+        dbEvent.fields.description = marked(dbEvent.fields.description).replace(
+          /RBCC/g,
+          "RB Community"
+        );
       }
 
       // RENDER HTML FOR DESCRIPTION
@@ -976,11 +980,16 @@ module.exports = function (app) {
 
       // SETUP SHELBY GIVING FORM EMBED
       if (dbEvent.fields.embedItem) {
-        if (dbEvent.fields.embedItem.substring(0, 31) === '<script src="/embed.aspx?formId') {
-          dbEvent.fields.embedItem = dbEvent.fields.embedItem.slice(0, 13) + 'https://forms.ministryforms.net' + dbEvent.fields.embedItem.slice(13)
+        if (
+          dbEvent.fields.embedItem.substring(0, 31) ===
+          '<script src="/embed.aspx?formId'
+        ) {
+          dbEvent.fields.embedItem =
+            dbEvent.fields.embedItem.slice(0, 13) +
+            "https://forms.ministryforms.net" +
+            dbEvent.fields.embedItem.slice(13);
         }
       }
-
 
       var hbsObject = {
         events: dbEvent,
@@ -992,7 +1001,31 @@ module.exports = function (app) {
 
       // console.log(dbEvent);
       return res.render("event", hbsObject);
-    });
+    };
+
+    if (req.params.id[0] === ":") {
+      client
+        .getEntries({
+          content_type: "events",
+          "sys.id[match]": req.params.id.substring(1),
+        })
+        .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
+    } else {
+      str = decodeURI(
+        req.originalUrl
+          .substring(7)
+          .replace(/-/g, " ")
+          .replace(/\s\s\s/g, " - ")
+      );
+      // req.params.id = req.params.id.substring(1);
+      // client.getEntry(req.params.id).then(function (dbEvent) {
+      client
+        .getEntries({
+          content_type: "events",
+          "fields.title[match]": str,
+        })
+        .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
+    }
   });
 
   app.get("/services", function (req, res) {
@@ -1023,7 +1056,7 @@ module.exports = function (app) {
 
   app.get("/kids", function (req, res) {
     res.redirect("/ministry:Children");
-  })
+  });
 
   app.get("/missions", function (req, res) {
     res.redirect("/ministry:Missions");
@@ -1056,26 +1089,32 @@ module.exports = function (app) {
   });
 
   app.get("/temp", function (req, res) {
-    res.redirect("https://www.shelbygiving.com/App/Form/c05b9e9b-e27d-4617-bd81-c55409037d94");
-  })
+    res.redirect(
+      "https://www.shelbygiving.com/App/Form/c05b9e9b-e27d-4617-bd81-c55409037d94"
+    );
+  });
 
   app.get("/online", (req, res) => {
-    client.getEntries({
-      content_type: "randomPagePieces",
-      "fields.title": "Online Worship"
-    }).then(pieces => {
-      // console.log("PIECES: ", pieces.items[0])
-      pieces.items[0].fields.bodyHTML = documentToHtmlString(pieces.items[0].fields.body)
-      let hbsObject = {
-        active: { events: true },
-        headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
+    client
+      .getEntries({
+        content_type: "randomPagePieces",
+        "fields.title": "Online Worship",
+      })
+      .then((pieces) => {
+        // console.log("PIECES: ", pieces.items[0])
+        pieces.items[0].fields.bodyHTML = documentToHtmlString(
+          pieces.items[0].fields.body
+        );
+        let hbsObject = {
+          active: { events: true },
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
                       <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">
                       <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
-        title: `Online Worship`,
-        pieces: pieces.items[0].fields
-      };
-      res.render("online", hbsObject);
-    })
+          title: `Online Worship`,
+          pieces: pieces.items[0].fields,
+        };
+        res.render("online", hbsObject);
+      });
   });
 
   app.get("/memorial", (req, res) => {
@@ -1084,14 +1123,14 @@ module.exports = function (app) {
       headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
                       <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">
                       <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
-      title: "Mark Moffet Memorial"
-    }
-    res.render("memorial", hbsObject)
-  })
+      title: "Mark Moffet Memorial",
+    };
+    res.render("memorial", hbsObject);
+  });
 
   app.get("/service", (req, res) => {
     res.redirect("/blog-Courtyard-Worship-Service-Bulletin");
-  })
+  });
 
   app.use(function (req, res) {
     var bloghbsObject = {

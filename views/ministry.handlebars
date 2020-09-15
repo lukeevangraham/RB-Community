@@ -368,7 +368,7 @@
 			<!-- Event -->
 
 			<div class="events_item">
-				<div class="events_item_image"><a href="/event:{{this.sys.id}}"><img
+				<div class="events_item_image"><a href="/event-{{changeSpacesToDashes this.fields.title}}"><img
 							src="{{this.fields.eventImage.fields.file.url}}" alt=""></a></div>
 				<div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
 					<div class="event_date">
@@ -378,7 +378,7 @@
 						</div>
 					</div>
 					<div class="event_content">
-						<div class="event_title"><a href="/event:{{this.sys.id}}">{{this.fields.title}}</a></div>
+						<div class="event_title"><a href="/event-{{changeSpacesToDashes this.fields.title}}">{{this.fields.title}}</a></div>
 						<ul class="event_row">
 							<li>
 								<div class="event_icon"><img src="images/calendar.png" alt=""></div>
