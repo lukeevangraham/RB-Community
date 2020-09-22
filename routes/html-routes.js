@@ -1019,6 +1019,7 @@ module.exports = function (app) {
       );
       // req.params.id = req.params.id.substring(1);
       // client.getEntry(req.params.id).then(function (dbEvent) {
+        console.log(`STR: ${str}`)
       client
         .getEntries({
           content_type: "events",

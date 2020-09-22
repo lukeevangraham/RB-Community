@@ -27,6 +27,7 @@ app.engine(
         return moment(date).format(format);
       },
       changeSpacesToDashes: function (str) {
+        str = str.replace(/-/g, "---")
         str = str.replace(/\s+/g, "-")
         // str = str.replace(/---/g, " - ")
         return str
