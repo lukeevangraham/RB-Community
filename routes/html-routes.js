@@ -1019,6 +1019,7 @@ module.exports = function (app) {
       );
       // req.params.id = req.params.id.substring(1);
       // client.getEntry(req.params.id).then(function (dbEvent) {
+        str.indexOf("?") > 0 ? (str = str.substring(0, str.indexOf("?"))) : "",
         console.log(`STR: ${str}`)
       client
         .getEntries({
