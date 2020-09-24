@@ -84,7 +84,7 @@ var vimeoOptionsAnnHome = {
   method: "GET",
   url: "https://api.vimeo.com/users/14320074/videos",
   qs: {
-    query: "Announcements",
+    query: "Announcements rbcommunity",
     fields:
       "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button, embed",
     width: "690",
