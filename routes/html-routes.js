@@ -1134,6 +1134,14 @@ module.exports = function (app) {
     res.redirect("/blog-Courtyard-Worship-Service-Bulletin");
   });
 
+  app.get("/commitment", (req, res) => {
+    res.render("commitment", {
+      headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+        <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
+      title: `Giving`,
+    });
+  })
+
   app.use(function (req, res) {
     var bloghbsObject = {
       // article: entry.fields,
