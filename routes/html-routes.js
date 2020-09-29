@@ -53,7 +53,7 @@ var vimeoOptions = {
   method: "GET",
   url: "https://api.vimeo.com/users/14320074/videos",
   qs: {
-    query: "Sermon rbcommunity",
+    query: "Sermon",
     fields:
       "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button",
     sizes: "960",
@@ -68,7 +68,7 @@ var vimeoOptionsHome = {
   method: "GET",
   url: "https://api.vimeo.com/users/14320074/videos",
   qs: {
-    query: "Sermon rbcommunity",
+    query: "Sermon",
     fields:
       "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button",
     sizes: "960",
@@ -84,7 +84,7 @@ var vimeoOptionsAnnHome = {
   method: "GET",
   url: "https://api.vimeo.com/users/14320074/videos",
   qs: {
-    query: "Announcements rbcommunity",
+    query: "Announcements",
     fields:
       "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button, embed",
     width: "690",
