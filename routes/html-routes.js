@@ -59,6 +59,8 @@ var vimeoOptions = {
     sizes: "960",
     per_page: "7",
     page: "1",
+    sort: 'date',
+    direction: 'desc'
   },
   headers: {
     Authorization: "Bearer " + vimeoPass,
@@ -74,6 +76,8 @@ var vimeoOptionsHome = {
     sizes: "960",
     per_page: "3",
     page: "1",
+    sort: 'modified_time',
+    direction: 'desc'
   },
   headers: {
     Authorization: "Bearer " + vimeoPass,
@@ -84,12 +88,14 @@ var vimeoOptionsAnnHome = {
   method: "GET",
   url: "https://api.vimeo.com/users/14320074/videos",
   qs: {
-    query: "Announcements",
+    query: "announcements",
     fields:
       "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button, embed",
     width: "690",
     per_page: "1",
     page: "1",
+    sort: "modified_time",
+    direction: "desc",
   },
   headers: {
     Authorization: "Bearer " + vimeoPass,
@@ -1019,8 +1025,8 @@ module.exports = function (app) {
       );
       // req.params.id = req.params.id.substring(1);
       // client.getEntry(req.params.id).then(function (dbEvent) {
-        str.indexOf("?") > 0 ? (str = str.substring(0, str.indexOf("?"))) : "",
-        console.log(`STR: ${str}`)
+      str.indexOf("?") > 0 ? (str = str.substring(0, str.indexOf("?"))) : "",
+        console.log(`STR: ${str}`);
       client
         .getEntries({
           content_type: "events",
@@ -1140,7 +1146,7 @@ module.exports = function (app) {
         <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
       title: `Giving`,
     });
-  })
+  });
 
   app.use(function (req, res) {
     var bloghbsObject = {
