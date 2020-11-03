@@ -1092,7 +1092,7 @@ module.exports = function (app) {
 
   app.get("/survey", function (req, res) {
     res.redirect(
-      "https://assessments.gloo.us/a/RGVwbG95bWVudENvbmZpZ3wxNjg4NDMyMTk3NDc4OTA5MzQz"
+      "http://usd.qualtrics.com/jfe/form/SV_eKIuokrIZXl42od"
     );
   });
 
