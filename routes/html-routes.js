@@ -1021,16 +1021,16 @@ module.exports = function (app) {
         req.originalUrl
           .substring(7)
           .replace(/-/g, " ")
-          .replace(/\s\s\s/g, " - ")
+          .replace(/\s\s\s/g, "-")
       );
+      str = str.replace(/\s\s\s/g, " - ")
       // req.params.id = req.params.id.substring(1);
       // client.getEntry(req.params.id).then(function (dbEvent) {
-      str.indexOf("?") > 0 ? (str = str.substring(0, str.indexOf("?"))) : "",
-        console.log(`STR: ${str}`);
+      str.indexOf("?") > 0 ? (str = str.substring(0, str.indexOf("?"))) : "";
       client
         .getEntries({
           content_type: "events",
-          "fields.title[match]": str,
+          "fields.title": str,
         })
         .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
     }
