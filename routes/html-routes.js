@@ -1148,6 +1148,10 @@ module.exports = function (app) {
     });
   });
 
+  app.get('/concert', (req, res) => {
+    res.redirect('/ministry:Concert%20Series')
+  })
+
   app.use(function (req, res) {
     var bloghbsObject = {
       // article: entry.fields,
