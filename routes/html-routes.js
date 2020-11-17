@@ -59,8 +59,8 @@ var vimeoOptions = {
     sizes: "960",
     per_page: "7",
     page: "1",
-    sort: 'date',
-    direction: 'desc'
+    sort: "date",
+    direction: "desc",
   },
   headers: {
     Authorization: "Bearer " + vimeoPass,
@@ -76,8 +76,8 @@ var vimeoOptionsHome = {
     sizes: "960",
     per_page: "3",
     page: "1",
-    sort: 'modified_time',
-    direction: 'desc'
+    sort: "modified_time",
+    direction: "desc",
   },
   headers: {
     Authorization: "Bearer " + vimeoPass,
@@ -1023,7 +1023,7 @@ module.exports = function (app) {
           .replace(/-/g, " ")
           .replace(/\s\s\s/g, "-")
       );
-      str = str.replace(/\s\s\s/g, " - ")
+      str = str.replace(/\s\s\s/g, " - ");
       // req.params.id = req.params.id.substring(1);
       // client.getEntry(req.params.id).then(function (dbEvent) {
       str.indexOf("?") > 0 ? (str = str.substring(0, str.indexOf("?"))) : "";
@@ -1091,9 +1091,7 @@ module.exports = function (app) {
   });
 
   app.get("/survey", function (req, res) {
-    res.redirect(
-      "http://usd.qualtrics.com/jfe/form/SV_eKIuokrIZXl42od"
-    );
+    res.redirect("http://usd.qualtrics.com/jfe/form/SV_eKIuokrIZXl42od");
   });
 
   app.get("/temp", function (req, res) {
@@ -1109,19 +1107,34 @@ module.exports = function (app) {
         "fields.title": "Online Worship",
       })
       .then((pieces) => {
-        // console.log("PIECES: ", pieces.items[0])
-        pieces.items[0].fields.bodyHTML = documentToHtmlString(
-          pieces.items[0].fields.body
-        );
-        let hbsObject = {
-          active: { events: true },
-          headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
+        let youTubeData;
+        request(
+          {
+            method: "GET",
+            url:
+              "https://www.googleapis.com/youtube/v3/search?channelId=UCD0FfZKe5vv9PS5wpkJAFgw&part=snippet&order=date&q=Online%20Worship%7Ccontemporary&key=" + process.env.GOOGLE_KEY,
+            headers: {},
+          },
+          (error, response) => {
+            if (error) throw new Error(error);
+            // console.log("LOOK HERE: ", response.body);
+            youTubeData = JSON.parse(response.body);
+            pieces.items[0].fields.bodyHTML = documentToHtmlString(
+              pieces.items[0].fields.body
+            );
+            let hbsObject = {
+              active: { events: true },
+              headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
                       <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">
                       <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
-          title: `Online Worship`,
-          pieces: pieces.items[0].fields,
-        };
-        res.render("online", hbsObject);
+              title: `Online Worship`,
+              pieces: pieces.items[0].fields,
+              youTubeUrl: youTubeData.items[0].id.videoId
+            };
+            res.render("online", hbsObject);
+          }
+        );
+        // console.log("PIECES: ", pieces.items[0])
       });
   });
 
@@ -1148,9 +1161,9 @@ module.exports = function (app) {
     });
   });
 
-  app.get('/concert', (req, res) => {
-    res.redirect('/ministry:Concert%20Series')
-  })
+  app.get("/concert", (req, res) => {
+    res.redirect("/ministry:Concert%20Series");
+  });
 
   app.use(function (req, res) {
     var bloghbsObject = {
