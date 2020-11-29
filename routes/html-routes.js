@@ -1107,36 +1107,68 @@ module.exports = function (app) {
         "fields.title": "Online Worship",
       })
       .then((pieces) => {
-        let youTubeData;
-        request(
-          {
-            method: "GET",
-            url:
-              "https://www.googleapis.com/youtube/v3/search?channelId=UCD0FfZKe5vv9PS5wpkJAFgw&part=snippet&order=date&q=Online%20Worship%7Ccontemporary&key=" + process.env.GOOGLE_KEY,
-            headers: {},
-          },
-          (error, response) => {
-            if (error) throw new Error(error);
-            // console.log("LOOK HERE: ", response.body);
-            youTubeData = JSON.parse(response.body);
-            pieces.items[0].fields.bodyHTML = documentToHtmlString(
-              pieces.items[0].fields.body
-            );
-            let hbsObject = {
-              active: { events: true },
-              headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
+        // console.log("PIECES: ", pieces.items[0].fields.embedCode)
+        if (!pieces.items[0].fields.embedCode) {
+          let youTubeData;
+          request(
+            {
+              method: "GET",
+              url:
+                "https://www.googleapis.com/youtube/v3/search?channelId=UCD0FfZKe5vv9PS5wpkJAFgw&part=snippet&order=date&q=Online%20Worship%7Ccontemporary&key=" +
+                process.env.GOOGLE_KEY,
+              headers: {},
+            },
+            (error, response) => {
+              if (error) throw new Error(error);
+              // console.log("LOOK HERE: ", response.body);
+              youTubeData = JSON.parse(response.body);
+              pieces.items[0].fields.bodyHTML = documentToHtmlString(
+                pieces.items[0].fields.body
+              );
+              let hbsObject = {
+                active: { events: true },
+                headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
                       <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">
                       <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
-              title: `Online Worship`,
-              pieces: pieces.items[0].fields,
-              youTubeUrl: youTubeData.items[0].id.videoId
-            };
-            res.render("online", hbsObject);
-          }
-        );
-        // console.log("PIECES: ", pieces.items[0])
+                title: `Online Worship`,
+                pieces: pieces.items[0].fields,
+                youTubeUrl: youTubeData.items[0].id.videoId,
+              };
+              res.render("online", hbsObject);
+            }
+          );
+        } else {
+          // let youTubeData;
+          // request(
+          // {
+          //   method: "GET",
+          //   url:
+          //     "https://www.googleapis.com/youtube/v3/search?channelId=UCD0FfZKe5vv9PS5wpkJAFgw&part=snippet&order=date&q=Online%20Worship%7Ccontemporary&key=" + process.env.GOOGLE_KEY,
+          //   headers: {},
+          // },
+          // (error, response) => {
+          // if (error) throw new Error(error);
+          // console.log("LOOK HERE: ", response.body);
+          // youTubeData = JSON.parse(response.body);
+          pieces.items[0].fields.bodyHTML = documentToHtmlString(
+            pieces.items[0].fields.body
+          );
+          let hbsObject = {
+            active: { events: true },
+            headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
+                      <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">
+                      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
+            title: `Online Worship`,
+            pieces: pieces.items[0].fields,
+            // youTubeUrl: youTubeData.items[0].id.videoId
+          };
+          res.render("online", hbsObject);
+        }
       });
   });
+  // console.log("PIECES: ", pieces.items[0])
+  //     });
+  // });
 
   app.get("/memorial", (req, res) => {
     let hbsObject = {
