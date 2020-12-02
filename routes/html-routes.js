@@ -334,8 +334,8 @@ module.exports = function (app) {
     request(vimeoOptionsHome, function (error, response, body) {
       if (error) throw new Error(error);
 
-      vimeoRecord = JSON.stringify(body);
-      console.log(`Vimeo Record ${JSON.parse(vimeoRecord)}`)
+      vimeoRecord = JSON.parse(body);
+      console.log(`Vimeo Record ${vimeoRecord.data}`)
 
       if (vimeoRecord.data) {
         vimeoRecord.data.forEach((item) => {
