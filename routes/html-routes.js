@@ -334,13 +334,18 @@ module.exports = function (app) {
     request(vimeoOptionsHome, function (error, response, body) {
       if (error) throw new Error(error);
 
-      vimeoRecord = JSON.parse(body);
+      vimeoRecord = JSON.stringify(body);
+      console.log(`Vimeo Record ${JSON.parse(vimeoRecord)}`)
 
-      vimeoRecord.data.forEach((item) => {
-        Object.assign(item, {
-          shortTitle: item.name.split(": ", 2)[1],
+      if (vimeoRecord.data) {
+        vimeoRecord.data.forEach((item) => {
+          Object.assign(item, {
+            shortTitle: item.name.split(": ", 2)[1],
+          });
         });
-      });
+      }
+
+      
 
       request(vimeoOptionsAnnHome, function (error, response, body) {
         if (error) throw new Error(error);
