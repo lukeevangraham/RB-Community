@@ -335,7 +335,7 @@ module.exports = function (app) {
       if (error) throw new Error(error);
 
       vimeoRecord = JSON.parse(body);
-      console.log(`Vimeo Record ${vimeoRecord.data}`)
+      console.log(`Vimeo Record ${vimeoRecord.data}`);
 
       if (vimeoRecord.data) {
         vimeoRecord.data.forEach((item) => {
@@ -344,8 +344,6 @@ module.exports = function (app) {
           });
         });
       }
-
-      
 
       request(vimeoOptionsAnnHome, function (error, response, body) {
         if (error) throw new Error(error);
@@ -1200,6 +1198,10 @@ module.exports = function (app) {
 
   app.get("/concert", (req, res) => {
     res.redirect("/ministry:Concert%20Series");
+  });
+
+  app.get("/nativity", (req, res) => {
+    res.redirect("/blog-nativity");
   });
 
   app.use(function (req, res) {
