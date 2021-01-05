@@ -21,7 +21,7 @@
     "@contentful/rich-text-html-renderer": "^13.4.0",
     "@contentful/rich-text-types": "^13.4.0",
     "aos": "^2.3.4",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "contentful": "^7.9.1",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
