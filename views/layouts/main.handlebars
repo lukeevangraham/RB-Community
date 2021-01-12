@@ -16,12 +16,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-	{{#if metaTitle}}<meta name="title" content="{{metaTitle}}">{{/if}}
-	{{#if metaDescription}}<meta name="description" content="{{metaDescription}}">{{/if}}
+	{{#if metaTitle}}
+	<meta name="title" content="{{metaTitle}}">{{/if}}
+	{{#if metaDescription}}
+	<meta name="description" content="{{metaDescription}}">{{/if}}
 
 	<link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css" lazyload>
 	<script src="https://kit.fontawesome.com/7af90b3384.js" crossorigin="anonymous"></script>
-	{{!-- <link href="plugins/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> --}}
+	{{!--
+	<link href="plugins/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> --}}
 	<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.carousel.css">
 	<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.theme.default.css">
 	<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/animate.css" lazyload>
@@ -33,15 +36,18 @@
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
 		integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
 		crossorigin="" />
-		<link rel="stylesheet" href="styles/print.css">
+	<link rel="stylesheet" href="styles/print.css">
 
-		<script src="js/lazysizes.min.js" async=""></script>
+	<script src="js/lazysizes.min.js" async=""></script>
 	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
 		integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
 		crossorigin="" async></script>
 
-		
-		<script type="application/ld+json">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.js" charset="utf-8"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.js" charset="utf-8"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js" charset="utf-8"></script>
+
+	<script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Church",
@@ -55,11 +61,13 @@
 
 	{{{headContent}}}
 
-	
 
 
-	{{!-- <link rel="stylesheet" type="text/css" href="styles/events.css"> --}}
-	{{!-- <link rel="stylesheet" type="text/css" href="styles/events_responsive.css"> --}}
+
+	{{!--
+	<link rel="stylesheet" type="text/css" href="styles/events.css"> --}}
+	{{!--
+	<link rel="stylesheet" type="text/css" href="styles/events_responsive.css"> --}}
 	<title>RB Community Church: {{{title}}}</title>
 </head>
 
@@ -104,17 +112,24 @@
 									</ul>
 									<div class="top_bar_social ml-auto">
 										<ul class="social_list">
-											<li><a href="https://www.facebook.com/rbcpc/" target="_blank"><i class="fab fa-facebook"
+											<li><a href="https://www.facebook.com/rbcpc/" target="_blank"><i
+														class="fab fa-facebook" aria-hidden="true"></i></a></li>
+
+
+
+
+											<li><a href="https://instagram.com/rbcpc" target="_blank"><i
+														class="fab fa-instagram" aria-hidden="true"></i></a></li>
+											<li><a href="https://www.linkedin.com/company/rbcommunitychurch/"
+													target="_blank"><i class="fab fa-linkedin"
 														aria-hidden="true"></i></a></li>
-
-
-
-														
-											<li><a href="https://instagram.com/rbcpc" target="_blank"><i class="fab fa-instagram" aria-hidden="true"></i></a></li>
-											<li><a href="https://www.linkedin.com/company/rbcommunitychurch/" target="_blank"><i class="fab fa-linkedin" aria-hidden="true"></i></a></li>
-											<li><a href="https://twitter.com/rbcpc" target="_blank"><i class="fab fa-twitter" aria-hidden="true"></i></a></li>
-											<li><a href="https://vimeo.com/rbcpc" target="_blank"><i class="fab fa-vimeo" aria-hidden="true"></i></a></li>
-											<li><a href="https://www.youtube.com/user/rbcpccommunications/" target="_blank"><i class="fab fa-youtube" aria-hidden="true"></i></a></li>
+											<li><a href="https://twitter.com/rbcpc" target="_blank"><i
+														class="fab fa-twitter" aria-hidden="true"></i></a></li>
+											<li><a href="https://vimeo.com/rbcpc" target="_blank"><i
+														class="fab fa-vimeo" aria-hidden="true"></i></a></li>
+											<li><a href="https://www.youtube.com/user/rbcpccommunications/"
+													target="_blank"><i class="fab fa-youtube"
+														aria-hidden="true"></i></a></li>
 											<!-- <li><a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li> -->
 										</ul>
 									</div>
@@ -147,10 +162,12 @@
 												href="/ministries">ministries</a></li>
 										<li class="{{#if active.sermons}}active{{/if}}"><a href="/sermons">sermons</a>
 										</li>
+										<li class="{{#if active.giving}}active{{/if}}"><a href="/giving">give</a>
 										<li class="{{#if active.contact}}active{{/if}}"><a href="/contact">contact</a>
 										</li>
 									</ul>
-									{{!-- <div class="search_button"><i class="fa fa-search" aria-hidden="true"></i></div> --}}
+									{{!-- <div class="search_button"><i class="fa fa-search" aria-hidden="true"></i>
+									</div> --}}
 								</nav>
 
 								<!-- Hamburger -->
@@ -252,7 +269,8 @@
 							</ul>
 							<ul class="footer_links_list" id="oneColumn">
 								<li>
-									<a class="" href="/services">Sunday service times: In-person @ 9:30am, Online @ 10am</a>
+									<a class="" href="/services">Sunday service times: In-person @ 9:30am, Online @
+										10am</a>
 								</li>
 							</ul>
 						</div>
@@ -280,11 +298,14 @@
 									Ministries</a></li>
 							<li><a href="/services"><i class="fa fa-angle-double-right" aria-hidden="true"></i>
 									Service Times</a></li>
-							<li style="letter-spacing:-.5px"><a href="https://bryanstamper.org/" target="_blank"><i class="fa fa-angle-double-right" aria-hidden="true"></i>
+							<li style="letter-spacing:-.5px"><a href="https://bryanstamper.org/" target="_blank"><i
+										class="fa fa-angle-double-right" aria-hidden="true"></i>
 									Dr. Stamper's Site</a></li>
-							<li><a href="http://www.rbcpcpreschool.org/" target="_blank"><i class="fa fa-angle-double-right" aria-hidden="true"></i>
+							<li><a href="http://www.rbcpcpreschool.org/" target="_blank"><i
+										class="fa fa-angle-double-right" aria-hidden="true"></i>
 									Preschool</a></li>
-							{{!-- <li><a href="#"><i class="fa fa-angle-double-right" aria-hidden="true"></i> Media</a></li> --}}
+							{{!-- <li><a href="#"><i class="fa fa-angle-double-right" aria-hidden="true"></i> Media</a>
+							</li> --}}
 						</ul>
 					</div>
 				</div>
@@ -304,7 +325,7 @@
 								<div id="mc_embed_signup_scroll">
 									<div class="footer_title">Subscribe</div>
 									{{!-- <div class="indicates-required"><span class="asterisk">*</span> indicates
-												required</div> --}}
+										required</div> --}}
 									<div class="footer_text">Get Pastor Bryan's email devotional to receive
 										in-the-moment reflection
 										on selected scripture passages.</div>
@@ -352,12 +373,18 @@
 							<ul>
 								<li><a href="https://www.facebook.com/rbcpc/" target="_blank"><i class="fab fa-facebook"
 											aria-hidden="true"></i></a></li>
-								<li><a href="https://instagram.com/rbcpc" target="_blank"><i class="fab fa-instagram" aria-hidden="true"></i></a></li>
-								<li><a href="https://www.linkedin.com/company/rbcommunitychurch" target="_blank"><i class="fab fa-linkedin" aria-hidden="true"></i></a></li>
-								<li><a href="https://twitter.com/rbcpc" target="_blank"><i class="fab fa-twitter" aria-hidden="true"></i></a></li>
-								<li><a href="https://vimeo.com/rbcpc" target="_blank"><i class="fab fa-vimeo" aria-hidden="true"></i></a></li>
-								<li><a href="https://www.yelp.com/biz/rancho-bernardo-community-presbyterian-church-san-diego" target="_blank"><i class="fab fa-yelp" aria-hidden="true"></i></a></li>
-								<li><a href="https://www.youtube.com/user/rbcpccommunications/" target="_blank"><i class="fab fa-youtube" aria-hidden="true"></i></a></li>
+								<li><a href="https://instagram.com/rbcpc" target="_blank"><i class="fab fa-instagram"
+											aria-hidden="true"></i></a></li>
+								<li><a href="https://www.linkedin.com/company/rbcommunitychurch" target="_blank"><i
+											class="fab fa-linkedin" aria-hidden="true"></i></a></li>
+								<li><a href="https://twitter.com/rbcpc" target="_blank"><i class="fab fa-twitter"
+											aria-hidden="true"></i></a></li>
+								<li><a href="https://vimeo.com/rbcpc" target="_blank"><i class="fab fa-vimeo"
+											aria-hidden="true"></i></a></li>
+								<li><a href="https://www.yelp.com/biz/rancho-bernardo-community-presbyterian-church-san-diego"
+										target="_blank"><i class="fab fa-yelp" aria-hidden="true"></i></a></li>
+								<li><a href="https://www.youtube.com/user/rbcpccommunications/" target="_blank"><i
+											class="fab fa-youtube" aria-hidden="true"></i></a></li>
 								<!-- <li><a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li> -->
 							</ul>
 						</div>

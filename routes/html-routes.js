@@ -383,6 +383,7 @@ module.exports = function (app) {
             // limit: 3
           })
           .then(function (dbEvent) {
+            // console.log("EVENT: ", dbEvent)
             // console.log("LOOK HERE: ", dbEvent.items[0].fields);
             var items = dbEvent.items;
 
@@ -694,6 +695,7 @@ module.exports = function (app) {
 
   app.get("/giving", function (req, res) {
     res.render("giving", {
+      active: { giving: true },
       headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
         <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
       title: `Giving`,
