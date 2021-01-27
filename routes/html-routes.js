@@ -76,7 +76,7 @@ var vimeoOptionsHome = {
     sizes: "960",
     per_page: "3",
     page: "1",
-    sort: "modified_time",
+    sort: "date",
     direction: "desc",
   },
   headers: {
