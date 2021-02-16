@@ -20,7 +20,8 @@ function processUsername() {
 }
 
 function loadChat() {
-  if ((moment().format('ddd') === 'Sun') && (moment().isBetween(moment('09:30', 'H:mm'), moment('11:30', 'H:mm')))) {
+  // if ((moment().format('ddd') === 'Sun') && (moment().isBetween(moment('09:30', 'H:mm'), moment('11:30', 'H:mm')))) {
+  if ((moment().format('ddd') === 'Wed') && (moment().isBetween(moment('16:30', 'H:mm'), moment('19:00', 'H:mm')))) {
     if (!username) {
       $("#sidebarMain").html(`<h4 class="mt-5 mb-2" style="color:black">Enter a username to chat</h4><form action=""><div class="form-group"><input type="text" class="form-control" id="un" placeholder="Enter username"><button class="form_submit_button px-2 mt-2" id="unSubmit">Submit</button></div></form>`)
     } else {
@@ -36,7 +37,8 @@ function loadChat() {
       })
     }
   } else {
-    $("#sidebarMain").html(`<h4 class="m-3">Chat is available on Sundays from 9:30am until 11:30am.</h4>`)
+    // $("#sidebarMain").html(`<h4 class="m-3">Chat is available on Sundays from 9:30am until 11:30am.</h4>`)
+    $("#sidebarMain").html(`<h4 class="m-3">Chat is available on Ash Wednesday from 4:30pm until 7:00pm. <br><br> The online service gathers at 5pm.</h4>`)
   }
 }
 
