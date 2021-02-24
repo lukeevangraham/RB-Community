@@ -33,7 +33,7 @@
   );
   color: rgb(48, 48, 48);
   border-radius: 10px;
-  padding: 1rem;
+  /* padding: 1rem; */
   font-size: 150%;
   /* font-family: "Cardo", serif; */
   font-family: "Assistant", sans-serif;
@@ -41,7 +41,7 @@
 
 .weekWrap img {
   border-radius: 10px;
-  padding-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
 .weekWrap a {
@@ -50,24 +50,32 @@
 }
 
 .weekWrap a:hover {
-  color: #b9022c;
+  color: #317091;
+}
+
+.singleEvent {
+  margin: 1.5rem 0;
+}
+
+.event_icon {
+  margin-right: 0.25rem;
 }
 
 .date {
-    font-size: 85%;
-    color: rgb(56, 56, 56);
-    /* padding-bottom: 1rem; */
-    margin-top: -.25rem;
+  font-size: 80%;
+  color: rgb(56, 56, 56);
+  /* padding-bottom: 1rem; */
+  margin-top: -0.25rem;
 }
 
 .location {
-    font-size: 85%;
-    color: rgb(56, 56, 56);
-    padding-bottom: 1rem;
-    margin-top: -.25rem;
+  font-size: 80%;
+  color: rgb(56, 56, 56);
+  padding-bottom: 1rem;
+  margin-top: -0.25rem;
 }
 
 .weekWrap p {
-    font-family: "Cardo", serif;
-    color: rgb(27, 27, 27);
+  font-family: "Cardo", serif;
+  color: rgb(27, 27, 27);
 }
