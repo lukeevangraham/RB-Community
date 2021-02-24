@@ -55,6 +55,12 @@
 
 .singleEvent {
   margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.singleEvent a {
+  flex-grow: 1;
 }
 
 .event_icon {
@@ -78,4 +84,23 @@
 .weekWrap p {
   font-family: "Cardo", serif;
   color: rgb(27, 27, 27);
+}
+
+.description {
+  flex-grow: 3;
+}
+
+.button {
+  /* margin: auto; */
+  align-self: center;
+  justify-self: flex-end;
+}
+
+.button a {
+  color: white;
+}
+
+.button a:hover {
+  text-shadow: 0px 0px .5rem rgb(236, 236, 236);
+  color: white;
 }
