@@ -1,0 +1,73 @@
+.wrapper {
+  background-image: linear-gradient(to bottom right, #3ce2e0, #f3cefd);
+  color: rgb(245, 245, 245);
+}
+
+.churchName {
+  font-family: "Assistant", sans-serif;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 150%;
+  opacity: 0.8;
+  text-shadow: 0px 0px 1rem rgb(26, 26, 26);
+  letter-spacing: 0.3em;
+}
+
+.title {
+  font-family: "Cardo", serif;
+  font-size: 600%;
+  margin-top: -0.5rem;
+  text-shadow: 0px 0px 1.5rem rgb(5, 5, 5);
+}
+
+.subTitle {
+  color: rgb(43, 43, 43);
+}
+
+.weekWrap {
+  margin-top: 2rem;
+  background-image: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0.39),
+    rgba(255, 255, 255, 0.85)
+  );
+  color: rgb(48, 48, 48);
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 150%;
+  /* font-family: "Cardo", serif; */
+  font-family: "Assistant", sans-serif;
+}
+
+.weekWrap img {
+  border-radius: 10px;
+  padding-bottom: .5rem;
+}
+
+.weekWrap a {
+  color: rgb(36, 36, 36);
+  transition: color 0.2s;
+}
+
+.weekWrap a:hover {
+  color: #b9022c;
+}
+
+.date {
+    font-size: 85%;
+    color: rgb(56, 56, 56);
+    /* padding-bottom: 1rem; */
+    margin-top: -.25rem;
+}
+
+.location {
+    font-size: 85%;
+    color: rgb(56, 56, 56);
+    padding-bottom: 1rem;
+    margin-top: -.25rem;
+}
+
+.weekWrap p {
+    font-family: "Cardo", serif;
+    color: rgb(27, 27, 27);
+}
