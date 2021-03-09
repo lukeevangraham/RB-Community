@@ -1198,7 +1198,7 @@ module.exports = function (app) {
     });
   });
 
-  app.get("/easter", (req, res) => {
+  app.get(["/easter", "/lent"], (req, res) => {
     res.render("easter", {
       headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
       <link rel="stylesheet" type="text/css" href="styles/easter.css"><link rel="preconnect" href="https://fonts.gstatic.com"> 
