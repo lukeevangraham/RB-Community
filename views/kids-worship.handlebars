@@ -1,0 +1,180 @@
+<div class="super_container">
+
+    <!-- Home -->
+
+    <div class="home">
+        <div class="home_background" style="background-image:url(images/events.jpg)"></div>
+        <div class="home_content">
+            <div class="container">
+                <div class="row">
+                    <div class="col d-flex flex-row align-items-center justify-content-start">
+                        <div class="home_title">Good Friday</div>
+                        <div class="breadcrumbs ml-auto">
+                            <ul>
+                                <li><a href="/home">Home</a></li>
+                                <li>Events</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events -->
+
+
+
+
+    <div class="events pt-5">
+        <div class="container">
+            <div class="row">
+                {{!-- <div class="col">
+					<div data-aos="fade-down" class="section_title_container text-center">
+						<div class="section_title">list of events</div>
+						<h1 class="invisible">list of events</h1>
+						<div class="section_subtitle">“If anyone is in Christ, they are a new creation.” 2 Corinthians 5:17</div>
+					</div>
+				</div> --}}
+                <div class="col-md-8 mb-3">
+                    {{!-- <img class="img-fluid" src="https://images.ctfassets.net/v1a9n1zktijq/6mpK4z8fgB4JUCQOXHt4NV/9ef8985e99b077f300dd7704f44a641d/Ash_Wednesday_online.png" alt=""> --}}
+
+
+                    {{!-- BRING THIS BACK!!!!!!! --}}
+
+                    <div class="embed-responsive embed-responsive-16by9">
+                        {{#if pieces.embedCode}}
+                        {{{pieces.embedCode}}}
+                        {{/if}}
+
+                        {{#unless pieces.embedCode}}
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/{{youTubeUrl}}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                        {{/unless}}
+                    </div>
+
+
+                    {{!-- AND BRING THIS BACK TOO --}}
+                    <div class="row my-2">
+                        <div class="col-md-5 pl-4 pt-2">
+                            {{{ pieces.bodyHTML }}}
+                        </div>
+                        <div class="col-md-7">
+                            <div class="embed-responsive embed-responsive-16by9">
+                                {{{pieces.embedCode2}}}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div class="page_nav mt-0 mb-1">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="side-nav" data-name="chat" href="#/">Chat</a>
+                            </li>
+                            <li class="nav-item" data-name="giving">
+                                <a class="side-nav" data-name="giving" href="#/">Giving</a>
+                            </li>
+                            {{!-- <li class="nav-item">
+                                <a class="side-nav" data-name="prayer" href="#/">Prayer</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="side-nav" data-name="info" href="#/">Info</a>
+                            </li> --}}
+                        </ul>
+                    </div>
+
+
+                    <div id="sidebarMain">
+                        {{!-- <form action="">
+
+                            <div class="form-group">
+                                <h5>Enter a username to chat</h5>
+                                <input type="text" class="form-control mt-5" id="un"
+                                    placeholder="Enter username"><button class="form_submit_button px-2 mt-2"
+                                    id="unSubmit">Submit</button>
+                            </div>
+                        </form> --}}
+
+                        {{!-- <h4 class="m-3"><a target="_blank" href="https://www.shelbygiving.com/App/Form/c22e10fa-1c2b-4a81-ada5-b64465d6ca94">Click here to give to RB Community church</a></h4> --}}
+
+
+                        {{!-- <ul id="messages"></ul>
+                        <form id="messageForm" action="">
+                            <div class="form-row">
+                                <div class="col-10">
+                                    <input type="text" class="form-control" placeholder="Enter message" id="m"
+                                        autocomplete="off" />
+                                </div>
+                                <div class="col-2">
+                                    <div class="input-group-append"><button class="btn btn-primary">Send</button></div>
+                                </div>
+                            </div>
+                        </form> --}}
+                    </div>
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+        <div data-aos="fade-down"
+            class="events_items d-flex flex-lg-row flex-column align-items-lg-start align-items-center justify-content-lg-between justify-content-center flex-wrap">
+
+
+
+
+
+
+
+
+            <!-- Page Nav -->
+            {{!-- <div class="container">
+				<div class="row">
+					<div class="col">
+						<div class="page_nav">
+							<ul>
+								<li class="active"><a href="#">1</a></li>
+								<li><a href="#">2</a></li>
+								<li><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i></a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div> --}}
+        </div>
+    </div>
+
+    <!-- Quote -->
+
+    <div class="quote">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="quote_container text-center">
+                        <div data-aos="fade-down" class="quote_quote">“We believe encounters with Jesus transform
+                            lives.”</div>
+                        <div class="quote_icon"><img src="images/quote.png" alt=""></div>
+                        {{!-- <div class="quote_source">Ignatius of Antioch</div> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.0/moment.min.js" type="text/javascript"></script>
+    <script src="/js/jquery-3.2.1.min.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/online-kids-worship.js"></script>
+    <script src="/socket.io/socket.io.js"></script>

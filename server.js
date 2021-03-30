@@ -22,26 +22,26 @@ var PORT = process.env.PORT || 3000;
 app.engine(
   "handlebars",
   exphbs({
-    helpers: {
-      formatDate: function (date, format) {
-        return moment(date).format(format);
-      },
-      changeSpacesToDashes: function (str) {
-        str = str.replace(/-/g, "---")
-        str = str.replace(/\s+/g, "-")
-        str = str.replace(/-----/g, " - ")
-        // str = str.replace(/---/g, " - ")
-        return str
-      },
-      changeDashesToSpaces: function (str) {
-        str = str.replace(/-/g, " ")
-      }
-      // function(name, options) {
-      //     if(!this._sections) this._section = {};
-      //     this._sections[name] = options.fn(this);
-      //     return null
+    helpers: require("./controllers/handlebars-helpers")
+      // formatDate: function (date, format) {
+      //   return moment(date).format(format);
+      // },
+      // changeSpacesToDashes: function (str) {
+      //   str = str.replace(/-/g, "---")
+      //   str = str.replace(/\s+/g, "-")
+      //   str = str.replace(/-----/g, " - ")
+      //   // str = str.replace(/---/g, " - ")
+      //   return str
+      // },
+      // changeDashesToSpaces: function (str) {
+      //   str = str.replace(/-/g, " ")
       // }
-    }
+      // // function(name, options) {
+      // //     if(!this._sections) this._section = {};
+      // //     this._sections[name] = options.fn(this);
+      // //     return null
+      // // }
+    
   })
 );
 app.set("view engine", "handlebars");

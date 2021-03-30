@@ -1216,6 +1216,80 @@ module.exports = function (app) {
     res.redirect("/blog-nativity");
   });
 
+  app.get(["/good-friday", "/goodfriday"], (req, res) => {
+    client
+      .getEntries({
+        content_type: "onlineService",
+        "fields.title": "Good Friday",
+      })
+      .then((pieces) => {
+        // console.log("PIECES: ", pieces.items[0].fields.embedCode)
+
+        // let youTubeData;
+        // request(
+        // {
+        //   method: "GET",
+        //   url:
+        //     "https://www.googleapis.com/youtube/v3/search?channelId=UCD0FfZKe5vv9PS5wpkJAFgw&part=snippet&order=date&q=Online%20Worship%7Ccontemporary&key=" + process.env.GOOGLE_KEY,
+        //   headers: {},
+        // },
+        // (error, response) => {
+        // if (error) throw new Error(error);
+        // console.log("LOOK HERE: ", response.body);
+        // youTubeData = JSON.parse(response.body);
+        pieces.items[0].fields.bodyHTML = documentToHtmlString(
+          pieces.items[0].fields.body
+        );
+        let hbsObject = {
+          active: { events: true },
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
+                      <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">
+                      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
+          title: `Online Good Friday`,
+          pieces: pieces.items[0].fields,
+          // youTubeUrl: youTubeData.items[0].id.videoId
+        };
+        res.render("good-friday", hbsObject);
+      });
+  });
+
+  app.get(["/kids-worship", "/kidsworship"], (req, res) => {
+    client
+      .getEntries({
+        content_type: "onlineService",
+        "fields.title": "Kids Worship",
+      })
+      .then((pieces) => {
+        // console.log("PIECES: ", pieces.items[0].fields.embedCode)
+
+        // let youTubeData;
+        // request(
+        // {
+        //   method: "GET",
+        //   url:
+        //     "https://www.googleapis.com/youtube/v3/search?channelId=UCD0FfZKe5vv9PS5wpkJAFgw&part=snippet&order=date&q=Online%20Worship%7Ccontemporary&key=" + process.env.GOOGLE_KEY,
+        //   headers: {},
+        // },
+        // (error, response) => {
+        // if (error) throw new Error(error);
+        // console.log("LOOK HERE: ", response.body);
+        // youTubeData = JSON.parse(response.body);
+        pieces.items[0].fields.bodyHTML = documentToHtmlString(
+          pieces.items[0].fields.body
+        );
+        let hbsObject = {
+          active: { events: true },
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
+                      <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">
+                      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
+          title: `Online Kids Worship`,
+          pieces: pieces.items[0].fields,
+          // youTubeUrl: youTubeData.items[0].id.videoId
+        };
+        res.render("kids-worship", hbsObject);
+      });
+  });
+
   app.use(function (req, res) {
     var bloghbsObject = {
       // article: entry.fields,
