@@ -185,6 +185,12 @@
 
 @media only screen and (max-width: 768px)
 {
+	.blog_post_title_container {
+		width: unset;
+	}
+	.blog_post_text {
+		width: unset;
+	}
 	
 }
 
