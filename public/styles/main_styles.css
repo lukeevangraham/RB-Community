@@ -486,11 +486,12 @@ section {
 .hamburger {
   display: none;
   cursor: pointer;
-  margin-right: 10px;
+  /* margin-right: 10px; */
 }
 .hamburger i {
-  font-size: 20px;
-  color: #353535;
+  font-size: 16px;
+  /* color: #353535; */
+  color: #fff;
   -webkit-transition: all 200ms ease;
   -moz-transition: all 200ms ease;
   -ms-transition: all 200ms ease;
@@ -498,7 +499,7 @@ section {
   transition: all 200ms ease;
 }
 .hamburger:hover i {
-  color: #eb4141;
+  color: #64a1c2;
 }
 
 /*********************************
@@ -578,7 +579,7 @@ section {
   font-size: 20px;
 }
 .menu_close:hover i {
-  color: #eb4141;
+  color: #64a1c2;
 }
 
 /*********************************
