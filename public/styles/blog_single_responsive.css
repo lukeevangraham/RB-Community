@@ -102,10 +102,21 @@
 	{
 		display: none;
 	}
-	.hamburger
-	{
-		display: block;
-	}
+	.hamburger {
+		/* display: block; */
+		display: grid;
+		grid-template-columns: 1fr min-content;
+		grid-gap: 0.4rem;
+		align-items: center;
+		padding: 0.4rem;
+		border-radius: 3px;
+		/* box-shadow: 0 0 5px 5px #ccc; */
+		background-color: #327091;
+		color: #fff;
+	  }
+	  .hamburger-text {
+		font-weight: 700;
+	  }
 	.home_title
 	{
 		font-size: 48px;
