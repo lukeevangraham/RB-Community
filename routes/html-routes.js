@@ -165,7 +165,7 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
           return `<a href="${node.data.uri}" target="blank">${node.content[0].value}</a>`;
       },
       "embedded-asset-block": (node) =>
-      node.data.target.fields.file.url.endsWith("pdf") ? `<embed src="${node.data.target.fields.file.url}" width="100%" height="700px"  />` : (
+      node.data.target.fields.file.url.endsWith("pdf") ? `<embed src="${node.data.target.fields.file.url}" width="100%" height="500px"  />` : (
         `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`
 
       )
