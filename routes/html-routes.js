@@ -145,6 +145,9 @@ function compare(a, b) {
 }
 
 function prepareBlogEntryForSinglePage(entry, requestId) {
+
+  console.log("ENTRY: ", entry.fields.body.content)
+
   Object.assign(entry.fields, {
     shortMonth: moment(entry.fields.datePosted).format("MMM").toUpperCase(),
   });
@@ -162,7 +165,7 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
           return `<a href="${node.data.uri}" target="blank">${node.content[0].value}</a>`;
       },
       "embedded-asset-block": (node) =>
-        `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`,
+        `<img class="img-fluid" src="${node.data.target.fields.file.url}" crossorigin />`,
     },
   };
 
