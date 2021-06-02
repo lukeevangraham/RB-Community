@@ -1442,3 +1442,23 @@ section {
   -moz-columns: 1 !important;
   margin-top: 15px !important;
 }
+
+.colorbox {
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.colorbox img {
+  opacity: .7;
+  width: 100%;
+  height: auto;
+transform: scale(1.15);
+transition: transform 0.5s, opacity 0.5s;
+}
+
+.colorbox img:hover {
+  transform: scale(1.03);
+  opacity: 1;
+}
