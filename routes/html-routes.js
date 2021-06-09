@@ -4,6 +4,7 @@ var request = require("request");
 var moment = require("moment");
 var path = require("path");
 var marked = require("marked");
+// let axios = require(axios)
 
 marked.setOptions({
   renderer: new marked.Renderer(),
@@ -24,6 +25,7 @@ const HtmlRenderer = require("@contentful/rich-text-html-renderer");
 let { documentToHtmlString } = HtmlRenderer;
 
 const richTextTypes = require("@contentful/rich-text-types");
+const { default: axios } = require("axios");
 let { INLINES } = richTextTypes;
 
 let vimeoPass = process.env.VIMEO_TOKEN;
@@ -145,7 +147,6 @@ function compare(a, b) {
 }
 
 function prepareBlogEntryForSinglePage(entry, requestId) {
-
   // console.log("ENTRY: ", entry.fields.body.content)
 
   Object.assign(entry.fields, {
@@ -165,12 +166,9 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
           return `<a href="${node.data.uri}" target="blank">${node.content[0].value}</a>`;
       },
       "embedded-asset-block": (node) =>
-      node.data.target.fields.file.url.endsWith("pdf") ? `<embed src="${node.data.target.fields.file.url}" width="100%" height="500px"  />` : (
-        `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`
-
-      )
-      
-
+        node.data.target.fields.file.url.endsWith("pdf")
+          ? `<embed src="${node.data.target.fields.file.url}" width="100%" height="500px"  />`
+          : `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`,
     },
   };
 
@@ -760,11 +758,10 @@ module.exports = function (app) {
             items.push(earlyItem);
           }
         });
-        // console.log("LOOK HERE", items);
 
         // Converting times for template
         items.forEach((item) => {
-          // console.log("LOOK HERE: ", item)
+          console.log("LOOK HERE: ", item.fields);
           // Converting Date info
           Object.assign(item.fields, {
             formattedDate: moment(item.fields.datePosted)
@@ -773,21 +770,24 @@ module.exports = function (app) {
           });
 
           if (item.fields.body) {
-            // Creating article excerpt
-            var truncatedString = JSON.stringify(
-              item.fields.body.content[0].content[0].value.replace(
-                /^(.{165}[^\s]*).*/,
-                "$1"
-              )
-            );
-            var truncatedLength = truncatedString.length;
-            truncatedString = truncatedString
-              .substring(1, truncatedLength - 1)
-              .replace(/RBCC/g, "RB Community");
+            if (item.fields.body.content[0].content[0]) {
+              // Creating article excerpt
+              console.log("Here: ", item.fields.body.content[0].content[0]);
+              var truncatedString = JSON.stringify(
+                item.fields.body.content[0].content[0].value.replace(
+                  /^(.{165}[^\s]*).*/,
+                  "$1"
+                )
+              );
+              var truncatedLength = truncatedString.length;
+              truncatedString = truncatedString
+                .substring(1, truncatedLength - 1)
+                .replace(/RBCC/g, "RB Community");
 
-            Object.assign(item.fields, {
-              excerpt: truncatedString,
-            });
+              Object.assign(item.fields, {
+                excerpt: truncatedString,
+              });
+            }
           }
 
           // Render HTML if featured on requested ministry
