@@ -441,6 +441,8 @@ module.exports = function (app) {
                 var items = [];
                 var itemsIncludingExpired = dbBlog.items;
 
+                console.log("ITEMS: ", itemsIncludingExpired)
+
                 // ELIMINATING OLD ENTRIES FROM PAGE
                 itemsIncludingExpired.forEach((earlyItem) => {
                   if (
