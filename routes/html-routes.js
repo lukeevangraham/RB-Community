@@ -441,8 +441,6 @@ module.exports = function (app) {
                 var items = [];
                 var itemsIncludingExpired = dbBlog.items;
 
-                console.log("ITEMS: ", itemsIncludingExpired)
-
                 // ELIMINATING OLD ENTRIES FROM PAGE
                 itemsIncludingExpired.forEach((earlyItem) => {
                   if (
@@ -943,6 +941,7 @@ module.exports = function (app) {
   app.get("/event:id", function (req, res) {
     renderSingleEvent = (oldDbEvent) => {
       let dbEvent = oldDbEvent.items[0];
+
       // Converting times for template
       Object.assign(dbEvent.fields, {
         shortMonth: moment(dbEvent.fields.date).format("MMM"),
