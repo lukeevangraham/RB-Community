@@ -14,6 +14,9 @@ module.exports = {
   changeDashesToSpaces: function (str) {
     str = str.replace(/-/g, " ");
   },
+  isDefined: function (value) {
+    return value !== undefined;
+  }
   // function(name, options) {
   //     if(!this._sections) this._section = {};
   //     this._sections[name] = options.fn(this);

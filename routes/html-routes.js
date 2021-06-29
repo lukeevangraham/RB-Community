@@ -761,7 +761,6 @@ module.exports = function (app) {
 
         // Converting times for template
         items.forEach((item) => {
-          console.log("LOOK HERE: ", item.fields);
           // Converting Date info
           Object.assign(item.fields, {
             formattedDate: moment(item.fields.datePosted)
@@ -772,7 +771,6 @@ module.exports = function (app) {
           if (item.fields.body) {
             if (item.fields.body.content[0].content[0]) {
               // Creating article excerpt
-              console.log("Here: ", item.fields.body.content[0].content[0]);
               var truncatedString = JSON.stringify(
                 item.fields.body.content[0].content[0].value.replace(
                   /^(.{165}[^\s]*).*/,
@@ -891,7 +889,6 @@ module.exports = function (app) {
 
                       youTubeRecord = JSON.parse(body);
 
-                      // console.log("LOOK HERE: ", youTubeRecord)
                       prepMinistryPage();
                     }
                   );
@@ -903,12 +900,21 @@ module.exports = function (app) {
 
                       youTubeRecord = JSON.parse(body);
 
-                      // console.log("LOOK HERE: ", youTubeRecord)
                       prepMinistryPage();
                     }
                   );
 
-                  // console.log('BIG TIME: ', customYouTubeOptions)
+                } else if (req.params.id === "Chancel Choir, Ensembles & Orchestra") {
+                  request(
+                    newYouTubeOptions("PLZ13IHPbJRZ6B3OcxF4pXk6uKwrEKTz-t"),
+                    function (error, response, body) {
+                      if (error) throw new Error(error);
+
+                      youTubeRecord = JSON.parse(body);
+
+                      prepMinistryPage();
+                    }
+                  );
                 } else {
                   prepMinistryPage();
                 }
