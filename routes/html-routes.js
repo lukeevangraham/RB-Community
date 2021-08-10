@@ -4,6 +4,7 @@ var request = require("request");
 var moment = require("moment");
 var path = require("path");
 var marked = require("marked");
+// let axios = require(axios)
 
 marked.setOptions({
   renderer: new marked.Renderer(),
@@ -24,6 +25,7 @@ const HtmlRenderer = require("@contentful/rich-text-html-renderer");
 let { documentToHtmlString } = HtmlRenderer;
 
 const richTextTypes = require("@contentful/rich-text-types");
+const { default: axios } = require("axios");
 let { INLINES } = richTextTypes;
 
 let vimeoPass = process.env.VIMEO_TOKEN;
@@ -145,6 +147,8 @@ function compare(a, b) {
 }
 
 function prepareBlogEntryForSinglePage(entry, requestId) {
+  // console.log("ENTRY: ", entry.fields.body.content)
+
   Object.assign(entry.fields, {
     shortMonth: moment(entry.fields.datePosted).format("MMM").toUpperCase(),
   });
@@ -162,7 +166,9 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
           return `<a href="${node.data.uri}" target="blank">${node.content[0].value}</a>`;
       },
       "embedded-asset-block": (node) =>
-        `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`,
+        node.data.target.fields.file.url.endsWith("pdf")
+          ? `<embed src="${node.data.target.fields.file.url}" width="100%" height="500px"  />`
+          : `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`,
     },
   };
 
@@ -335,7 +341,7 @@ module.exports = function (app) {
       if (error) throw new Error(error);
 
       vimeoRecord = JSON.parse(body);
-      console.log(`Vimeo Record ${vimeoRecord.data}`);
+      // console.log(`Vimeo Record ${vimeoRecord.data}`);
 
       if (vimeoRecord.data) {
         vimeoRecord.data.forEach((item) => {
@@ -752,11 +758,9 @@ module.exports = function (app) {
             items.push(earlyItem);
           }
         });
-        // console.log("LOOK HERE", items);
 
         // Converting times for template
         items.forEach((item) => {
-          // console.log("LOOK HERE: ", item)
           // Converting Date info
           Object.assign(item.fields, {
             formattedDate: moment(item.fields.datePosted)
@@ -765,21 +769,23 @@ module.exports = function (app) {
           });
 
           if (item.fields.body) {
-            // Creating article excerpt
-            var truncatedString = JSON.stringify(
-              item.fields.body.content[0].content[0].value.replace(
-                /^(.{165}[^\s]*).*/,
-                "$1"
-              )
-            );
-            var truncatedLength = truncatedString.length;
-            truncatedString = truncatedString
-              .substring(1, truncatedLength - 1)
-              .replace(/RBCC/g, "RB Community");
+            if (item.fields.body.content[0].content[0]) {
+              // Creating article excerpt
+              var truncatedString = JSON.stringify(
+                item.fields.body.content[0].content[0].value.replace(
+                  /^(.{165}[^\s]*).*/,
+                  "$1"
+                )
+              );
+              var truncatedLength = truncatedString.length;
+              truncatedString = truncatedString
+                .substring(1, truncatedLength - 1)
+                .replace(/RBCC/g, "RB Community");
 
-            Object.assign(item.fields, {
-              excerpt: truncatedString,
-            });
+              Object.assign(item.fields, {
+                excerpt: truncatedString,
+              });
+            }
           }
 
           // Render HTML if featured on requested ministry
@@ -883,7 +889,6 @@ module.exports = function (app) {
 
                       youTubeRecord = JSON.parse(body);
 
-                      // console.log("LOOK HERE: ", youTubeRecord)
                       prepMinistryPage();
                     }
                   );
@@ -895,12 +900,21 @@ module.exports = function (app) {
 
                       youTubeRecord = JSON.parse(body);
 
-                      // console.log("LOOK HERE: ", youTubeRecord)
                       prepMinistryPage();
                     }
                   );
 
-                  // console.log('BIG TIME: ', customYouTubeOptions)
+                } else if (req.params.id === "Chancel Choir, Ensembles & Orchestra") {
+                  request(
+                    newYouTubeOptions("PLZ13IHPbJRZ6B3OcxF4pXk6uKwrEKTz-t"),
+                    function (error, response, body) {
+                      if (error) throw new Error(error);
+
+                      youTubeRecord = JSON.parse(body);
+
+                      prepMinistryPage();
+                    }
+                  );
                 } else {
                   prepMinistryPage();
                 }
@@ -933,6 +947,7 @@ module.exports = function (app) {
   app.get("/event:id", function (req, res) {
     renderSingleEvent = (oldDbEvent) => {
       let dbEvent = oldDbEvent.items[0];
+
       // Converting times for template
       Object.assign(dbEvent.fields, {
         shortMonth: moment(dbEvent.fields.date).format("MMM"),
@@ -1106,70 +1121,71 @@ module.exports = function (app) {
   });
 
   app.get("/online", (req, res) => {
-    client
-      .getEntries({
-        content_type: "randomPagePieces",
-        "fields.title": "Online Worship",
-      })
-      .then((pieces) => {
-        // console.log("PIECES: ", pieces.items[0].fields.embedCode)
-        if (!pieces.items[0].fields.embedCode) {
-          let youTubeData;
-          request(
-            {
-              method: "GET",
-              url:
-                "https://www.googleapis.com/youtube/v3/search?channelId=UCD0FfZKe5vv9PS5wpkJAFgw&part=snippet&order=date&q=Online%20Worship%7Ccontemporary&key=" +
-                process.env.GOOGLE_KEY,
-              headers: {},
-            },
-            (error, response) => {
-              if (error) throw new Error(error);
-              // console.log("LOOK HERE: ", response.body);
-              youTubeData = JSON.parse(response.body);
-              pieces.items[0].fields.bodyHTML = documentToHtmlString(
-                pieces.items[0].fields.body
-              );
-              let hbsObject = {
-                active: { events: true },
-                headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
-                      <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">
-                      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
-                title: `Online Worship`,
-                pieces: pieces.items[0].fields,
-                youTubeUrl: youTubeData.items[0].id.videoId,
-              };
-              res.render("online", hbsObject);
-            }
-          );
-        } else {
-          // let youTubeData;
-          // request(
-          // {
-          //   method: "GET",
-          //   url:
-          //     "https://www.googleapis.com/youtube/v3/search?channelId=UCD0FfZKe5vv9PS5wpkJAFgw&part=snippet&order=date&q=Online%20Worship%7Ccontemporary&key=" + process.env.GOOGLE_KEY,
-          //   headers: {},
-          // },
-          // (error, response) => {
-          // if (error) throw new Error(error);
-          // console.log("LOOK HERE: ", response.body);
-          // youTubeData = JSON.parse(response.body);
-          pieces.items[0].fields.bodyHTML = documentToHtmlString(
-            pieces.items[0].fields.body
-          );
-          let hbsObject = {
-            active: { events: true },
-            headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
-                      <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">
-                      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
-            title: `Online Worship`,
-            pieces: pieces.items[0].fields,
-            // youTubeUrl: youTubeData.items[0].id.videoId
-          };
-          res.render("online", hbsObject);
-        }
-      });
+    res.redirect("/blog-New-Online-Worship-Times");
+    // client
+    //   .getEntries({
+    //     content_type: "randomPagePieces",
+    //     "fields.title": "Online Worship",
+    //   })
+    //   .then((pieces) => {
+    //     // console.log("PIECES: ", pieces.items[0].fields.embedCode)
+    //     if (!pieces.items[0].fields.embedCode) {
+    //       let youTubeData;
+    //       request(
+    //         {
+    //           method: "GET",
+    //           url:
+    //             "https://www.googleapis.com/youtube/v3/search?channelId=UCD0FfZKe5vv9PS5wpkJAFgw&part=snippet&order=date&q=Online%20Worship%7Ccontemporary&key=" +
+    //             process.env.GOOGLE_KEY,
+    //           headers: {},
+    //         },
+    //         (error, response) => {
+    //           if (error) throw new Error(error);
+    //           // console.log("LOOK HERE: ", response.body);
+    //           youTubeData = JSON.parse(response.body);
+    //           pieces.items[0].fields.bodyHTML = documentToHtmlString(
+    //             pieces.items[0].fields.body
+    //           );
+    //           let hbsObject = {
+    //             active: { events: true },
+    //             headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
+    //                   <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">
+    //                   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
+    //             title: `Online Worship`,
+    //             pieces: pieces.items[0].fields,
+    //             youTubeUrl: youTubeData.items[0].id.videoId,
+    //           };
+    //           res.render("online", hbsObject);
+    //         }
+    //       );
+    //     } else {
+    //       // let youTubeData;
+    //       // request(
+    //       // {
+    //       //   method: "GET",
+    //       //   url:
+    //       //     "https://www.googleapis.com/youtube/v3/search?channelId=UCD0FfZKe5vv9PS5wpkJAFgw&part=snippet&order=date&q=Online%20Worship%7Ccontemporary&key=" + process.env.GOOGLE_KEY,
+    //       //   headers: {},
+    //       // },
+    //       // (error, response) => {
+    //       // if (error) throw new Error(error);
+    //       // console.log("LOOK HERE: ", response.body);
+    //       // youTubeData = JSON.parse(response.body);
+    //       pieces.items[0].fields.bodyHTML = documentToHtmlString(
+    //         pieces.items[0].fields.body
+    //       );
+    //       let hbsObject = {
+    //         active: { events: true },
+    //         headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
+    //                   <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">
+    //                   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
+    //         title: `Online Worship`,
+    //         pieces: pieces.items[0].fields,
+    //         // youTubeUrl: youTubeData.items[0].id.videoId
+    //       };
+    //       res.render("online", hbsObject);
+    //     }
+    //   });
   });
   // console.log("PIECES: ", pieces.items[0])
   //     });
@@ -1198,12 +1214,96 @@ module.exports = function (app) {
     });
   });
 
+  app.get(["/easter", "/lent"], (req, res) => {
+    res.render("easter", {
+      headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+      <link rel="stylesheet" type="text/css" href="styles/easter.css"><link rel="preconnect" href="https://fonts.gstatic.com"> 
+      <link href="https://fonts.googleapis.com/css2?family=Cardo&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
+      title: `Easter`,
+    });
+  });
+
   app.get("/concert", (req, res) => {
     res.redirect("/ministry:Concert%20Series");
   });
 
   app.get("/nativity", (req, res) => {
     res.redirect("/blog-nativity");
+  });
+
+  app.get(["/good-friday", "/goodfriday"], (req, res) => {
+    client
+      .getEntries({
+        content_type: "onlineService",
+        "fields.title": "Good Friday",
+      })
+      .then((pieces) => {
+        // console.log("PIECES: ", pieces.items[0].fields.embedCode)
+
+        // let youTubeData;
+        // request(
+        // {
+        //   method: "GET",
+        //   url:
+        //     "https://www.googleapis.com/youtube/v3/search?channelId=UCD0FfZKe5vv9PS5wpkJAFgw&part=snippet&order=date&q=Online%20Worship%7Ccontemporary&key=" + process.env.GOOGLE_KEY,
+        //   headers: {},
+        // },
+        // (error, response) => {
+        // if (error) throw new Error(error);
+        // console.log("LOOK HERE: ", response.body);
+        // youTubeData = JSON.parse(response.body);
+        pieces.items[0].fields.bodyHTML = documentToHtmlString(
+          pieces.items[0].fields.body
+        );
+        let hbsObject = {
+          active: { events: true },
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
+                      <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">
+                      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
+          title: `Online Good Friday`,
+          pieces: pieces.items[0].fields,
+          // youTubeUrl: youTubeData.items[0].id.videoId
+        };
+        res.render("good-friday", hbsObject);
+      });
+  });
+
+  app.get(["/kids-worship", "/kidsworship"], (req, res) => {
+    client
+      .getEntries({
+        content_type: "onlineService",
+        "fields.title": "Kids Worship",
+      })
+      .then((pieces) => {
+        // console.log("PIECES: ", pieces.items[0].fields.embedCode)
+
+        // let youTubeData;
+        // request(
+        // {
+        //   method: "GET",
+        //   url:
+        //     "https://www.googleapis.com/youtube/v3/search?channelId=UCD0FfZKe5vv9PS5wpkJAFgw&part=snippet&order=date&q=Online%20Worship%7Ccontemporary&key=" + process.env.GOOGLE_KEY,
+        //   headers: {},
+        // },
+        // (error, response) => {
+        // if (error) throw new Error(error);
+        // console.log("LOOK HERE: ", response.body);
+        // youTubeData = JSON.parse(response.body);
+        pieces.items[0].fields.bodyHTML = documentToHtmlString(
+          pieces.items[0].fields.body
+        );
+        let hbsObject = {
+          active: { events: true },
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/online-worship.css">
+                      <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">
+                      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
+          title: `Online Kids Worship`,
+          pieces: pieces.items[0].fields,
+          // youTubeUrl: youTubeData.items[0].id.videoId
+        };
+        res.render("kids-worship", hbsObject);
+      });
   });
 
   app.use(function (req, res) {

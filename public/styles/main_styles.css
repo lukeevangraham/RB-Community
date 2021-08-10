@@ -486,11 +486,12 @@ section {
 .hamburger {
   display: none;
   cursor: pointer;
-  margin-right: 10px;
+  /* margin-right: 10px; */
 }
 .hamburger i {
-  font-size: 20px;
-  color: #353535;
+  font-size: 16px;
+  /* color: #353535; */
+  color: #fff;
   -webkit-transition: all 200ms ease;
   -moz-transition: all 200ms ease;
   -ms-transition: all 200ms ease;
@@ -498,7 +499,7 @@ section {
   transition: all 200ms ease;
 }
 .hamburger:hover i {
-  color: #eb4141;
+  color: #64a1c2;
 }
 
 /*********************************
@@ -578,7 +579,7 @@ section {
   font-size: 20px;
 }
 .menu_close:hover i {
-  color: #eb4141;
+  color: #64a1c2;
 }
 
 /*********************************
@@ -601,7 +602,7 @@ section {
 }
 .home_content {
   position: absolute;
-  top: 36%;
+  top: 46%;
   left: 0;
   width: 100%;
   z-index: 10;
@@ -1440,4 +1441,24 @@ section {
   -webkit-columns: 1 !important;
   -moz-columns: 1 !important;
   margin-top: 15px !important;
+}
+
+.colorbox {
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.colorbox img {
+  opacity: .7;
+  width: 100%;
+  height: auto;
+transform: scale(1.15);
+transition: transform 0.5s, opacity 0.5s;
+}
+
+.colorbox img:hover {
+  transform: scale(1.03);
+  opacity: 1;
 }

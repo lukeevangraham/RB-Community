@@ -311,8 +311,9 @@
 		{{#each youTubeVideos.items}}
 
 		<div class="events_item">
-				<div class="events_item_image"><a href="http://youtube.com/watch?v={{contentDetails.videoId}}" target="_blank"><img
-							src="{{snippet.thumbnails.maxres.url}}" alt=""></a></div>
+				<div class="events_item_image"><a href="http://youtube.com/watch?v={{contentDetails.videoId}}" target="_blank">
+			 {{#if (isDefined snippet.thumbnails.maxres.url)}}<img src="{{snippet.thumbnails.maxres.url}}" alt="">{{else}}<img src="{{snippet.thumbnails.medium.url}}" alt="">{{/if}}
+				</a></div>
 				<div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
 					{{!-- <div class="event_date">
 						<div class="d-flex flex-column align-items-center justify-content-center">

@@ -128,7 +128,8 @@ $(document).ready(function() {
       // console.log("DATE: ", dateToCountTo)
       
       // Uncomment line below and replace date
-      var target_date = new Date(dateToCountTo).getTime() + 36000000;
+      // the last number on the line below is the time of target beyond midnight
+      var target_date = new Date(dateToCountTo).getTime() + 34200000;
       console.log("Count to", target_date)
 
       // comment lines below

@@ -36,14 +36,14 @@
 				<div class="about_image"><img data-src="images/about.jpg" class="lazyload" alt=""></div>
 			</div>
 			<div data-aos="fade-left" class="col-lg-6">
-					<h1 class="invisible">We offer six worship services every weekend, in a variety of styles.</h1>
+					<h1 class="invisible">We offer in-person and online worship services every weekend, in a variety of styles.</h1>
 				<div class="about_content">
 					<div class="about_text">
 						<p>RB Community is a church located in north San Diego within the beautiful suburbs of Rancho
 							Bernardo. We draw our faith family from surrounding neighborhoods of Poway, Del Sur,
 							Escondido, 4S Ranch and PQ. With a 50 year legacy of generosity to our neighbors, we
 							continue to embrace Biblical principles and compassionate service in the name of Jesus.</p>
-						<p>We offer six worship services every weekend, in a variety of styles. Adult education options
+						<p>We offer in-person and online worship services every weekend, in a variety of styles. Adult education options
 							run throughout the week, and service opportunities for all ages run throughout the year. We
 							have a unique preschool recognized for its inclusivity for children of all abilities, and we
 							are blessed with a stunning campus of multiple buildings for worship, family ministries,
@@ -122,20 +122,20 @@
 		<div class="row team_row" style="justify-content: space-around;">
 
 			<!-- Team Item -->
-			{{!-- <div data-aos="fade-down" class="col-lg-4 team_col">
+			<div data-aos="fade-down" class="col-lg-4 team_col">
 				<div class="team_item">
 					<div class="team_image">
 						<img data-src="images/team_1.jpg" class="lazyload" alt="">
 						<div
 							class="team_overlay d-flex flex-column align-items-center justify-content-end text-center trans_200">
 							<div class="team_overlay_text">
-								<p>Bryan leads our staff of over 90 employees while serving as the main preaching pastor.</p>
+								<p>Geoff leads our staff and is the main preaching pastor while we go through this season of transition.</p>
 							</div>
 							<div class="team_overlay_contact">
 								<ul>
 									<li>
 										<i class="fa fa-envelope" aria-hidden="true"></i>
-										<div> : bryan@rbcpc.org</div>
+										<div> : geoff@rbcpc.org</div>
 									</li>
 									<li>
 										<i class="fa fa-phone" aria-hidden="true"></i>
@@ -146,11 +146,11 @@
 						</div>
 					</div>
 					<div class="team_content text-center">
-						<div class="team_name">Rev. Dr. Bryan Stamper</div>
-						<div class="team_title">Senior Pastor</div>
+						<div class="team_name">Geoff Kohler (Rev. Dr.)</div>
+						<div class="team_title">Transitional Pastor</div>
 					</div>
 				</div>
-			</div> --}}
+			</div>
 
 			<!-- Team Item -->
 			<div data-aos="fade-down" class="col-lg-4 team_col">
@@ -226,7 +226,7 @@
 		<div class="row">
 			<div class="col">
 				<div data-aos="fade-down" class="section_title_container text-center">
-					<div class="section_title">Six Services</div>
+					<div class="section_title">In-Person & Online Services</div>
 					<div class="section_subtitle">Get your gift bag and
 						information about our monthly dinner with the Senior
 						Pastor to learn more
@@ -240,15 +240,15 @@
 					<div class="row">
 						<div data-aos="fade-right" class="col-md-6 col-xs-12">
 							{{!-- <br> --}}
-							<div class="about_text">
-								<h3 class="text-dark mt-3">Service Times</h3>
-								<h4><strong>Traditional Worship</strong> (2 choices)</h4>
-								<p>SUNDAY<br>
-									8:30 AM & 11:30 AM<br>
-									Sanctuary</p>
+							<div class="about_text text-dark">
+								{{!-- <h3 class="text-dark mt-3">Sunday Service Times</h3>
+								<h4>In-Person Worship</h4>
+								<p>9:30 AM<br>
+									Sanctuary<br>(childcare provided)</p>
 
-								<h4><strong>Contemporary Worship</strong> (3 choices)</h4>
-								<p>SATURDAY 5:00 PM<br>
+								<h4>Online Worship</h4>
+								<p>LIVESTREAM <br>
+								Sunday, 9:30 AM (YouTub) 5:00 PM<br>
 									Sanctuary<br>
 									SUNDAY 8:30 AM (Café)<br>
 									Fellowship Center<br>
@@ -261,7 +261,8 @@
 								<p>SUNDAY<br>
 									11:00 AM<BR>
 									Chapel
-								</p>
+								</p> --}}
+								{{> serviceTimes/serviceTimes}}
 							</div>
 
 
@@ -279,7 +280,9 @@
 					</div>
 					<div data-aos="fade-down" class="section_title mt-4 text-center">Family Ministries</div>
 					<div class="row mt-2">
-						<div data-aos="fade-down" class="col-md-4 col-xs-12 mb-3">
+
+						{{> familyMinistryInfo/familyMinistryInfo}}
+						{{!-- <div data-aos="fade-down" class="col-md-4 col-xs-12 mb-3">
 							<h3 class="text-dark text-center"><a class="text-dark" href="/ministry:Children" style="border-bottom: solid 1px #327091">NextWave</a></h3>
 							<h4 class="text-center">(K-5)</h4>
 							<p class="text-center">NextWave Sunday school classes are downstairs in our main building.
@@ -305,7 +308,7 @@
 								together. Our goal is to grow students in the model of servant leadership - young men
 								and women God has called them to be in Christ. Both MSM and Highway offer multiple
 								retreats and mission trips throughout the year.</p>
-						</div>
+						</div> --}}
 
 					</div>
 				</div>
