@@ -1318,7 +1318,8 @@ section {
   margin-top: 32px;
 }
 .footer_links_list li {
-  margin-bottom: 11px;
+  /* margin-bottom: 11px; */
+  padding-bottom: 11px;
 }
 .footer_links_list li a {
   font-size: 14px;
