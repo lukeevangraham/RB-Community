@@ -1202,7 +1202,7 @@ module.exports = function (app) {
       res.render("jobs", {
         active: { about: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
-          <link rel="stylesheet" type="text/css" href="styles/about.css">`,
+          <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
         title: `Job Openings | RB Community Presbyterian Church San Diego`,
         metaTitle: `Job Openings | RB Community Presbyterian Church San Diego`,
         jobs: parsedJobs,
@@ -1217,7 +1217,7 @@ module.exports = function (app) {
       res.render("job", {
         active: { about: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
-          <link rel="stylesheet" type="text/css" href="styles/about.css">`,
+          <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
         title: `Job Openings | RB Community Presbyterian Church San Diego`,
         metaTitle: `Job Openings | RB Community Presbyterian Church San Diego`,
         job: parsedJob,
