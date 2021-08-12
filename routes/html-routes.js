@@ -1191,6 +1191,26 @@ module.exports = function (app) {
   //     });
   // });
 
+  app.get("/jobs", function (req, res) {
+    request('http://admin.rbcommunity.org/jobs', function(error, response, body) {
+      let parsedJobs = JSON.parse(body)
+
+
+
+      
+    res.render("jobs", {
+        active: { about: true },
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+          <link rel="stylesheet" type="text/css" href="styles/about.css">`,
+        title: `Job Openings | RB Community Presbyterian Church San Diego`,
+        metaTitle: `Job Openings | RB Community Presbyterian Church San Diego`,
+        jobs: parsedJobs,
+      });
+      
+})
+
+  });
+
   app.get("/memorial", (req, res) => {
     let hbsObject = {
       active: { events: true },

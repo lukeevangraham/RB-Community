@@ -1,0 +1,68 @@
+<!-- Home -->
+
+<div class="home">
+    <div class="home_background" style="background-image:url(images/events.jpg)"></div>
+    <div class="home_content">
+        <div class="container">
+            <div class="row">
+                <div class="col d-flex flex-row align-items-center justify-content-start">
+                    <div class="home_title">About</div>
+                    <div class="breadcrumbs ml-auto">
+                        <ul>
+                            <li><a href="/home">Home</a></li>
+                            <li>About</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- About -->
+
+<div class="about">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div data-aos="fade-down" class="section_title_container text-center">
+                    <div class="section_title">job openings</div>
+                    <div class="section_subtitle">Opportunities to put talent to work</div>
+                </div>
+            </div>
+        </div>
+        <div class="row about_row" style="align-items: center">
+
+            <ul class="jobsList w-100">
+
+                {{#each this.jobs}}
+                {{log this}}
+                <li class="py-3 h6"><a href="/jobs/{{this.id}}">{{this.Title}}</a></li>
+                {{/each}}
+
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Quote -->
+
+<div class="quote">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="quote_container text-center">
+                    <div data-aos="fade-down" class="quote_quote">“Whatever you do, work at it with all your heart, as
+                        working for the Lord, not for human masters” - Colossians 3:23</div>
+                    <div class="quote_icon"><img src="images/quote_2.png" alt=""></div>
+                    {{!-- <div class="quote_source">Ignatius of Antioch</div> --}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/jquery-3.2.1.min.js"></script>
+<script src="js/about.js"></script>
