@@ -34,13 +34,23 @@
         <div class="row about_row" style="align-items: center">
 
 
-            {{#if this.jobs}}
-            <ul class="jobsList w-100">
-                {{#each this.jobs}}
-                {{!-- {{log this}} --}}
-                <li class="py-3 h6"><a href="/jobs-{{this.id}}">{{this.Title}}</a></li>
-                {{/each}}
-            </ul>
+            {{#if this.job}}
+
+            <div class="w-100 jobPost">
+                <div class="h5 text-center ">
+                    {{this.job.Title}}
+                </div>
+                {{#if (isFullTime this.job.Type)}}
+                <div class="h6 text-center">Full time</div>
+                {{/if}}
+                {{#if (isPartTime this.job.Type)}}
+                <div class="h6 text-center">Part time</div>
+                {{/if}}
+                <div class="mt-5">
+                    {{{this.description}}}
+                </div>
+            </div>
+
             {{else}}
             <div class="h6">No positions are available at this time.</div>
             {{/if}}
@@ -53,7 +63,7 @@
 
 <!-- Quote -->
 
-<div class="quote">
+{{!-- <div class="quote">
     <div class="container">
         <div class="row">
             <div class="col">
@@ -66,7 +76,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 
-<script src="js/jquery-3.2.1.min.js"></script>
-<script src="js/about.js"></script>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/about.js"></script>

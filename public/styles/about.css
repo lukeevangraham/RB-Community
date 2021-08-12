@@ -1064,3 +1064,11 @@ section {
   border-bottom: 1px solid rgb(233, 233, 233);
 margin-bottom: 0;
 }
+
+.jobPost, .jobPost p {
+  color: #444444;
+}
+
+.jobPost ol {
+  margin-left: 0;
+}

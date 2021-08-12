@@ -4,7 +4,10 @@ var request = require("request");
 var moment = require("moment");
 var path = require("path");
 var marked = require("marked");
+let showdown = require("showdown");
 // let axios = require(axios)
+
+let converter = new showdown.Converter()
 
 marked.setOptions({
   renderer: new marked.Renderer(),
@@ -26,6 +29,7 @@ let { documentToHtmlString } = HtmlRenderer;
 
 const richTextTypes = require("@contentful/rich-text-types");
 const { default: axios } = require("axios");
+const { parse } = require("dotenv");
 let { INLINES } = richTextTypes;
 
 let vimeoPass = process.env.VIMEO_TOKEN;
@@ -301,7 +305,7 @@ module.exports = function (app) {
           renderSingleBlog(entry, res);
         }))
       : // req.params.id.substring,
-        ((req.params.id = req.originalUrl.substring(6)),
+      ((req.params.id = req.originalUrl.substring(6)),
         (str = req.originalUrl.substring(6)),
         (str = str.replace(/-/g, " ")),
         (str = str.replace(/\s\s\s/g, " - ")),
@@ -1192,13 +1196,10 @@ module.exports = function (app) {
   // });
 
   app.get("/jobs", function (req, res) {
-    request('http://admin.rbcommunity.org/jobs', function(error, response, body) {
+    request('http://admin.rbcommunity.org/jobs', function (error, response, body) {
       let parsedJobs = JSON.parse(body)
 
-
-
-      
-    res.render("jobs", {
+      res.render("jobs", {
         active: { about: true },
         headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
           <link rel="stylesheet" type="text/css" href="styles/about.css">`,
@@ -1206,10 +1207,24 @@ module.exports = function (app) {
         metaTitle: `Job Openings | RB Community Presbyterian Church San Diego`,
         jobs: parsedJobs,
       });
-      
-})
-
+    })
   });
+
+  app.get("/jobs-:id", (req, res) => {
+    request('http://admin.rbcommunity.org/jobs/' + req.params.id, function (error, response, body) {
+      let parsedJob = JSON.parse(body)
+
+      res.render("job", {
+        active: { about: true },
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+          <link rel="stylesheet" type="text/css" href="styles/about.css">`,
+        title: `Job Openings | RB Community Presbyterian Church San Diego`,
+        metaTitle: `Job Openings | RB Community Presbyterian Church San Diego`,
+        job: parsedJob,
+        description: converter.makeHtml(parsedJob.Description)
+      });
+    })
+  })
 
   app.get("/memorial", (req, res) => {
     let hbsObject = {

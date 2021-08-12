@@ -16,20 +16,26 @@ module.exports = {
   },
   isDefined: function (value) {
     return value !== undefined;
-  }
+  },
+  isFullTime: function (value) {
+    return value === "FullTime";
+  },
+  isPartTime: function (value) {
+    return value === "PartTime";
+  },
   // function(name, options) {
   //     if(!this._sections) this._section = {};
   //     this._sections[name] = options.fn(this);
   //     return null
   // }
-//   showChat: function (showWeekday, showStart, showEnd) {
-//     console.log("current date: ", moment().format("ddd"));
-//     console.log("show start: ", moment(showStart, ["h:mm A"]).format("HH:mm"));
-//     console.log("show end: ", showEnd);
-//     console.log("show weekday: ", showWeekday);
-//     return moment().format("dddd") === showWeekday &&
-//       moment().isBetween(moment(showStart, "h:mm A"), moment(showEnd, "h:mm A"))
-//       ? true
-//       : false;
-//   },
+  //   showChat: function (showWeekday, showStart, showEnd) {
+  //     console.log("current date: ", moment().format("ddd"));
+  //     console.log("show start: ", moment(showStart, ["h:mm A"]).format("HH:mm"));
+  //     console.log("show end: ", showEnd);
+  //     console.log("show weekday: ", showWeekday);
+  //     return moment().format("dddd") === showWeekday &&
+  //       moment().isBetween(moment(showStart, "h:mm A"), moment(showEnd, "h:mm A"))
+  //       ? true
+  //       : false;
+  //   },
 };
