@@ -17,12 +17,6 @@ module.exports = {
   isDefined: function (value) {
     return value !== undefined;
   },
-  isFullTime: function (value) {
-    return value === "FullTime";
-  },
-  isPartTime: function (value) {
-    return value === "PartTime";
-  },
   // function(name, options) {
   //     if(!this._sections) this._section = {};
   //     this._sections[name] = options.fn(this);

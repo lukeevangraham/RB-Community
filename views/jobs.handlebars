@@ -11,6 +11,7 @@
                         <ul>
                             <li><a href="/home">Home</a></li>
                             <li>About</li>
+                            <li>Job Openings</li>
                         </ul>
                     </div>
                 </div>
@@ -32,19 +33,20 @@
             </div>
         </div>
         <div class="row about_row" style="align-items: center">
+            <div class="col">
 
 
-            {{#if this.jobs}}
-            <ul class="jobsList w-100">
-                {{#each this.jobs}}
-                {{!-- {{log this}} --}}
-                <li class="py-3 h6"><a href="/jobs-{{this.id}}">{{this.Title}}</a></li>
-                {{/each}}
-            </ul>
-            {{else}}
-            <div class="h6">No positions are available at this time.</div>
-            {{/if}}
-
+                {{#if this.jobs}}
+                <ul class="jobsList w-100">
+                    {{#each this.jobs}}
+                    {{!-- {{log this}} --}}
+                    <li class="py-3 h6"><a href="/jobs-{{this.id}}">{{this.Title}}</a></li>
+                    {{/each}}
+                </ul>
+                {{else}}
+                <div class="h6">No positions are available at this time.</div>
+                {{/if}}
+            </div>
 
         </div>
     </div>

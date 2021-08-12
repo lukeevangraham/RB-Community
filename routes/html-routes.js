@@ -1212,17 +1212,30 @@ module.exports = function (app) {
 
   app.get("/jobs-:id", (req, res) => {
     request('http://admin.rbcommunity.org/jobs/' + req.params.id, function (error, response, body) {
-      let parsedJob = JSON.parse(body)
 
-      res.render("job", {
-        active: { about: true },
-        headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
-          <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
-        title: `Job Openings | RB Community Presbyterian Church San Diego`,
-        metaTitle: `Job Openings | RB Community Presbyterian Church San Diego`,
-        job: parsedJob,
-        description: converter.makeHtml(parsedJob.Description)
-      });
+      if (body !== "Not Found") {
+        let parsedJob = JSON.parse(body)
+
+        res.render("job", {
+          active: { about: true },
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+        <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
+          title: `Job Openings | RB Community Presbyterian Church San Diego`,
+          metaTitle: `Job Openings | RB Community Presbyterian Church San Diego`,
+          job: parsedJob,
+          description: converter.makeHtml(parsedJob.Description)
+        });
+      } else {
+        var bloghbsObject = {
+          // article: entry.fields,
+          // request: req.params.id,
+          // active: { about: true },
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+            <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
+          title: `404`,
+        };
+        res.render("404", bloghbsObject);
+      }
     })
   })
 

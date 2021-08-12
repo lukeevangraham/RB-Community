@@ -1207,3 +1207,9 @@ section {
 .jobPost ol {
   list-style-position: inside;
 }
+
+.jobPost ul {
+  margin-bottom: 1rem;
+  list-style: unset;
+  list-style-position: inside;
+}

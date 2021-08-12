@@ -36,20 +36,21 @@
 
             {{#if this.job}}
 
-            <div class="w-100 jobPost">
-                <div class="h5 text-center ">
-                    {{this.job.Title}}
+
+                <div class="col jobPost">
+                    <div class="h5 text-center ">
+                        {{this.job.Title}}
+                    </div>
+                    {{#each this.job.job_types}}
+                    <div class="h6 text-center">{{Name}}</div>
+                    {{/each}}
+
+
+                    <div class="mt-5">
+                        {{{this.description}}}
+                    </div>
                 </div>
-                {{#if (isFullTime this.job.Type)}}
-                <div class="h6 text-center">Full time</div>
-                {{/if}}
-                {{#if (isPartTime this.job.Type)}}
-                <div class="h6 text-center">Part time</div>
-                {{/if}}
-                <div class="mt-5">
-                    {{{this.description}}}
-                </div>
-            </div>
+
 
             {{else}}
             <div class="h6">No positions are available at this time.</div>
