@@ -606,14 +606,26 @@ module.exports = function (app) {
   });
 
   app.get("/about", function (req, res) {
-    res.render("about", {
-      active: { about: true },
-      headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
-        <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
-      metaTitle: "Join Our Family | RB Community Presbyterian Church",
-      title: `Join Our Family | RB Community Presbyterian Church`,
-    });
-  });
+    client.getEntry("1esz4QXvYbB04qb45A3pHj").then((entry) => {
+
+      // const rawRichTextField = entry.fields.body;
+
+      const aboutBody = documentToHtmlString(entry.fields.body)
+
+      //             Object.assign(entry.fields, {
+      //               renderedHtml: documentToHtmlString(rawRichTextField),
+
+
+                    res.render("about", {
+                      aboutBody: aboutBody,
+                      active: { about: true },
+                      headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+                      <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
+                      metaTitle: "Join Our Family | RB Community Presbyterian Church",
+                      title: `Join Our Family | RB Community Presbyterian Church`,
+                    });
+                  })
+                  });
 
   app.get(["/sermons", "/sermons:id"], function (req, res) {
     if (req.params.id) {
