@@ -1213,3 +1213,7 @@ section {
   list-style: unset;
   list-style-position: inside;
 }
+
+.jobPost div:last-of-type {
+  max-width: 30rem;
+}

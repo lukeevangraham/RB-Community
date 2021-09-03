@@ -65,6 +65,6 @@ To add an event item select "Add Entry" from the top right of the content page a
 
 **Display countdown on home page?:** The 'yes' button places the event at the top of the home page.
 
-**Home page password:** To display entry on home page a password must be entered.  Ask Bryan or Luke to enter the password.  You can submit a task to them via the panel on the right.
+**Home page password:** To display entry on home page a password must be entered.  Ask Luke to enter the password.  You can submit a task to them via the panel on the right.
 
 **Ministry:** Select the ministry sponsoring the entry (if no check-box exists contact Luke).
