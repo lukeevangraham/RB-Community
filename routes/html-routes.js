@@ -741,6 +741,8 @@ module.exports = function (app) {
     var thirdRecord = null;
     let youTubeRecord = null;
 
+    console.log("HERE: ", req.params.id)
+
     client
       .getEntries({
         content_type: "blog",
