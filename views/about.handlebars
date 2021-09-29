@@ -214,8 +214,54 @@
 					</div>
 				</div>
 			</div>
-
 		</div>
+
+			<div class="row">
+			<div class="col">
+				<div data-aos="fade-down" class="section_title_container text-center">
+					<div class="section_title">our staff</div>
+					<div class="section_subtitle">Serving with all our hearts</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row team_row" style="justify-content: space-around;">
+
+			{{#each staffMembers  }}
+			<!-- Team Item -->
+			<div data-aos="fade-down" class="col-lg-4 team_col">
+				<div class="team_item">
+					<div class="team_image">
+						<img data-src="{{this.Photo.url}}" class="lazyload" alt="">
+						<div
+							class="team_overlay d-flex flex-column align-items-center justify-content-end text-center trans_200">
+							<div class="team_overlay_text">
+								<p>John leads our education team that facilitates unique learning opportunities through small groups, classes, events and leadership development.</p>
+							</div>
+							<div class="team_overlay_contact">
+								<ul>
+									<li>
+										<i class="fa fa-envelope" aria-hidden="true"></i>
+										<div> : {{this.Email}}</div>
+									</li>
+									<li>
+										<i class="fa fa-phone" aria-hidden="true"></i>
+										<div>: 858.487.0811 x217</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="team_content text-center">
+						<div class="team_name">{{this.FirstName}} {{this.LastName}}</div>
+						<div class="team_title">{{this.JobTitle}}</div>
+					</div>
+				</div>
+			</div>
+			{{/each}}
+
+			</div>
+
 	</div>
 </div>
 

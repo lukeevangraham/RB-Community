@@ -6,8 +6,9 @@ var path = require("path");
 var marked = require("marked");
 let showdown = require("showdown");
 // let axios = require(axios)
+// let axios = require("axios");
 
-let converter = new showdown.Converter()
+let converter = new showdown.Converter();
 
 marked.setOptions({
   renderer: new marked.Renderer(),
@@ -305,7 +306,7 @@ module.exports = function (app) {
           renderSingleBlog(entry, res);
         }))
       : // req.params.id.substring,
-      ((req.params.id = req.originalUrl.substring(6)),
+        ((req.params.id = req.originalUrl.substring(6)),
         (str = req.originalUrl.substring(6)),
         (str = str.replace(/-/g, " ")),
         (str = str.replace(/\s\s\s/g, " - ")),
@@ -605,27 +606,39 @@ module.exports = function (app) {
       });
   });
 
-  app.get("/about", function (req, res) {
-    client.getEntry("1esz4QXvYbB04qb45A3pHj").then((entry) => {
+  app.get("/about", async function (req, res) {
+    function getStaffMembers() {
+      try {
+        const response = axios.get(
+          `https://admin.rbcommunity.org/staff-members`
+        );
+        return response;
+      } catch (error) {
+        console.log(error);
+      }
+    }
 
+    const staffMembers = await getStaffMembers();
+
+    client.getEntry("1esz4QXvYbB04qb45A3pHj").then((entry) => {
       // const rawRichTextField = entry.fields.body;
 
-      const aboutBody = documentToHtmlString(entry.fields.body)
+      const aboutBody = documentToHtmlString(entry.fields.body);
 
       //             Object.assign(entry.fields, {
       //               renderedHtml: documentToHtmlString(rawRichTextField),
 
-
-                    res.render("about", {
-                      aboutBody: aboutBody,
-                      active: { about: true },
-                      headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+      res.render("about", {
+        aboutBody: aboutBody,
+        active: { about: true },
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
                       <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
-                      metaTitle: "Join Our Family | RB Community Presbyterian Church",
-                      title: `Join Our Family | RB Community Presbyterian Church`,
-                    });
-                  })
-                  });
+        metaTitle: "Join Our Family | RB Community Presbyterian Church",
+        title: `Join Our Family | RB Community Presbyterian Church`,
+        staffMembers: staffMembers.data
+      });
+    });
+  });
 
   app.get(["/sermons", "/sermons:id"], function (req, res) {
     if (req.params.id) {
@@ -919,8 +932,9 @@ module.exports = function (app) {
                       prepMinistryPage();
                     }
                   );
-
-                } else if (req.params.id === "Chancel Choir, Ensembles & Orchestra") {
+                } else if (
+                  req.params.id === "Chancel Choir, Ensembles & Orchestra"
+                ) {
                   request(
                     newYouTubeOptions("PLZ13IHPbJRZ6B3OcxF4pXk6uKwrEKTz-t"),
                     function (error, response, body) {
@@ -1208,48 +1222,53 @@ module.exports = function (app) {
   // });
 
   app.get("/jobs", function (req, res) {
-    request('http://admin.rbcommunity.org/jobs', function (error, response, body) {
-      let parsedJobs = JSON.parse(body)
+    request(
+      "http://admin.rbcommunity.org/jobs",
+      function (error, response, body) {
+        let parsedJobs = JSON.parse(body);
 
-      res.render("jobs", {
-        active: { about: true },
-        headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+        res.render("jobs", {
+          active: { about: true },
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
           <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
-        title: `Job Openings | RB Community Presbyterian Church San Diego`,
-        metaTitle: `Job Openings | RB Community Presbyterian Church San Diego`,
-        jobs: parsedJobs,
-      });
-    })
+          title: `Job Openings | RB Community Presbyterian Church San Diego`,
+          metaTitle: `Job Openings | RB Community Presbyterian Church San Diego`,
+          jobs: parsedJobs,
+        });
+      }
+    );
   });
 
   app.get("/jobs-:id", (req, res) => {
-    request('http://admin.rbcommunity.org/jobs/' + req.params.id, function (error, response, body) {
+    request(
+      "http://admin.rbcommunity.org/jobs/" + req.params.id,
+      function (error, response, body) {
+        if (body !== "Not Found") {
+          let parsedJob = JSON.parse(body);
 
-      if (body !== "Not Found") {
-        let parsedJob = JSON.parse(body)
-
-        res.render("job", {
-          active: { about: true },
-          headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+          res.render("job", {
+            active: { about: true },
+            headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
         <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
-          title: `Job Openings | RB Community Presbyterian Church San Diego`,
-          metaTitle: `Job Openings | RB Community Presbyterian Church San Diego`,
-          job: parsedJob,
-          description: converter.makeHtml(parsedJob.Description)
-        });
-      } else {
-        var bloghbsObject = {
-          // article: entry.fields,
-          // request: req.params.id,
-          // active: { about: true },
-          headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+            title: `Job Openings | RB Community Presbyterian Church San Diego`,
+            metaTitle: `Job Openings | RB Community Presbyterian Church San Diego`,
+            job: parsedJob,
+            description: converter.makeHtml(parsedJob.Description),
+          });
+        } else {
+          var bloghbsObject = {
+            // article: entry.fields,
+            // request: req.params.id,
+            // active: { about: true },
+            headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
             <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
-          title: `404`,
-        };
-        res.render("404", bloghbsObject);
+            title: `404`,
+          };
+          res.render("404", bloghbsObject);
+        }
       }
-    })
-  })
+    );
+  });
 
   app.get("/memorial", (req, res) => {
     let hbsObject = {
