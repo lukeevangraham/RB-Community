@@ -232,7 +232,12 @@
 			<div data-aos="fade-down" class="col-lg-4 team_col">
 				<div class="team_item">
 					<div class="team_image">
-						<img data-src="{{this.Photo.url}}" class="lazyload" alt="">
+						<img srcset="{{this.Photo.url}} {{this.Photo.width}}w,
+							{{this.Photo.formats.thumbnail.url}} {{this.Photo.formats.thumbnail.width}}w,
+							{{this.Photo.formats.small.url}} {{this.Photo.formats.small.width}}w"
+							sizes="(max-width: 1199px) 289px, (max-width: 991px) 690px, (max-width: 767px) 510px, (max-width: 575px) 543px, 360px"
+							alt="{{this.Photo.alternativeText}}"
+							class="lazyload staffMember" alt="">
 						<div
 							class="team_overlay d-flex flex-column align-items-center justify-content-end text-center trans_200">
 							<div class="team_overlay_text">

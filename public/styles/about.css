@@ -90,7 +90,11 @@ p:last-of-type {
   margin-bottom: 0;
 }
 
-a, a:hover, a:visited, a:active, a:link {
+a,
+a:hover,
+a:visited,
+a:active,
+a:link {
   text-decoration: none;
   -webkit-font-smoothing: antialiased;
   -webkit-text-shadow: rgba(0, 0, 0, 0.01) 0 0 1px;
@@ -111,9 +115,11 @@ p a:hover::after {
   opacity: 0.2;
 }
 
-::selection {}
+::selection {
+}
 
-p::selection {}
+p::selection {
+}
 
 h1 {
   font-size: 48px;
@@ -135,14 +141,25 @@ h5 {
   font-size: 14px;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: "Open Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -webkit-text-shadow: rgba(0, 0, 0, 0.01) 0 0 1px;
   text-shadow: rgba(0, 0, 0, 0.01) 0 0 1px;
 }
 
-h1::selection, h2::selection, h3::selection, h4::selection, h5::selection, h6::selection {}
+h1::selection,
+h2::selection,
+h3::selection,
+h4::selection,
+h5::selection,
+h6::selection {
+}
 
 .form-control {
   color: #db5246;
@@ -158,7 +175,8 @@ section {
   clear: both;
 }
 
-.clearfix::before, .clearfix::after {
+.clearfix::before,
+.clearfix::after {
   content: "";
   display: table;
 }
@@ -289,7 +307,8 @@ section {
   width: 100%;
 }
 
-.header.scrolled .top_bar {}
+.header.scrolled .top_bar {
+}
 
 .top_bar_background {
   position: absolute;
@@ -316,13 +335,14 @@ section {
   display: inline-block;
 }
 
-.top_bar_contact_list li i, .top_bar_contact_list li>div {
+.top_bar_contact_list li i,
+.top_bar_contact_list li > div {
   display: inline-block;
   font-size: 12px;
   color: #ffffff;
 }
 
-.top_bar_contact_list li>div {
+.top_bar_contact_list li > div {
   margin-left: 5px;
 }
 
@@ -383,7 +403,8 @@ section {
 3.3 Logo
 *********************************/
 
-.logo, .logo_text {
+.logo,
+.logo_text {
   display: inline-block;
 }
 
@@ -429,9 +450,11 @@ section {
 3.4 Main Nav
 *********************************/
 
-.main_nav_contaner {}
+.main_nav_contaner {
+}
 
-.main_nav, .search_button {
+.main_nav,
+.search_button {
   display: inline-block;
 }
 
@@ -455,7 +478,8 @@ section {
   transition: all 200ms ease;
 }
 
-.main_nav li a:hover, .main_nav li.active a {
+.main_nav li a:hover,
+.main_nav li.active a {
   color: #327091;
 }
 
@@ -719,7 +743,8 @@ section {
   background: #ffffff;
 }
 
-.section_title_container {}
+.section_title_container {
+}
 
 .section_title {
   font-size: 36px;
@@ -897,7 +922,8 @@ section {
   margin-top: 15px;
 }
 
-.team_overlay_contact ul li i, .team_overlay_contact ul li div {
+.team_overlay_contact ul li i,
+.team_overlay_contact ul li div {
   display: inline-block;
 }
 
@@ -972,7 +998,8 @@ section {
   padding-top: 54px;
 }
 
-.footer_logo, .footer_logo_text {
+.footer_logo,
+.footer_logo_text {
   display: inline-block;
 }
 
@@ -1200,7 +1227,8 @@ section {
   margin-bottom: 0;
 }
 
-.jobPost, .jobPost p {
+.jobPost,
+.jobPost p {
   color: #444444;
 }
 
@@ -1210,10 +1238,14 @@ section {
 
 .jobPost ul {
   margin-bottom: 1rem;
-  list-style: unset;
+  list-style: unset;w
   list-style-position: inside;
 }
 
 .jobPost div:last-of-type {
   max-width: 30rem;
+}
+
+.staffMember {
+  filter: grayscale(100%);
 }
