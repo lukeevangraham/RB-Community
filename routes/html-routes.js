@@ -610,7 +610,7 @@ module.exports = function (app) {
     function getStaffMembers() {
       try {
         const response = axios.get(
-          `https://admin.rbcommunity.org/staff-members`
+          `https://admin.rbcommunity.org/staff-members?_sort=LastName:ASC`
         );
         return response;
       } catch (error) {

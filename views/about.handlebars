@@ -229,19 +229,25 @@
 
 			{{#each staffMembers  }}
 			<!-- Team Item -->
-			<div data-aos="fade-down" class="col-lg-4 team_col">
+			<div data-aos="fade-down" class="col-lg-3 team_col">
 				<div class="team_item">
 					<div class="team_image">
+						{{#if this.Photo}}
 						<img srcset="{{this.Photo.url}} {{this.Photo.width}}w,
 							{{this.Photo.formats.thumbnail.url}} {{this.Photo.formats.thumbnail.width}}w,
 							{{this.Photo.formats.small.url}} {{this.Photo.formats.small.width}}w"
-							sizes="(max-width: 1199px) 289px, (max-width: 991px) 690px, (max-width: 767px) 510px, (max-width: 575px) 543px, 360px"
+							sizes="(max-width: 575px) 545px, (max-width: 767px) 510px, (max-width:991px) 690px, (max-width: 1199px) 210px, 263px"
 							alt="{{this.Photo.alternativeText}}"
 							class="lazyload staffMember" alt="">
+							{{else}}
+							<img src="images/unnamed.jpg" alt="">
+							{{/if}}
 						<div
 							class="team_overlay d-flex flex-column align-items-center justify-content-end text-center trans_200">
 							<div class="team_overlay_text">
-								<p>John leads our education team that facilitates unique learning opportunities through small groups, classes, events and leadership development.</p>
+								{{#if this.ShortBio}}
+								<p>{{this.ShortBio}}</p>
+								{{/if}}
 							</div>
 							<div class="team_overlay_contact">
 								<ul>
@@ -249,10 +255,12 @@
 										<i class="fa fa-envelope" aria-hidden="true"></i>
 										<div> : {{this.Email}}</div>
 									</li>
+									{{#with PhoneExtension}}
 									<li>
 										<i class="fa fa-phone" aria-hidden="true"></i>
-										<div>: 858.487.0811 x217</div>
+										<div>: 858.487.0811 x{{this}}</div>
 									</li>
+									{{/with}}
 								</ul>
 							</div>
 						</div>
