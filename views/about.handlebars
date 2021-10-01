@@ -233,9 +233,9 @@
 				<div class="team_item">
 					<div class="team_image">
 						{{#if this.Photo}}
-						<img srcset="{{this.Photo.url}} {{this.Photo.width}}w,
-							{{this.Photo.formats.thumbnail.url}} {{this.Photo.formats.thumbnail.width}}w,
-							{{this.Photo.formats.small.url}} {{this.Photo.formats.small.width}}w"
+						<img srcset="https://res.cloudinary.com/rb-community-church/image/upload/f_auto/{{this.Photo.hash}}{{this.Photo.ext}} {{this.Photo.width}}w,
+							https://res.cloudinary.com/rb-community-church/image/upload/f_auto,w_500/{{this.Photo.hash}}{{this.Photo.ext}} 500w,
+							https://res.cloudinary.com/rb-community-church/image/upload/f_auto,w_210/{{this.Photo.hash}}{{this.Photo.ext}} 210w"
 							sizes="(max-width: 575px) 545px, (max-width: 767px) 510px, (max-width:991px) 690px, (max-width: 1199px) 210px, 263px"
 							alt="{{this.Photo.alternativeText}}"
 							class="lazyload staffMember" alt="">
