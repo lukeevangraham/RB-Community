@@ -251,10 +251,13 @@
 							</div>
 							<div class="team_overlay_contact">
 								<ul>
+									{{#with Email}}
+									
 									<li>
 										<i class="fa fa-envelope" aria-hidden="true"></i>
-										<div> : {{this.Email}}</div>
+										<div> : {{this}}</div>
 									</li>
+									{{/with}}
 									{{#with PhoneExtension}}
 									<li>
 										<i class="fa fa-phone" aria-hidden="true"></i>
