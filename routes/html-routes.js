@@ -1305,6 +1305,16 @@ module.exports = function (app) {
     });
   });
 
+  app.get("/christmas", (req, res) => {
+    res.render("christmas", {
+      headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+      <link rel="stylesheet" type="text/css" href="styles/christmas.css"><link rel="preconnect" href="https://fonts.gstatic.com"> 
+      <link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
+    })
+  })
+
+
   app.get("/concert", (req, res) => {
     res.redirect("/ministry:Concert%20Series");
   });

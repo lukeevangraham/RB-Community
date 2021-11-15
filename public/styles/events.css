@@ -65,6 +65,11 @@ ul {
   list-style: none;
   margin-bottom: 0px;
 }
+
+.event_text ul {
+  list-style: unset;
+  margin-left: 1rem;
+}
 p {
   font-family: "Assistant", sans-serif;
   font-size: 16px;

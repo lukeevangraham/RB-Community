@@ -1,0 +1,87 @@
+:root {
+    --color-primary: #dd1c37;
+    --color-secondary: #5e2930;
+    --color-tertiary: #e36273;
+    --color-quaternary: #5e0c17;
+    --color-quinary: #ab162a;
+}
+
+.top {
+    background-image: linear-gradient(to bottom, #2e080d00 70%, #2e080d),
+        linear-gradient(to bottom right, #dd1c3686, #5e0c1780), url("/images/pierWeb.jpg");
+    background-position: center;
+    background-size: cover;
+    height: 55vw;
+    margin-top: 114px;
+}
+
+.maintainMaxWidth {
+    max-width: 1170px;
+    margin: auto;
+}
+
+.sectionHeading {
+    font-size: 2rem;
+    text-transform: uppercase;
+    padding: 2rem 0;
+}
+
+.xmasContainer {
+    width: 100%;
+    /* max-width: 1170px; */
+    height: 55vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: #eee;
+    /* margin-top: 114px; */
+    /* margin: 114px auto 0 auto; */
+    margin-top: 114px;
+}
+
+.title {
+    font-size: 4vw;
+    font-family: "PT Serif", serif;
+    text-shadow: 0 0 15px black;
+}
+
+.adventEvents {
+    background-image: linear-gradient(to bottom, #2e080d, #2e080d);
+    font-family: "PT Serif", serif;
+    text-align: center;
+    padding: 5rem 0;
+    color: #eee;
+}
+
+.cardWrapper {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.card .card__side .card__picture {
+    height: 9rem;
+    background-size: cover;
+    background-blend-mode: screen;
+}
+
+.card .card__side .card__picture--1 {
+    background-image: linear-gradient(to bottom right, var(--color-primary), var(--color-primary)),
+        url("https://images.ctfassets.net/v1a9n1zktijq/7GJqhPHvnodP6xc0YuLB8n/ad30995ea94280a1a3621ed17f6443de/Reveal_web_graphic.png");
+}
+.card .card__side .card__picture--2 {
+    background-image: linear-gradient(to bottom right, var(--color-secondary), var(--color-secondary)),
+        url("https://images.ctfassets.net/v1a9n1zktijq/37N7iBcyw08xF5dSFPmqNq/d07c2334fd36ec5534621877f2a1f474/breakfast_in_bethlehem_web.jpg");
+}
+.card .card__side .card__picture--3 {
+    background-image: linear-gradient(to bottom right, var(--color-quaternary), var(--color-quaternary)),
+        url("https://images.ctfassets.net/v1a9n1zktijq/6dCmv6e4Y4XwaNu8UMjDEX/a20ca6daec6b72b3b65076a1c62f94ff/blueChristmasWeb.jpg");
+}
+.card .card__side .card__picture--4 {
+    background-image: linear-gradient(to bottom right, var(--color-secondary), var(--color-secondary)),
+        url("https://images.ctfassets.net/v1a9n1zktijq/37N7iBcyw08xF5dSFPmqNq/d07c2334fd36ec5534621877f2a1f474/breakfast_in_bethlehem_web.jpg");
+}
+.card .card__side .card__picture--5{
+    background-image: linear-gradient(to bottom right, var(--color-quinary), var(--color-quinary)),
+        url("https://images.ctfassets.net/v1a9n1zktijq/3Bmq2odJexDOz1UbrONYlG/60c67c28dc1e7d569d3534af637214b2/Nativity_Event_688x388.png");
+}
