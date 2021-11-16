@@ -1,19 +1,19 @@
 :root {
-    --color-primary: 352, 78%, 49%;
-    --color-primary-light: 352, 78%, 49%;
-    --color-primary-dark: hsl(from var(--color-primary) h s calc(l - 10%));
-    --color-secondary: 352, 70%, 64%;
-    --color-secondary-light: 352, 70%, 64%;
-    --color-secondary-dark: 352, 70%, 64%;
-    --color-tertiary: 352, 39%, 26%;
-    --color-tertiary-light: 352, 39%, 26%;
-    --color-tertiary-dark: 352, 39%, 26%;
-    --color-quaternary: 352, 77%, 21%;
-    --color-quaternary-light: 352, 77%, 21%;
-    --color-quaternary-dark: 352, 77%, 21%;
-    --color-quinary: 352, 77%, 38%;
-    --color-quinary-light: 352, 77%, 38%;
-    --color-quinary-dark: 352, 77%, 38%;
+    --color-primary: #dd1c37;
+    --color-primary-light: #f13f56;
+    --color-primary-dark: #9e091d;
+    --color-secondary: #e36273;
+    --color-secondary-light: #f78191;
+    --color-secondary-dark: #c04858;
+    --color-tertiary: #5e2930;
+    --color-tertiary-light: #70383f;
+    --color-tertiary-dark: #421b20;
+    --color-quaternary: #5e0c17;
+    --color-quaternary-light: #6e1722;
+    --color-quaternary-dark: #46050e;
+    --color-quinary: #ab162a;
+    --color-quinary-light: #c2263b;
+    --color-quinary-dark: #8f0b1d;
 }
 
 .top {
@@ -30,11 +30,18 @@
     margin: auto;
 }
 
+.section {
+    font-family: "PT Serif", serif;
+    padding: 5rem 0;
+    color: #eee;
+    text-align: center;
+}
+
 .sectionHeading {
     font-size: 2rem;
     text-transform: uppercase;
     padding: 2rem 0;
-    padding-bottom: 5rem;
+    /* padding-bottom: 5rem; */
 }
 
 .xmasContainer {
@@ -59,14 +66,10 @@
 
 .adventEvents {
     background-image: linear-gradient(to bottom, #2e080d, #2e080d);
-    font-family: "PT Serif", serif;
-    text-align: center;
-    padding: 5rem 0;
-    color: #eee;
 }
 
 .card {
-    border: none;
+    /* border: none; */
     perspective: 150rem;
     -moz-perspective: 150rem;
     position: relative;
@@ -81,7 +84,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    -webkit-backface-visibility: hidden;
+    /* -webkit-backface-visibility: hidden; */
     backface-visibility: hidden;
     border-radius: 6px;
     overflow: hidden;
@@ -94,8 +97,14 @@
 
 .card__side--back {
     transform: rotateY(180deg);
-    background-color: orangered;
     color: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card__side--back .button {
+    background-color: var(--color-primary-dark);
 }
 
 .card:hover .card__side--front {
@@ -106,23 +115,23 @@
 }
 
 .card__side--back-1 {
-    background-image: linear-gradient(to bottom right, hsl(var(--color-primary)), var(--color-primary-dark));
+    background-image: linear-gradient(to bottom right, var(--color-primary-light), var(--color-primary-dark));
 }
 
 .card__side--back-2 {
-    background-image: linear-gradient(to bottom right, hsl(var(--color-secondary)), hsl(var(--color-secondary)));
+    background-image: linear-gradient(to bottom right, var(--color-secondary-light), var(--color-secondary-dark));
 }
 
 .card__side--back-3 {
-    background-image: linear-gradient(to bottom right, hsl(var(--color-quaternary)), hsl(var(--color-quaternary)));
+    background-image: linear-gradient(to bottom right, var(--color-quaternary-light), var(--color-quaternary-dark));
 }
 
 .card__side--back-4 {
-    background-image: linear-gradient(to bottom right, hsl(var(--color-tertiary)), hsl(var(--color-tertiary)));
+    background-image: linear-gradient(to bottom right, var(--color-tertiary-light), var(--color-tertiary-dark));
 }
 
 .card__side--back-5 {
-    background-image: linear-gradient(to bottom right, hsl(var(--color-quinary)), hsl(var(--color-quinary)));
+    background-image: linear-gradient(to bottom right, var(--color-quinary-light), var(--color-quinary-dark));
 }
 
 .cardWrapper {
@@ -130,6 +139,7 @@
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     grid-gap: 3rem;
     justify-content: center;
+    padding: 5rem 0;
 }
 
 .card__heading {
@@ -148,43 +158,23 @@
 }
 
 .card_heading--1 span {
-    background-image: linear-gradient(
-        to bottom right,
-        hsl(var(--color-primary), 0.85),
-        hsl(var(--color-primary), 0.85)
-    );
+    background-color: var(--color-primary);
 }
 
 .card_heading--2 span {
-    background-image: linear-gradient(
-        to bottom right,
-        hsl(var(--color-secondary), 0.85),
-        hsl(var(--color-secondary), 0.85)
-    );
+    background-color: var(--color-secondary);
 }
 
 .card_heading--3 span {
-    background-image: linear-gradient(
-        to bottom right,
-        hsl(var(--color-quaternary), 0.85),
-        hsl(var(--color-quaternary), 0.85)
-    );
+    background-color: var(--color-quaternary);
 }
 
 .card_heading--4 span {
-    background-image: linear-gradient(
-        to bottom right,
-        hsl(var(--color-tertiary), 0.85),
-        hsl(var(--color-tertiary), 0.85)
-    );
+    background-color: var(--color-tertiary);
 }
 
 .card_heading--5 span {
-    background-image: linear-gradient(
-        to bottom right,
-        hsl(var(--color-quinary), 0.85),
-        hsl(var(--color-quinary), 0.85)
-    );
+    background-color: var(--color-quinary);
 }
 
 .card .card__side .card__picture {
@@ -195,23 +185,23 @@
 }
 
 .card .card__side .card__picture--1 {
-    background-image: linear-gradient(to bottom right, hsl(var(--color-primary)), hsl(var(--color-primary))),
+    background-image: linear-gradient(to bottom right, var(--color-primary-light), var(--color-primary-dark)),
         url("https://images.ctfassets.net/v1a9n1zktijq/7GJqhPHvnodP6xc0YuLB8n/ad30995ea94280a1a3621ed17f6443de/Reveal_web_graphic.png");
 }
 .card .card__side .card__picture--2 {
-    background-image: linear-gradient(to bottom right, hsl(var(--color-secondary)), hsl(var(--color-secondary))),
+    background-image: linear-gradient(to bottom right, var(--color-secondary-light), var(--color-secondary-dark)),
         url("https://images.ctfassets.net/v1a9n1zktijq/705vis77Un12igRzhkAJn7/0b1b07f43b2d76939703bfbc6d3c520a/pageant.jpg");
 }
 .card .card__side .card__picture--3 {
-    background-image: linear-gradient(to bottom right, hsl(var(--color-quaternary)), hsl(var(--color-quaternary))),
+    background-image: linear-gradient(to bottom right, var(--color-quaternary-light), var(--color-quaternary-dark)),
         url("https://images.ctfassets.net/v1a9n1zktijq/6dCmv6e4Y4XwaNu8UMjDEX/a20ca6daec6b72b3b65076a1c62f94ff/blueChristmasWeb.jpg");
 }
 .card .card__side .card__picture--4 {
-    background-image: linear-gradient(to bottom right, hsl(var(--color-tertiary)), hsl(var(--color-tertiary))),
+    background-image: linear-gradient(to bottom right, var(--color-tertiary-light), var(--color-tertiary-dark)),
         url("https://images.ctfassets.net/v1a9n1zktijq/6TMj3FNaQSbtxLxjvGAprm/e87361b8a8a104610f5b9e9f0d7c13ed/ChristmasBrunch_1920x1080.jpg");
 }
 .card .card__side .card__picture--5 {
-    background-image: linear-gradient(to bottom right, hsl(var(--color-quinary)), hsl(var(--color-quinary))),
+    background-image: linear-gradient(to bottom right, var(--color-quinary-light), var(--color-quinary-dark)),
         url("https://images.ctfassets.net/v1a9n1zktijq/3wuUhukI35gRpnjBXuCyYo/050aff2d7e7868f92c29cabd06e4960a/nativity.jpg");
 }
 
@@ -235,4 +225,42 @@
     margin-top: 1rem;
     padding-top: 1rem;
     border-top: 1px rgb(214, 214, 214) solid;
+}
+
+.sundaySeries {
+    background-image: linear-gradient(to bottom, #2e080d, transparent 10%, transparent 80%, var(--color-quinary)), url("/images/withStarWeb.jpg");
+    background-position: left center;
+    background-size: cover;
+    padding: 9rem 0;
+}
+
+.makeRightColumn {
+    margin-left: 50%;
+    background-color: rgba(20, 20, 20, 0.774);
+    padding: 0 1rem 2rem 1rem;
+    border-radius: 6px;
+}
+
+.sundayTimes {
+    font-size: 20px;
+    /* padding: 2rem 0; */
+    padding-bottom: 2rem;
+    margin-top: -1rem;
+}
+
+.sundaySeries p {
+    font-family: "PT Serif", serif;
+    color: #eee;
+    font-weight: 700;
+    text-align: left;
+}
+
+.christmasEve {
+    background-color: var(--color-quinary);
+}
+
+.christmasEve p {
+    font-family: "PT Serif", serif;
+    color: #eee;
+    font-weight: 700;
 }
