@@ -228,7 +228,7 @@
 }
 
 .sundaySeries {
-    background-image: linear-gradient(to bottom, #2e080d, transparent 10%, transparent 80%, var(--color-quinary)), url("/images/withStarWeb.jpg");
+    background-image: linear-gradient(to bottom, #2e080d, transparent 10%), url("/images/withStarWeb.jpg");
     background-position: left center;
     background-size: cover;
     padding: 9rem 0;
@@ -237,7 +237,7 @@
 .makeRightColumn {
     margin-left: 50%;
     background-color: rgba(20, 20, 20, 0.774);
-    padding: 0 1rem 2rem 1rem;
+    padding: 0 1.5rem 2rem 1.5rem;
     border-radius: 6px;
 }
 
@@ -256,11 +256,67 @@
 }
 
 .christmasEve {
-    background-color: var(--color-quinary);
+    background-color: var(--color-quaternary);
+    background-image: linear-gradient(to bottom, #5e0c17a6, #5e0c17a6), url("/images/xmasEve.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
 .christmasEve p {
     font-family: "PT Serif", serif;
     color: #eee;
     font-weight: 700;
+    max-width: 50rem;
+    margin: auto;
 }
+
+.topBox {
+    background-color: #310309c0;
+    padding: 0 3rem 2rem 3rem;
+    width: fit-content;
+    margin: auto;
+    border-radius: 6px;
+}
+
+.eveServiceWrapper {
+    padding: 3rem 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-gap: 2rem;
+    font-size: 16px;
+}
+
+.eveService {
+    background-color: rgba(241, 241, 241, 0.977);
+    border-radius: 6px;
+    padding: 2rem 1rem;
+    color: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: all .2s;
+    box-shadow: 0 0 5px #111;
+}
+
+.eveService:hover {
+    transform: scale(1.03) translateY(-.33rem);
+}
+
+.eveService .Title {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.eveService .Time {
+    font-size: 1.2rem;
+    padding-bottom: 1rem;
+}
+
+.eveService img {
+    /* font-weight: 700; */
+    height: 4rem;
+    margin-bottom: 1rem;
+}
+
+
