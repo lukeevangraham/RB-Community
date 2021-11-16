@@ -1,9 +1,19 @@
 :root {
-    --color-primary: #dd1c37;
-    --color-secondary: #5e2930;
-    --color-tertiary: #e36273;
-    --color-quaternary: #5e0c17;
-    --color-quinary: #ab162a;
+    --color-primary: 352, 78%, 49%;
+    --color-primary-light: 352, 78%, 49%;
+    --color-primary-dark: hsl(from var(--color-primary) h s calc(l - 10%));
+    --color-secondary: 352, 70%, 64%;
+    --color-secondary-light: 352, 70%, 64%;
+    --color-secondary-dark: 352, 70%, 64%;
+    --color-tertiary: 352, 39%, 26%;
+    --color-tertiary-light: 352, 39%, 26%;
+    --color-tertiary-dark: 352, 39%, 26%;
+    --color-quaternary: 352, 77%, 21%;
+    --color-quaternary-light: 352, 77%, 21%;
+    --color-quaternary-dark: 352, 77%, 21%;
+    --color-quinary: 352, 77%, 38%;
+    --color-quinary-light: 352, 77%, 38%;
+    --color-quinary-dark: 352, 77%, 38%;
 }
 
 .top {
@@ -24,6 +34,7 @@
     font-size: 2rem;
     text-transform: uppercase;
     padding: 2rem 0;
+    padding-bottom: 5rem;
 }
 
 .xmasContainer {
@@ -54,34 +65,174 @@
     color: #eee;
 }
 
+.card {
+    border: none;
+    perspective: 150rem;
+    -moz-perspective: 150rem;
+    position: relative;
+    height: 33rem;
+    background-color: #2e080d;
+}
+
+.card__side {
+    height: 33rem;
+    transition: all 0.8s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 0 21px #ffdbdfaf;
+}
+
+.card__side--front {
+    background-color: #eee;
+}
+
+.card__side--back {
+    transform: rotateY(180deg);
+    background-color: orangered;
+    color: #eee;
+}
+
+.card:hover .card__side--front {
+    transform: rotateY(-180deg);
+}
+.card:hover .card__side--back {
+    transform: rotateY(0deg);
+}
+
+.card__side--back-1 {
+    background-image: linear-gradient(to bottom right, hsl(var(--color-primary)), var(--color-primary-dark));
+}
+
+.card__side--back-2 {
+    background-image: linear-gradient(to bottom right, hsl(var(--color-secondary)), hsl(var(--color-secondary)));
+}
+
+.card__side--back-3 {
+    background-image: linear-gradient(to bottom right, hsl(var(--color-quaternary)), hsl(var(--color-quaternary)));
+}
+
+.card__side--back-4 {
+    background-image: linear-gradient(to bottom right, hsl(var(--color-tertiary)), hsl(var(--color-tertiary)));
+}
+
+.card__side--back-5 {
+    background-image: linear-gradient(to bottom right, hsl(var(--color-quinary)), hsl(var(--color-quinary)));
+}
+
 .cardWrapper {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-gap: 3rem;
+    justify-content: center;
+}
+
+.card__heading {
+    position: absolute;
+    top: 12rem;
+    right: 1rem;
+    font-size: 1.75rem;
+    text-align: right;
+    line-height: 1.2;
+}
+
+.card__heading span {
+    padding: 0.15rem 1rem;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
+
+.card_heading--1 span {
+    background-image: linear-gradient(
+        to bottom right,
+        hsl(var(--color-primary), 0.85),
+        hsl(var(--color-primary), 0.85)
+    );
+}
+
+.card_heading--2 span {
+    background-image: linear-gradient(
+        to bottom right,
+        hsl(var(--color-secondary), 0.85),
+        hsl(var(--color-secondary), 0.85)
+    );
+}
+
+.card_heading--3 span {
+    background-image: linear-gradient(
+        to bottom right,
+        hsl(var(--color-quaternary), 0.85),
+        hsl(var(--color-quaternary), 0.85)
+    );
+}
+
+.card_heading--4 span {
+    background-image: linear-gradient(
+        to bottom right,
+        hsl(var(--color-tertiary), 0.85),
+        hsl(var(--color-tertiary), 0.85)
+    );
+}
+
+.card_heading--5 span {
+    background-image: linear-gradient(
+        to bottom right,
+        hsl(var(--color-quinary), 0.85),
+        hsl(var(--color-quinary), 0.85)
+    );
 }
 
 .card .card__side .card__picture {
-    height: 9rem;
+    height: 14rem;
     background-size: cover;
+    background-position: center;
     background-blend-mode: screen;
 }
 
 .card .card__side .card__picture--1 {
-    background-image: linear-gradient(to bottom right, var(--color-primary), var(--color-primary)),
+    background-image: linear-gradient(to bottom right, hsl(var(--color-primary)), hsl(var(--color-primary))),
         url("https://images.ctfassets.net/v1a9n1zktijq/7GJqhPHvnodP6xc0YuLB8n/ad30995ea94280a1a3621ed17f6443de/Reveal_web_graphic.png");
 }
 .card .card__side .card__picture--2 {
-    background-image: linear-gradient(to bottom right, var(--color-secondary), var(--color-secondary)),
-        url("https://images.ctfassets.net/v1a9n1zktijq/37N7iBcyw08xF5dSFPmqNq/d07c2334fd36ec5534621877f2a1f474/breakfast_in_bethlehem_web.jpg");
+    background-image: linear-gradient(to bottom right, hsl(var(--color-secondary)), hsl(var(--color-secondary))),
+        url("https://images.ctfassets.net/v1a9n1zktijq/705vis77Un12igRzhkAJn7/0b1b07f43b2d76939703bfbc6d3c520a/pageant.jpg");
 }
 .card .card__side .card__picture--3 {
-    background-image: linear-gradient(to bottom right, var(--color-quaternary), var(--color-quaternary)),
+    background-image: linear-gradient(to bottom right, hsl(var(--color-quaternary)), hsl(var(--color-quaternary))),
         url("https://images.ctfassets.net/v1a9n1zktijq/6dCmv6e4Y4XwaNu8UMjDEX/a20ca6daec6b72b3b65076a1c62f94ff/blueChristmasWeb.jpg");
 }
 .card .card__side .card__picture--4 {
-    background-image: linear-gradient(to bottom right, var(--color-secondary), var(--color-secondary)),
-        url("https://images.ctfassets.net/v1a9n1zktijq/37N7iBcyw08xF5dSFPmqNq/d07c2334fd36ec5534621877f2a1f474/breakfast_in_bethlehem_web.jpg");
+    background-image: linear-gradient(to bottom right, hsl(var(--color-tertiary)), hsl(var(--color-tertiary))),
+        url("https://images.ctfassets.net/v1a9n1zktijq/6TMj3FNaQSbtxLxjvGAprm/e87361b8a8a104610f5b9e9f0d7c13ed/ChristmasBrunch_1920x1080.jpg");
 }
-.card .card__side .card__picture--5{
-    background-image: linear-gradient(to bottom right, var(--color-quinary), var(--color-quinary)),
-        url("https://images.ctfassets.net/v1a9n1zktijq/3Bmq2odJexDOz1UbrONYlG/60c67c28dc1e7d569d3534af637214b2/Nativity_Event_688x388.png");
+.card .card__side .card__picture--5 {
+    background-image: linear-gradient(to bottom right, hsl(var(--color-quinary)), hsl(var(--color-quinary))),
+        url("https://images.ctfassets.net/v1a9n1zktijq/3wuUhukI35gRpnjBXuCyYo/050aff2d7e7868f92c29cabd06e4960a/nativity.jpg");
+}
+
+.card__details {
+    margin: 1rem;
+    padding: 1rem;
+}
+
+.card__details,
+.card__details p {
+    color: rgb(22, 22, 22);
+    text-align: left;
+    font-size: 16px;
+}
+
+.event_icon {
+    margin: 0.3rem 0.25rem 0.3rem 0;
+}
+
+.description {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px rgb(214, 214, 214) solid;
 }
