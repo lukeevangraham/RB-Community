@@ -326,6 +326,11 @@
 /* RESPONSIVE */
 
 @media only screen and (max-width: 900px) {
+.title {
+    font-size: 2.5rem;
+    padding: 0 2rem;
+}
+
     .makeRightColumn {
         margin-left: unset;
         margin-top: 800px;
@@ -347,5 +352,11 @@
 
     .card:hover .card__side--front {
         transform: rotateY(0);
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .title {
+        font-size: 1.75rem;
     }
 }
