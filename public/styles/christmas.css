@@ -107,6 +107,7 @@
 
 .card__side--back .button {
     background-color: var(--color-primary-dark);
+    margin: 2.5rem;
 }
 
 .card:hover .card__side--front {
