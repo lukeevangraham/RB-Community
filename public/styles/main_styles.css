@@ -363,7 +363,7 @@ section {
   transition: all 200ms ease;
 }
 .logo img {
-  max-width: 100%;
+  max-width: 52px;
 }
 .logo_text {
   font-size: 30px;
