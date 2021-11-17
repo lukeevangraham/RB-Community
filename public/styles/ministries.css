@@ -1053,3 +1053,11 @@ section {
   transform: translate(-50%, -50%);
   z-index: -1;
 }
+
+
+#oneColumn {
+  columns: 1 !important;
+  -webkit-columns: 1 !important;
+  -moz-columns: 1 !important;
+  margin-top: 15px !important;
+}

@@ -322,6 +322,13 @@
     margin-bottom: 1rem;
 }
 
+#oneColumn {
+    columns: 1 !important;
+    -webkit-columns: 1 !important;
+    -moz-columns: 1 !important;
+    margin-top: 15px !important;
+  }
+
 
 /* RESPONSIVE */
 
@@ -360,3 +367,4 @@
         font-size: 1.75rem;
     }
 }
+
