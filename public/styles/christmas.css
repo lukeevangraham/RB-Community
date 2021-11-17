@@ -200,7 +200,7 @@
         url("https://images.ctfassets.net/v1a9n1zktijq/6dCmv6e4Y4XwaNu8UMjDEX/a20ca6daec6b72b3b65076a1c62f94ff/blueChristmasWeb.jpg");
 }
 .card .card__side .card__picture--4 {
-    background-image: linear-gradient(to bottom right, var(--color-tertiary-light), var(--color-tertiary-dark)),
+    background-image: linear-gradient(to bottom right, var(--color-tertiary-light), var(--color-tertiary-light)),
         url("https://images.ctfassets.net/v1a9n1zktijq/6TMj3FNaQSbtxLxjvGAprm/e87361b8a8a104610f5b9e9f0d7c13ed/ChristmasBrunch_1920x1080.jpg");
 }
 .card .card__side .card__picture--5 {
