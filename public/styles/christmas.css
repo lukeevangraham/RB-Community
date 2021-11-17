@@ -28,6 +28,7 @@
 .maintainMaxWidth {
     max-width: 1170px;
     margin: auto;
+    padding: 0 1rem;
 }
 
 .section {
@@ -321,3 +322,29 @@
 }
 
 
+/* RESPONSIVE */
+
+@media only screen and (max-width: 900px) {
+    .makeRightColumn {
+        margin-left: unset;
+        margin-top: 800px;
+    }
+
+    .card {
+        height: auto;
+        background-color: #eee;
+    }
+
+    .card__side {
+        height: auto;
+        position: relative;
+    }
+
+    .card__side--back {
+        transform: rotateY(0);
+    }
+
+    .card:hover .card__side--front {
+        transform: rotateY(0);
+    }
+}
