@@ -592,6 +592,7 @@ section {
 }
 .home_background {
   position: absolute;
+  padding-top: 160px;
   top: 0;
   left: 0;
   width: 100%;
@@ -599,6 +600,7 @@ section {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
+  background-origin: content-box;
 }
 .home_content {
   position: absolute;
