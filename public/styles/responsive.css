@@ -247,6 +247,9 @@
   .header.scrolled {
     top: 0;
   }
+  .home_background {
+    padding-top: 120px;
+  }
   .home_title {
     font-size: 36px;
   }
@@ -308,6 +311,9 @@
     width: 100%;
     padding-left: 15px;
     padding-right: 15px;
+  }
+  .home_background {
+    padding-top: 80px;
   }
   .event_container {
     padding-left: 15px;
