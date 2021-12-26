@@ -440,6 +440,7 @@ module.exports = function(app) {
                                 var items = [];
                                 var itemsIncludingExpired = dbBlog.items;
 
+                                
                                 // ELIMINATING OLD ENTRIES FROM PAGE
                                 itemsIncludingExpired.forEach((earlyItem) => {
                                     if (
@@ -450,6 +451,7 @@ module.exports = function(app) {
                                         items.push(earlyItem);
                                     }
                                 });
+                                console.log("ITEMS: ", dbBlog.items)
 
                                 // Converting times for template
                                 items.forEach((item) => {
