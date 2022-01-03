@@ -111,19 +111,19 @@ function getIdFromVimeoURL(url) {
 }
 
 function doReq(url, what) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         request({
-                url: url,
-                headers: {
-                    Bearer: "sampleapitoken",
-                },
+            url: url,
+            headers: {
+                Bearer: "sampleapitoken",
             },
-            function(error, response) {
+        },
+            function (error, response) {
                 if (error || response.statusCode !== 200) {
                     reject(error);
                 } else {
                     var data = {};
-                    (Array.isArray(what) ? what : [what]).forEach(function(item, index) {
+                    (Array.isArray(what) ? what : [what]).forEach(function (item, index) {
                         data[item] = JSON.parse(arguments[index + 2]);
                     });
                     resolve(data);
@@ -168,8 +168,8 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
             },
             "embedded-asset-block": (node) =>
                 node.data.target.fields.file.url.endsWith("pdf") ?
-                `<embed src="${node.data.target.fields.file.url}" width="100%" height="500px"  />` :
-                `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`,
+                    `<embed src="${node.data.target.fields.file.url}" width="100%" height="500px"  />` :
+                    `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`,
         },
     };
 
@@ -214,18 +214,32 @@ function renderSingleBlog(entry, res) {
 }
 
 // Routes
-module.exports = function(app) {
-    app.get("/blog", function(req, res) {
-        client
-            .getEntries({
-                content_type: "blog",
-                order: "-fields.datePosted",
-                // remove about rB Community from the news feed
-                "sys.id[nin]": "3JEwFofQhW3MQcReiGLCYu",
-            })
-            .then(function(dbBlog) {
+module.exports = function (app) {
+    app.get("/blog", function (req, res) {
+        Promise.all([
+            client
+                .getEntries({
+                    content_type: "blog",
+                    order: "-fields.datePosted",
+                    // remove about rB Community from the news feed
+                    "sys.id[nin]": "3JEwFofQhW3MQcReiGLCYu",
+                }),
+            axios.get('https://admin.rbcommunity.org/articles?_sort=datePosted')
+        ])
+            .then(function (resultArray) {
                 var items = [];
-                var itemsIncludingExpired = dbBlog.items;
+                var itemsIncludingExpired = resultArray[0].items;
+
+                // FORMATTING STRAPI DATA TO MATCH CONTENTFUL
+                resultArray[1].data.forEach(article => {
+                    let formattedArticle = {}
+                    formattedArticle.fields = article
+                    itemsIncludingExpired.push(formattedArticle)
+                });
+
+                // itemsIncludingExpired.push(resultArray[1].data)
+
+                // console.log("2nd ARR: ", resultArray[1].data)
 
                 // ELIMINATING OLD ENTRIES FROM PAGE
                 itemsIncludingExpired.forEach((earlyItem) => {
@@ -233,7 +247,7 @@ module.exports = function(app) {
                         moment(earlyItem.fields.expirationDate).isBefore(
                             moment().format("YYYY-MM-DD")
                         )
-                    ) {} else {
+                    ) { } else {
                         items.push(earlyItem);
                     }
                 });
@@ -247,17 +261,29 @@ module.exports = function(app) {
                     });
 
                     if (item.fields.body) {
-                        if (item.fields.body.content[0].content[0]) {
-                            var truncatedString = JSON.stringify(
-                                item.fields.body.content[0].content[0].value.replace(
-                                    /^(.{165}[^\s]*).*/,
-                                    "$1"
-                                )
-                            );
-                            var truncatedLength = truncatedString.length;
-                            truncatedString = truncatedString
-                                .substring(1, truncatedLength - 1)
-                                .replace(/RBCC/g, "RB Community");
+
+                        // CONTENTFUL ITEMS USE THE ".content" value
+                        if (item.fields.body.content) {
+                            if (item.fields.body.content[0].content[0]) {
+                                var truncatedString = JSON.stringify(
+                                    item.fields.body.content[0].content[0].value.replace(
+                                        /^(.{165}[^\s]*).*/,
+                                        "$1"
+                                    )
+                                );
+                                var truncatedLength = truncatedString.length;
+                                truncatedString = truncatedString
+                                    .substring(1, truncatedLength - 1)
+                                    .replace(/RBCC/g, "RB Community");
+                            }
+                        }
+                        else if (item.fields.body) {
+                            console.log("newBody: ", item.fields.body)
+                            var truncatedString = item.fields.body.toString().replace(
+                                /^(.{165}[^\s]*).*/,
+                                "$1"
+                            )
+                            console.log("TRUN: ", truncatedString)
                         }
                     }
 
@@ -287,14 +313,14 @@ module.exports = function(app) {
             });
     });
 
-    app.get("/blog:id", function(req, res) {
+    app.get("/blog:id", function (req, res) {
         // console.log("ORG URL: ", req.originalUrl)
         // console.log("ID: ", req.params.id)
         // console.log("LOOK HERE: ", req.params.id.match(/_single:/g).length)
         req.params.id.match(/_single:/g) ?
             (console.log("_blog_single: detected!!"),
                 (req.params.id = req.params.id.substring(8)),
-                client.getEntry(req.params.id).then(function(entry) {
+                client.getEntry(req.params.id).then(function (entry) {
                     // console.log("ENTRY #: ", entry),
                     // blogEntry = entry;
                     prepareBlogEntryForSinglePage(entry, req.params.id);
@@ -316,19 +342,19 @@ module.exports = function(app) {
                 // console.log("LOOK HERE: ", newRes),
 
                 client
-                .getEntries({
-                    content_type: "blog",
-                    "fields.title[match]": newRes,
-                })
-                .then(function(entry) {
-                    // console.log("ENTRY no#: ", entry.items[0])
-                    // blogEntry = entry.items[0]
-                    prepareBlogEntryForSinglePage(entry.items[0], req.params.id);
-                    renderSingleBlog(entry.items[0], res);
-                }));
+                    .getEntries({
+                        content_type: "blog",
+                        "fields.title[match]": newRes,
+                    })
+                    .then(function (entry) {
+                        // console.log("ENTRY no#: ", entry.items[0])
+                        // blogEntry = entry.items[0]
+                        prepareBlogEntryForSinglePage(entry.items[0], req.params.id);
+                        renderSingleBlog(entry.items[0], res);
+                    }));
     });
 
-    app.get(["/", "/index.html", "/home"], function(req, res) {
+    app.get(["/", "/index.html", "/home"], function (req, res) {
         var vimeoRecord = null;
         let secondRecord = null;
         let thirdRecord = null;
@@ -336,7 +362,7 @@ module.exports = function(app) {
         let vimeoAnnURL = null;
         let welcomeRecord = null;
 
-        request(vimeoOptionsHome, function(error, response, body) {
+        request(vimeoOptionsHome, function (error, response, body) {
             if (error) throw new Error(error);
 
             vimeoRecord = JSON.parse(body);
@@ -350,7 +376,7 @@ module.exports = function(app) {
                 });
             }
 
-            request(vimeoOptionsAnnHome, function(error, response, body) {
+            request(vimeoOptionsAnnHome, function (error, response, body) {
                 if (error) throw new Error(error);
 
                 vimeoAnnRecord = JSON.parse(body);
@@ -387,7 +413,7 @@ module.exports = function(app) {
                         order: "fields.date",
                         // limit: 3
                     })
-                    .then(function(dbEvent) {
+                    .then(function (dbEvent) {
                         // console.log("EVENT: ", dbEvent)
                         // console.log("LOOK HERE: ", dbEvent.items[0].fields);
                         var items = dbEvent.items;
@@ -436,22 +462,22 @@ module.exports = function(app) {
                                 order: "-fields.datePosted",
                                 limit: 3,
                             })
-                            .then(function(dbBlog) {
+                            .then(function (dbBlog) {
                                 var items = [];
                                 var itemsIncludingExpired = dbBlog.items;
 
-                                
+
                                 // ELIMINATING OLD ENTRIES FROM PAGE
                                 itemsIncludingExpired.forEach((earlyItem) => {
                                     if (
                                         moment(earlyItem.fields.expirationDate).isBefore(
                                             moment().format("YYYY-MM-DD")
                                         )
-                                    ) {} else {
+                                    ) { } else {
                                         items.push(earlyItem);
                                     }
                                 });
-                                console.log("ITEMS: ", dbBlog.items)
+                                // console.log("ITEMS: ", dbBlog.items)
 
                                 // Converting times for template
                                 items.forEach((item) => {
@@ -482,7 +508,7 @@ module.exports = function(app) {
 
                                 thirdRecord = items;
 
-                                client.getEntry("5yMSI9dIzpsdb55JvXkZk").then(function(entry) {
+                                client.getEntry("5yMSI9dIzpsdb55JvXkZk").then(function (entry) {
                                     // console.log("LOOK HERE: ", entry);
                                     const rawRichTextField = entry.fields.body;
 
@@ -515,11 +541,11 @@ module.exports = function(app) {
         });
     });
 
-    app.get("/cms", function(req, res) {
+    app.get("/cms", function (req, res) {
         res.sendFile(path.join(__dirname, "../public/cms.html"));
     });
 
-    app.get("/cms-post", function(req, res) {
+    app.get("/cms-post", function (req, res) {
         res.sendFile(path.join(__dirname, "../public/cms-post.html"));
     });
 
@@ -527,14 +553,14 @@ module.exports = function(app) {
     //     res.sendFile(path.join(__dirname, "../public/events.html"));
     // })
 
-    app.get("/events", function(req, res) {
+    app.get("/events", function (req, res) {
         client
             .getEntries({
                 content_type: "events",
                 "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
                 order: "fields.date",
             })
-            .then(function(dbEvent) {
+            .then(function (dbEvent) {
                 var items = dbEvent.items;
                 var topItem = [];
 
@@ -600,7 +626,7 @@ module.exports = function(app) {
             });
     });
 
-    app.get("/about", async function(req, res) {
+    app.get("/about", async function (req, res) {
         function getStaffMembers() {
             try {
                 const response = axios.get(
@@ -634,14 +660,14 @@ module.exports = function(app) {
         });
     });
 
-    app.get(["/sermons", "/sermons:id"], function(req, res) {
+    app.get(["/sermons", "/sermons:id"], function (req, res) {
         if (req.params.id) {
             vimeoOptions.qs.page = parseInt(req.params.id.substr(1));
         } else {
             vimeoOptions.qs.page = 1;
         }
 
-        request(vimeoOptions, function(error, response, body) {
+        request(vimeoOptions, function (error, response, body) {
             if (error) throw new Error(error);
             //
 
@@ -712,7 +738,7 @@ module.exports = function(app) {
         });
     });
 
-    app.get("/contact", function(req, res) {
+    app.get("/contact", function (req, res) {
         res.render("contact", {
             active: { contact: true },
             headContent: `<link rel="stylesheet" type="text/css" href="styles/contact.css">
@@ -721,7 +747,7 @@ module.exports = function(app) {
         });
     });
 
-    app.get("/giving", function(req, res) {
+    app.get("/giving", function (req, res) {
         res.render("giving", {
             active: { giving: true },
             headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
@@ -730,7 +756,7 @@ module.exports = function(app) {
         });
     });
 
-    app.get("/ministries", function(req, res) {
+    app.get("/ministries", function (req, res) {
         res.render("ministries", {
             active: { ministries: true },
             headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
@@ -740,7 +766,7 @@ module.exports = function(app) {
         });
     });
 
-    app.get("/ministry:id", function(req, res) {
+    app.get("/ministry:id", function (req, res) {
         req.params.id = req.params.id.substring(1);
         var firstRecord = null;
         var secondRecord = null;
@@ -756,7 +782,7 @@ module.exports = function(app) {
                 "fields.ministry": req.params.id,
                 limit: 6,
             })
-            .then(function(entry) {
+            .then(function (entry) {
                 if (entry.total >= 1) {
                     Object.assign(entry.items, {
                         multipleEntries: true,
@@ -777,7 +803,7 @@ module.exports = function(app) {
                         moment(earlyItem.fields.expirationDate).isBefore(
                             moment().format("YYYY-MM-DD")
                         )
-                    ) {} else {
+                    ) { } else {
                         items.push(earlyItem);
                     }
                 });
@@ -834,7 +860,7 @@ module.exports = function(app) {
                         order: "fields.date",
                         limit: 6,
                     })
-                    .then(function(dbEvent) {
+                    .then(function (dbEvent) {
                         var items = dbEvent.items;
 
                         // Converting times for template
@@ -889,7 +915,7 @@ module.exports = function(app) {
                                 "fields.featureOnMinistryPage": true,
                                 limit: 1,
                             })
-                            .then(function(entry) {
+                            .then(function (entry) {
                                 var item = entry.items[0];
                                 if (item) {
                                     const rawRichTextField = item.fields.body;
@@ -907,7 +933,7 @@ module.exports = function(app) {
                                 ) {
                                     request(
                                         newYouTubeOptions("PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ"),
-                                        function(error, response, body) {
+                                        function (error, response, body) {
                                             if (error) throw new Error(error);
 
                                             youTubeRecord = JSON.parse(body);
@@ -918,7 +944,7 @@ module.exports = function(app) {
                                 } else if (req.params.id === "Adult Education") {
                                     request(
                                         newYouTubeOptions("PLZ13IHPbJRZ6Iz2cphwea8AzUqUqFiPUw"),
-                                        function(error, response, body) {
+                                        function (error, response, body) {
                                             if (error) throw new Error(error);
 
                                             youTubeRecord = JSON.parse(body);
@@ -931,7 +957,7 @@ module.exports = function(app) {
                                 ) {
                                     request(
                                         newYouTubeOptions("PLZ13IHPbJRZ6B3OcxF4pXk6uKwrEKTz-t"),
-                                        function(error, response, body) {
+                                        function (error, response, body) {
                                             if (error) throw new Error(error);
 
                                             youTubeRecord = JSON.parse(body);
@@ -968,7 +994,7 @@ module.exports = function(app) {
     });
 
     // Page for individual events
-    app.get("/event:id", function(req, res) {
+    app.get("/event:id", function (req, res) {
         renderSingleEvent = (oldDbEvent) => {
             let dbEvent = oldDbEvent.items[0];
 
@@ -1063,9 +1089,9 @@ module.exports = function(app) {
         } else {
             str = decodeURI(
                 req.originalUrl
-                .substring(7)
-                .replace(/-/g, " ")
-                .replace(/\s\s\s/g, "-")
+                    .substring(7)
+                    .replace(/-/g, " ")
+                    .replace(/\s\s\s/g, "-")
             );
             str = str.replace(/\s\s\s/g, " - ");
             // req.params.id = req.params.id.substring(1);
@@ -1080,7 +1106,7 @@ module.exports = function(app) {
         }
     });
 
-    app.get("/services", function(req, res) {
+    app.get("/services", function (req, res) {
         var bloghbsObject = {
             // article: entry.fields,
             // request: req.params.id,
@@ -1094,51 +1120,51 @@ module.exports = function(app) {
     });
 
     // REDIRECT TO CONNECTION CARD
-    app.get("/card", function(req, res) {
+    app.get("/card", function (req, res) {
         res.redirect("https://rbcc.churchcenter.com/people/forms/43489");
     });
 
-    app.get("/highschool", function(req, res) {
+    app.get("/highschool", function (req, res) {
         res.redirect("/ministry:High%20School");
     });
 
-    app.get("/msm", function(req, res) {
+    app.get("/msm", function (req, res) {
         res.redirect("/ministry:Middle%20School");
     });
 
-    app.get("/kids", function(req, res) {
+    app.get("/kids", function (req, res) {
         res.redirect("/ministry:Children");
     });
 
-    app.get("/missions", function(req, res) {
+    app.get("/missions", function (req, res) {
         res.redirect("/ministry:Missions");
     });
 
-    app.get("/shop", function(req, res) {
+    app.get("/shop", function (req, res) {
         res.redirect("https://www.companycasuals.com/RBCommunity");
     });
 
-    app.get("/give", function(req, res) {
+    app.get("/give", function (req, res) {
         res.redirect("/giving");
     });
 
-    app.get("/sitemap.xml", function(req, res) {
+    app.get("/sitemap.xml", function (req, res) {
         res.sendFile("/sitemap.xml");
     });
 
-    app.get("/arabic", function(req, res) {
+    app.get("/arabic", function (req, res) {
         res.redirect("/ministry:Arabic%20Ministries");
     });
 
-    app.get("/families", function(req, res) {
+    app.get("/families", function (req, res) {
         res.redirect("/ministry:Family%20Ministries");
     });
 
-    app.get("/survey", function(req, res) {
+    app.get("/survey", function (req, res) {
         res.redirect("http://usd.qualtrics.com/jfe/form/SV_eKIuokrIZXl42od");
     });
 
-    app.get("/temp", function(req, res) {
+    app.get("/temp", function (req, res) {
         res.redirect(
             "https://www.shelbygiving.com/App/Form/c05b9e9b-e27d-4617-bd81-c55409037d94"
         );
@@ -1215,10 +1241,10 @@ module.exports = function(app) {
     //     });
     // });
 
-    app.get("/jobs", function(req, res) {
+    app.get("/jobs", function (req, res) {
         request(
             "http://admin.rbcommunity.org/jobs",
-            function(error, response, body) {
+            function (error, response, body) {
                 let parsedJobs = JSON.parse(body);
 
                 res.render("jobs", {
@@ -1236,7 +1262,7 @@ module.exports = function(app) {
     app.get("/jobs-:id", (req, res) => {
         request(
             "http://admin.rbcommunity.org/jobs/" + req.params.id,
-            function(error, response, body) {
+            function (error, response, body) {
                 if (body !== "Not Found") {
                     let parsedJob = JSON.parse(body);
 
@@ -1389,7 +1415,7 @@ module.exports = function(app) {
             });
     });
 
-    app.use(function(req, res) {
+    app.use(function (req, res) {
         var bloghbsObject = {
             // article: entry.fields,
             // request: req.params.id,
