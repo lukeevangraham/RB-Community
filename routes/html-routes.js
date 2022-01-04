@@ -148,7 +148,7 @@ function compare(a, b) {
 }
 
 function prepareBlogEntryForSinglePage(entry, requestId) {
-    // console.log("ENTRY: ", entry.fields.body.content)
+    // console.log("ENTRY: ", entry)
 
     Object.assign(entry.fields, {
         shortMonth: moment(entry.fields.datePosted).format("MMM").toUpperCase(),
@@ -237,6 +237,18 @@ module.exports = function (app) {
                     itemsIncludingExpired.push(formattedArticle)
                 });
 
+                // SORT ALL ITEMS BY DATE POSTED
+                function compareItemDatePosted(a, b) {
+                    if (a.fields.datePosted > b.fields.datePosted) {
+                        return -1;
+                    }
+                    if (a.fields.datesPosted < b.fields.datesPosted) {
+                        return 1
+                    }
+                    return 0;
+                }
+                itemsIncludingExpired.sort(compareItemDatePosted)
+
                 // itemsIncludingExpired.push(resultArray[1].data)
 
                 // console.log("2nd ARR: ", resultArray[1].data)
@@ -278,12 +290,11 @@ module.exports = function (app) {
                             }
                         }
                         else if (item.fields.body) {
-                            console.log("newBody: ", item.fields.body)
-                            var truncatedString = item.fields.body.toString().replace(
-                                /^(.{165}[^\s]*).*/,
-                                "$1"
-                            )
-                            console.log("TRUN: ", truncatedString)
+                            // console.log("newBody: ", item.fields.body)
+                            var truncatedString = item.fields.body.toString().replace(/<br\s*[\/]?>/gi, "\n").replace(/<\/?[^>]+(>|$)/g, "").replace(/\&nbsp;/g, ' ')
+                            // console.log("TRUN: ", truncatedString)
+                            var truncatedLength = truncatedString.length;
+                            truncatedString = truncatedString.substring(0, 165)
                         }
                     }
 
@@ -315,7 +326,7 @@ module.exports = function (app) {
 
     app.get("/blog:id", function (req, res) {
         // console.log("ORG URL: ", req.originalUrl)
-        // console.log("ID: ", req.params.id)
+        console.log("ID: ", req.params.id)
         // console.log("LOOK HERE: ", req.params.id.match(/_single:/g).length)
         req.params.id.match(/_single:/g) ?
             (console.log("_blog_single: detected!!"),
@@ -339,18 +350,30 @@ module.exports = function (app) {
 
                 // newRes = str.replace(/%20/g, " "),
                 (newRes = decodeURI(str)),
-                // console.log("LOOK HERE: ", newRes),
+                console.log("LOOK HERE: ", newRes),
 
-                client
-                    .getEntries({
-                        content_type: "blog",
-                        "fields.title[match]": newRes,
-                    })
-                    .then(function (entry) {
+                Promise.all([
+                    client
+                        .getEntries({
+                            content_type: "blog",
+                            "fields.title[match]": newRes,
+                        }),
+                    axios.get(`https://admin.rbcommunity.org/articles?_title=${newRes}`)
+                ])
+
+                    .then(function (resultArray) {
                         // console.log("ENTRY no#: ", entry.items[0])
                         // blogEntry = entry.items[0]
-                        prepareBlogEntryForSinglePage(entry.items[0], req.params.id);
-                        renderSingleBlog(entry.items[0], res);
+                        resultArray[0].items.length ? (
+                            console.log("normal world", resultArray[0]),
+                            prepareBlogEntryForSinglePage(resultArray[0].items[0], req.params.id),
+                            renderSingleBlog(resultArray[0].items[0], res)
+                        ) : (
+                            console.log("new world", resultArray[1].data)
+                            // prepareBlogEntryForSinglePage(entry.items[0], req.params.id),
+                            // renderSingleBlog(entry.items[0], res)
+                        )
+
                     }));
     });
 

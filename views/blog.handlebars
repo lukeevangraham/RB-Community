@@ -37,20 +37,33 @@
 			{{#each blogpost}}
 			{{#unless fields.featureOnMinistryPage}}
 
+			{{!-- {{ log this.fields }} --}}
+
 
 			<!-- News Post -->
 			<div class="col-xl-4 col-lg-6 news_post_col">
 				<div class="news_post">
+					{{#if this.fields.image.fields}}
 					<div class="news_image"><a href="./blog-{{changeSpacesToDashes this.fields.title}}"><img
 								data-src="{{this.fields.image.fields.file.url}}" class="lazyload" alt=""></a></div>
+					{{else}}
+					<div class="news_image"><a href="./blog-{{changeSpacesToDashes this.fields.title}}"><img
+								data-src="{{this.fields.image.url}}" class="lazyload" alt=""></a></div>
+					{{/if}}
 					<div class="news_post_content">
 						<div class="news_post_title">
 							<a href="./blog-{{changeSpacesToDashes this.fields.title}}">{{this.fields.title}}</a>
 						</div>
 						<div class="news_post_meta">
 							<ul>
-								<li><i class="fa fa-user" aria-hidden="true"></i><a
-										href="#">{{#each fields.author}}{{this}}{{/each}}</a></li>
+								<li><i class="fa fa-user" aria-hidden="true"></i>
+									{{#if (isString this.fields.author)}}
+									<a href="#">{{this.fields.author}}</a>
+									{{/if}}
+
+									<a href="#">{{#each
+										fields.author}}{{this}}{{/each}}</a>
+								</li>
 								<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a
 										href="#">{{this.fields.formattedDate}}</a></li>
 								{{!-- <li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">15</a></li> --}}
@@ -70,200 +83,208 @@
 			{{/each}}
 		</div>
 
-		{{!-- 
-				<!-- News Post -->
-				<div class="col-xl-4 col-lg-6 news_post_col">
-					<div class="news_post">
-						<div class="news_image"><img src="images/news_2.jpg" alt=""></div>
-						<div class="news_post_content">
-							<div class="news_post_title">
-								<a href="blog_single.html">Moderator joins Pope Francis in call to prayer for peace</a>
-							</div>
-							<div class="news_post_meta">
-								<ul>
-									<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Ashley Young</a></li>
-									<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">08 MAR, 2018</a></li>
-									<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">12</a></li>
-								</ul>
-							</div>
-							<div class="news_post_text">
-								<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean interdus mid vitae blandit  porta. Quisque dignissim commodo congue efficitur...</p>
-							</div>
-						</div>
+		{{!--
+		<!-- News Post -->
+		<div class="col-xl-4 col-lg-6 news_post_col">
+			<div class="news_post">
+				<div class="news_image"><img src="images/news_2.jpg" alt=""></div>
+				<div class="news_post_content">
+					<div class="news_post_title">
+						<a href="blog_single.html">Moderator joins Pope Francis in call to prayer for peace</a>
 					</div>
-				</div>
-
-				<!-- News Post -->
-				<div class="col-xl-4 col-lg-6 news_post_col">
-					<div class="news_post">
-						<div class="news_image"><img src="images/news_3.jpg" alt=""></div>
-						<div class="news_post_content">
-							<div class="news_post_title">
-								<a href="blog_single.html">Church plays a major role in tackling loneliness</a>
-							</div>
-							<div class="news_post_meta">
-								<ul>
-									<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
-									<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">08 MAR, 2018</a></li>
-									<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">10</a></li>
-								</ul>
-							</div>
-							<div class="news_post_text">
-								<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean interdus mid vitae blandit  porta. Quisque dignissim commodo congue efficitur...</p>
-							</div>
-						</div>
+					<div class="news_post_meta">
+						<ul>
+							<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Ashley Young</a></li>
+							<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">08 MAR, 2018</a></li>
+							<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">12</a></li>
+						</ul>
 					</div>
-				</div>
-
-				<!-- News Post -->
-				<div class="col-xl-4 col-lg-6 news_post_col">
-					<div class="news_post">
-						<div class="news_image"><img src="images/news_4.jpg" alt=""></div>
-						<div class="news_post_content">
-							<div class="news_post_title">
-								<a href="blog_single.html">Family History Enthusiasts to Gather in Utah for RootsTech</a>
-							</div>
-							<div class="news_post_meta">
-								<ul>
-									<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
-									<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">07 MAR, 2018</a></li>
-									<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">10</a></li>
-								</ul>
-							</div>
-							<div class="news_post_text">
-								<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean interdus mid vitae blandit  porta. Quisque dignissim commodo congue efficitur...</p>
-							</div>
-						</div>
+					<div class="news_post_text">
+						<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean
+							interdus mid vitae blandit porta. Quisque dignissim commodo congue efficitur...</p>
 					</div>
-				</div>
-
-				<!-- News Post -->
-				<div class="col-xl-4 col-lg-6 news_post_col">
-					<div class="news_post">
-						<div class="news_image"><img src="images/news_5.jpg" alt=""></div>
-						<div class="news_post_content">
-							<div class="news_post_title">
-								<a href="blog_single.html">Faith and Rebuilding Will Make Puerto Ricans Stronger</a>
-							</div>
-							<div class="news_post_meta">
-								<ul>
-									<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
-									<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">07 MAR, 2018</a></li>
-									<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">10</a></li>
-								</ul>
-							</div>
-							<div class="news_post_text">
-								<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean interdus mid vitae blandit  porta. Quisque dignissim commodo congue efficitur...</p>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- News Post -->
-				<div class="col-xl-4 col-lg-6 news_post_col">
-					<div class="news_post">
-						<div class="news_image"><img src="images/news_6.jpg" alt=""></div>
-						<div class="news_post_content">
-							<div class="news_post_title">
-								<a href="blog_single.html">Historian Shares Legacy of Black Mormon Pioneers</a>
-							</div>
-							<div class="news_post_meta">
-								<ul>
-									<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
-									<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">07 MAR, 2018</a></li>
-									<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">10</a></li>
-								</ul>
-							</div>
-							<div class="news_post_text">
-								<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean interdus mid vitae blandit  porta. Quisque dignissim commodo congue efficitur...</p>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- News Post -->
-				<div class="col-xl-4 col-lg-6 news_post_col">
-					<div class="news_post">
-						<div class="news_image"><img src="images/news_7.jpg" alt=""></div>
-						<div class="news_post_content">
-							<div class="news_post_title">
-								<a href="blog_single.html">2018 Schedule for Church Pageants Now Available on LDS</a>
-							</div>
-							<div class="news_post_meta">
-								<ul>
-									<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
-									<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">07 MAR, 2018</a></li>
-									<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">10</a></li>
-								</ul>
-							</div>
-							<div class="news_post_text">
-								<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean interdus mid vitae blandit  porta. Quisque dignissim commodo congue efficitur...</p>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- News Post -->
-				<div class="col-xl-4 col-lg-6 news_post_col">
-					<div class="news_post">
-						<div class="news_image"><img src="images/news_8.jpg" alt=""></div>
-						<div class="news_post_content">
-							<div class="news_post_title">
-								<a href="blog_single.html">Former Church Presidents, Apostles Reflect on Calls</a>
-							</div>
-							<div class="news_post_meta">
-								<ul>
-									<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
-									<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">06 MAR, 2018</a></li>
-									<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">10</a></li>
-								</ul>
-							</div>
-							<div class="news_post_text">
-								<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean interdus mid vitae blandit  porta. Quisque dignissim commodo congue efficitur...</p>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- News Post -->
-				<div class="col-xl-4 col-lg-6 news_post_col">
-					<div class="news_post">
-						<div class="news_image"><img src="images/news_9.jpg" alt=""></div>
-						<div class="news_post_content">
-							<div class="news_post_title">
-								<a href="blog_single.html">All Saints: The Surprising True Story of How Refugees from Burma</a>
-							</div>
-							<div class="news_post_meta">
-								<ul>
-									<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
-									<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">06 MAR, 2018</a></li>
-									<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">10</a></li>
-								</ul>
-							</div>
-							<div class="news_post_text">
-								<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean interdus mid vitae blandit  porta. Quisque dignissim commodo congue efficitur...</p>
-							</div>
-						</div>
-					</div>
-				</div>
-
-			</div> --}}
-
-		<!-- Page Nav -->
-
-		{{!-- <div class="row">
-			<div class="col">
-				<div class="page_nav">
-					<ul>
-						<li class="active"><a href="#">1</a></li>
-						<li><a href="#">2</a></li>
-						<li><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i></a></li>
-					</ul>
 				</div>
 			</div>
-		</div> --}}
+		</div>
 
-	</div>
+		<!-- News Post -->
+		<div class="col-xl-4 col-lg-6 news_post_col">
+			<div class="news_post">
+				<div class="news_image"><img src="images/news_3.jpg" alt=""></div>
+				<div class="news_post_content">
+					<div class="news_post_title">
+						<a href="blog_single.html">Church plays a major role in tackling loneliness</a>
+					</div>
+					<div class="news_post_meta">
+						<ul>
+							<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
+							<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">08 MAR, 2018</a></li>
+							<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">10</a></li>
+						</ul>
+					</div>
+					<div class="news_post_text">
+						<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean
+							interdus mid vitae blandit porta. Quisque dignissim commodo congue efficitur...</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- News Post -->
+		<div class="col-xl-4 col-lg-6 news_post_col">
+			<div class="news_post">
+				<div class="news_image"><img src="images/news_4.jpg" alt=""></div>
+				<div class="news_post_content">
+					<div class="news_post_title">
+						<a href="blog_single.html">Family History Enthusiasts to Gather in Utah for RootsTech</a>
+					</div>
+					<div class="news_post_meta">
+						<ul>
+							<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
+							<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">07 MAR, 2018</a></li>
+							<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">10</a></li>
+						</ul>
+					</div>
+					<div class="news_post_text">
+						<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean
+							interdus mid vitae blandit porta. Quisque dignissim commodo congue efficitur...</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- News Post -->
+		<div class="col-xl-4 col-lg-6 news_post_col">
+			<div class="news_post">
+				<div class="news_image"><img src="images/news_5.jpg" alt=""></div>
+				<div class="news_post_content">
+					<div class="news_post_title">
+						<a href="blog_single.html">Faith and Rebuilding Will Make Puerto Ricans Stronger</a>
+					</div>
+					<div class="news_post_meta">
+						<ul>
+							<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
+							<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">07 MAR, 2018</a></li>
+							<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">10</a></li>
+						</ul>
+					</div>
+					<div class="news_post_text">
+						<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean
+							interdus mid vitae blandit porta. Quisque dignissim commodo congue efficitur...</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- News Post -->
+		<div class="col-xl-4 col-lg-6 news_post_col">
+			<div class="news_post">
+				<div class="news_image"><img src="images/news_6.jpg" alt=""></div>
+				<div class="news_post_content">
+					<div class="news_post_title">
+						<a href="blog_single.html">Historian Shares Legacy of Black Mormon Pioneers</a>
+					</div>
+					<div class="news_post_meta">
+						<ul>
+							<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
+							<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">07 MAR, 2018</a></li>
+							<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">10</a></li>
+						</ul>
+					</div>
+					<div class="news_post_text">
+						<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean
+							interdus mid vitae blandit porta. Quisque dignissim commodo congue efficitur...</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- News Post -->
+		<div class="col-xl-4 col-lg-6 news_post_col">
+			<div class="news_post">
+				<div class="news_image"><img src="images/news_7.jpg" alt=""></div>
+				<div class="news_post_content">
+					<div class="news_post_title">
+						<a href="blog_single.html">2018 Schedule for Church Pageants Now Available on LDS</a>
+					</div>
+					<div class="news_post_meta">
+						<ul>
+							<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
+							<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">07 MAR, 2018</a></li>
+							<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">10</a></li>
+						</ul>
+					</div>
+					<div class="news_post_text">
+						<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean
+							interdus mid vitae blandit porta. Quisque dignissim commodo congue efficitur...</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- News Post -->
+		<div class="col-xl-4 col-lg-6 news_post_col">
+			<div class="news_post">
+				<div class="news_image"><img src="images/news_8.jpg" alt=""></div>
+				<div class="news_post_content">
+					<div class="news_post_title">
+						<a href="blog_single.html">Former Church Presidents, Apostles Reflect on Calls</a>
+					</div>
+					<div class="news_post_meta">
+						<ul>
+							<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
+							<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">06 MAR, 2018</a></li>
+							<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">10</a></li>
+						</ul>
+					</div>
+					<div class="news_post_text">
+						<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean
+							interdus mid vitae blandit porta. Quisque dignissim commodo congue efficitur...</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- News Post -->
+		<div class="col-xl-4 col-lg-6 news_post_col">
+			<div class="news_post">
+				<div class="news_image"><img src="images/news_9.jpg" alt=""></div>
+				<div class="news_post_content">
+					<div class="news_post_title">
+						<a href="blog_single.html">All Saints: The Surprising True Story of How Refugees from Burma</a>
+					</div>
+					<div class="news_post_meta">
+						<ul>
+							<li><i class="fa fa-user" aria-hidden="true"></i><a href="#">Josh Brighton</a></li>
+							<li><i class="fa fa-calendar-o" aria-hidden="true"></i><a href="#">06 MAR, 2018</a></li>
+							<li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">10</a></li>
+						</ul>
+					</div>
+					<div class="news_post_text">
+						<p>Integer luctus diam acto scerisque consectetur. Vimus euismod nec lacus sit amet. Aenean
+							interdus mid vitae blandit porta. Quisque dignissim commodo congue efficitur...</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div> --}}
+
+	<!-- Page Nav -->
+
+	{{!-- <div class="row">
+		<div class="col">
+			<div class="page_nav">
+				<ul>
+					<li class="active"><a href="#">1</a></li>
+					<li><a href="#">2</a></li>
+					<li><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i></a></li>
+				</ul>
+			</div>
+		</div>
+	</div> --}}
+
+</div>
 </div>
 
 <script src="/js/jquery-3.2.1.min.js"></script>

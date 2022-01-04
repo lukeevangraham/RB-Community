@@ -17,6 +17,9 @@ module.exports = {
   isDefined: function (value) {
     return value !== undefined;
   },
+  isString: function(value) {
+    return typeof(value) === 'string'
+  }
   // function(name, options) {
   //     if(!this._sections) this._section = {};
   //     this._sections[name] = options.fn(this);
