@@ -173,21 +173,36 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
         },
     };
 
-    const rawRichTextField = entry.fields.body;
-    // let renderedHtml = documentToHtmlString(rawRichTextField);
-    Object.assign(entry.fields, {
-        renderedHtml: documentToHtmlString(rawRichTextField, options).replace(
-            /RBCC/g,
-            "RB Community"
-        ),
-        id: requestId,
-    });
+    // entry.strapi ? entry.fields.renderedHtml =  :
+
+    if (entry.strapi) {
+        Object.assign(entry.fields, {
+            renderedHtml: entry.fields.body.replace(
+                /RBCC/g,
+                "RB Community"
+            ),
+            id: requestId,
+        })
+        entry.fields.renderedHtml
+    } else {
+        const rawRichTextField = entry.fields.body;
+        // let renderedHtml = documentToHtmlString(rawRichTextField);
+        Object.assign(entry.fields, {
+            renderedHtml: documentToHtmlString(rawRichTextField, options).replace(
+                /RBCC/g,
+                "RB Community"
+            ),
+            id: requestId,
+        });
+
+    }
+    console.log("ENTRY: ", entry)
+
     // renderSingleBlog(entry)
     return entry;
 }
 
 function renderSingleBlog(entry, res) {
-    // console.log("ENTRY: ", entry)
     let newMetaDescription;
     entry.fields.metaDescription ?
         (newMetaDescription = entry.fields.metaDescription) :
@@ -364,16 +379,16 @@ module.exports = function (app) {
                     .then(function (resultArray) {
                         // console.log("ENTRY no#: ", entry.items[0])
                         // blogEntry = entry.items[0]
+                        formattedData = { strapi: true }
+                        formattedData.fields = resultArray[1].data[0]
+                        // console.log("data ", formattedData)
                         resultArray[0].items.length ? (
-                            console.log("normal world", resultArray[0]),
                             prepareBlogEntryForSinglePage(resultArray[0].items[0], req.params.id),
                             renderSingleBlog(resultArray[0].items[0], res)
                         ) : (
-                            console.log("new world", resultArray[1].data)
-                            // prepareBlogEntryForSinglePage(entry.items[0], req.params.id),
-                            // renderSingleBlog(entry.items[0], res)
+                            prepareBlogEntryForSinglePage(formattedData, req.params.id),
+                            renderSingleBlog(formattedData, res)
                         )
-
                     }));
     });
 
