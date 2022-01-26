@@ -749,12 +749,14 @@ module.exports = function(app) {
 
         console.log("HERE: ", req.params.id)
 
+        console.log("TIME: ", moment().format())
+
         client
             .getEntries({
                 content_type: "blog",
                 order: "-fields.datePosted",
                 "fields.ministry": req.params.id,
-                limit: 6,
+                limit: 10,
             })
             .then(function(entry) {
                 if (entry.total >= 1) {
@@ -777,7 +779,7 @@ module.exports = function(app) {
                         moment(earlyItem.fields.expirationDate).isBefore(
                             moment().format("YYYY-MM-DD")
                         )
-                    ) {} else {
+                    ) { console.log("exclude: ", earlyItem) } else {
                         items.push(earlyItem);
                     }
                 });
