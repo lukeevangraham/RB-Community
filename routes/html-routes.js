@@ -1100,6 +1100,10 @@ module.exports = function(app) {
         res.redirect("https://rbcc.churchcenter.com/people/forms/43489");
     });
 
+    app.get("/care", function(req, res) {
+        res.redirect("/ministry:Pastoral%20Care");
+    });
+
     app.get("/highschool", function(req, res) {
         res.redirect("/ministry:High%20School");
     });
