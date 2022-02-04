@@ -351,19 +351,14 @@ module.exports = function (app) {
                     // blogEntry = entry;
                     prepareBlogEntryForSinglePage(entry, req.params.id);
                     renderSingleBlog(entry, res);
-                })) : // req.params.id.substring,
+                })) :
             ((req.params.id = req.originalUrl.substring(6)),
                 (str = req.originalUrl.substring(6)),
                 (str = str.replace(/-/g, " ")),
                 (str = str.replace(/\s\s\s/g, " - ")),
-                // console.log("Before: ", str.indexOf('?')),
-                str.indexOf("?") > 0 ? (str = str.substring(0, str.indexOf("?"))) : "",
-                // questionIndex = str.indexOf('?')+1,
-                // console.log("After: ", str.substring(0, questionIndex)),
-                // str = str.substring(0, questionIndex),
-                // console.log("AFTER: ", str),
 
-                // newRes = str.replace(/%20/g, " "),
+                str.indexOf("?") > 0 ? (str = str.substring(0, str.indexOf("?"))) : "",
+
                 (newRes = decodeURI(str)),
                 // console.log("LOOK HERE: ", newRes),
 
@@ -411,22 +406,6 @@ module.exports = function (app) {
                     Authorization: "Bearer " + vimeoPass,
                 },
             }),
-            axios({
-                url: "https://api.vimeo.com/users/14320074/videos",
-                method: "GET",
-                params: {
-                    query: "announcements",
-                    fields: "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button, embed",
-                    width: "690",
-                    per_page: "1",
-                    page: "1",
-                    sort: "modified_time",
-                    direction: "desc",
-                },
-                headers: {
-                    Authorization: "Bearer " + vimeoPass,
-                },
-            }),
             client.getEntries({
                 content_type: "events",
                 // "fields.featuredOnHome": true,
@@ -442,27 +421,18 @@ module.exports = function (app) {
                 order: "-fields.datePosted",
                 limit: 3,
             }),
-            client.getEntry("5yMSI9dIzpsdb55JvXkZk")
-
+            client.getEntry("5yMSI9dIzpsdb55JvXkZk"),
+            axios.get("https://admin.rbcommunity.org/home")
         ]).then(resultArray => {
-            // console.log("RES ARR: ", resultArray)
-
 
             var vimeoRecord = resultArray[0].data;
-            // let vimeoAnnRecord = resultArray[1].data;
-            let dbEvent = resultArray[2];
-            let dbBlog = resultArray[3];
-            let entry = resultArray[4]
-            // let vimeoAnnURL = null;
-            let welcomeRecord = null;
 
-            // request(vimeoOptionsHome, function (error, response, body) {
-            // if (error) throw new Error(error);
+            let dbEvent = resultArray[1];
+            let dbBlog = resultArray[2];
+            let entry = resultArray[3]
+            let homeData = resultArray[4].data
 
-
-            // vimeoRecord = JSON.parse(body);
-
-            // console.log(`Vimeo Record ${vimeoRecord.data}`);
+            // console.log("Home: ", homeData.data)
 
             if (vimeoRecord.data) {
                 vimeoRecord.data.forEach((item) => {
@@ -472,43 +442,6 @@ module.exports = function (app) {
                 });
             }
 
-            // request(vimeoOptionsAnnHome, function (error, response, body) {
-
-            // vimeoAnnRecord = JSON.parse(body);
-
-            // var items = vimeoAnnRecord.data;
-            // if (items.length > 0) {
-            //     let trimmedURL = getIdFromVimeoURL(items[0].link);
-
-            //     let editedEmbed = items[0].embed.html;
-            //     // console.log("TRIMMED URL: ", trimmedURL)
-            //     editedEmbed = editedEmbed.replace(
-            //         `" `,
-            //         `" data-aos="fade-right" class="about_image" `
-            //     );
-            //     // a = a.replace(`https://`,`//`)
-            //     // console.log("HERE: ", a)
-            //     // console.log(vimeoAnnRecord)
-
-            //     // vimeoAnnURL = getIdFromVimeoURL(a);
-            //     // vimeoAnnURL = trimmedURL;
-            //     // vimeoAnnURL = items[0].embed.html;
-            //     vimeoAnnURL = editedEmbed;
-            //     // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
-            // }
-
-            // client
-            //     .getEntries({
-            //         content_type: "events",
-            //         // "fields.featuredOnHome": true,
-            //         "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
-            //         "fields.homePagePassword": "Psalm 46:1",
-            //         order: "fields.date",
-            //         // limit: 3
-            //     })
-            //     .then(function (dbEvent) {
-            // console.log("EVENT: ", dbEvent)
-            // console.log("LOOK HERE: ", dbEvent.items[0].fields);
             var items = dbEvent.items;
 
             // Converting times for template
@@ -545,23 +478,25 @@ module.exports = function (app) {
                 }
             });
 
-            // secondRecord = dbEvent;
-
-            // client
-            //     .getEntries({
-            //         content_type: "blog",
-            //         "fields.featureOnHomePage": true,
-            //         "fields.homePagePassword": "Psalm 46:1",
-            //         order: "-fields.datePosted",
-            //         limit: 3,
-            //     })
-            //     .then(function (dbBlog) {
             var blogItems = [];
             var itemsIncludingExpired = dbBlog.items;
+
+            // console.log("homeData", homeData)
+
+            // Make homeData match contentful output
+
+            const newHomeData = {}
+
+            homeData.featuredArticles.forEach(article => {
+                // console.log("Article: ", article)
+                itemsIncludingExpired.push({ fields: article, strapi: true })
+            });
+
 
 
             // ELIMINATING OLD ENTRIES FROM PAGE
             itemsIncludingExpired.forEach((earlyItem) => {
+                // console.log("HERE: ", earlyItem)
                 if (
                     moment(earlyItem.fields.expirationDate).isBefore(
                         moment().format("YYYY-MM-DD")
@@ -570,7 +505,6 @@ module.exports = function (app) {
                     blogItems.push(earlyItem);
                 }
             });
-            // console.log("ITEMS: ", dbBlog.items)
 
             // Converting times for template
             blogItems.forEach((item) => {
@@ -581,12 +515,20 @@ module.exports = function (app) {
                 });
 
                 if (item.fields.body) {
-                    var truncatedString = JSON.stringify(
-                        item.fields.body.content[0].content[0].value.replace(
-                            /^(.{165}[^\s]*).*/,
-                            "$1"
-                        )
-                    );
+
+                    if (item.strapi) {
+                        var truncatedString = JSON.stringify(
+                            item.fields.body.replace(/<[^>]*>/g, '')
+                        );
+                        console.log("TRUN: ", truncatedString)
+                    } else {
+                        var truncatedString = JSON.stringify(
+                            item.fields.body.content[0].content[0].value.replace(
+                                /^(.{165}[^\s]*).*/,
+                                "$1"
+                            )
+                        );
+                    }
                     var truncatedLength = truncatedString.length;
                     truncatedString = truncatedString.substring(
                         1,

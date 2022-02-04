@@ -13,7 +13,10 @@
                     <div class="col">
                         <div class="home_title">“From you will flow living waters.” John 7:38 </div>
                         <div class="home_text mb-4">Jesus said it. Believe it.</div>
-                        <div style="width: 300px; background-color: #eee" class="button home_link"><a target="_blank" style="color: #317091" href="https://www.youtube.com/playlist?list=PLZ13IHPbJRZ5KfFIv3qODc2FymwvNrRAp">view Christmas Eve Services Here</a></div>
+                        <div style="width: 300px; background-color: #eee" class="button home_link"><a target="_blank"
+                                style="color: #317091"
+                                href="https://www.youtube.com/playlist?list=PLZ13IHPbJRZ5KfFIv3qODc2FymwvNrRAp">view
+                                Christmas Eve Services Here</a></div>
                     </div>
                 </div>
             </div>
@@ -98,6 +101,10 @@
                 <div class="col-lg-6">
                     {{!-- <div data-aos="fade-right" class="about_image"><img data-src="images/about2.jpg" alt=""
                             class="lazyload"></div> --}}
+                    <iframe data-aos="fade-right" class="about_image" width="560" height="315"
+                        src="https://www.youtube.com/embed/JTlz0wPiXu8" title="YouTube video player" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
                     {{!-- {{{this.vimeoAnn}}} --}}
                     {{!-- <iframe
                         src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2Frbcpc%2Fvideos%2F424474422108613%2F&show_text=false&width=560"
@@ -491,19 +498,34 @@
 
                 {{#each blogpost}}
 
+                {{ log this }}
+
                 <!-- News Post -->
                 <div class="col-xl-4 col-lg-6 news_post_col" data-aos="fade-down">
                     <div class="news_post">
+                        {{#if this.strapi}}
+                        <div class="news_image"><a href="./blog-{{changeSpacesToDashes this.fields.title}}"><img
+                                    data-src="{{fields.image.url}}" class="lazyload" alt=""></a></div>
+
+                        {{else}}
                         <div class="news_image"><a href="./blog-{{changeSpacesToDashes this.fields.title}}"><img
                                     data-src="{{fields.image.fields.file.url}}" class="lazyload" alt=""></a></div>
+
+                        {{/if}}
                         <div class="news_post_content">
                             <div class="news_post_title">
                                 <a href="./blog-{{changeSpacesToDashes this.fields.title}}">{{fields.title}}</a>
                             </div>
                             <div class="news_post_meta">
                                 <ul>
+                                    {{#if this.strapi}}
+                                    <li><i class="fa fa-user" aria-hidden="true"></i><a href="#">
+                                            {{this.fields.author}}</a></li>
+                                    {{else}}
                                     <li><i class="fa fa-user" aria-hidden="true"></i><a href="#">{{#each
                                             fields.author}}{{this}}{{/each}}</a></li>
+                                    {{/if}}
+                                    
                                     <li><i class="fa fa-calendar-o" aria-hidden="true"></i><a
                                             href="#">{{fields.formattedDate}}</a>
                                     </li>
