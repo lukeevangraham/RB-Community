@@ -365,7 +365,7 @@ module.exports = function (app) {
 
                 // newRes = str.replace(/%20/g, " "),
                 (newRes = decodeURI(str)),
-                console.log("LOOK HERE: ", newRes),
+                // console.log("LOOK HERE: ", newRes),
 
                 Promise.all([
                     client
@@ -393,17 +393,75 @@ module.exports = function (app) {
     });
 
     app.get(["/", "/index.html", "/home"], function (req, res) {
-        var vimeoRecord = null;
-        let secondRecord = null;
-        let thirdRecord = null;
-        let vimeoAnnRecord = null;
-        let vimeoAnnURL = null;
-        let welcomeRecord = null;
 
-        request(vimeoOptionsHome, function (error, response, body) {
-            if (error) throw new Error(error);
+        Promise.all([
+            axios({
+                url: "https://api.vimeo.com/users/14320074/videos",
+                method: "GET",
+                params: {
+                    query: "Sermon",
+                    fields: "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button",
+                    sizes: "960",
+                    per_page: "3",
+                    page: "1",
+                    sort: "date",
+                    direction: "desc",
+                },
+                headers: {
+                    Authorization: "Bearer " + vimeoPass,
+                },
+            }),
+            axios({
+                url: "https://api.vimeo.com/users/14320074/videos",
+                method: "GET",
+                params: {
+                    query: "announcements",
+                    fields: "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button, embed",
+                    width: "690",
+                    per_page: "1",
+                    page: "1",
+                    sort: "modified_time",
+                    direction: "desc",
+                },
+                headers: {
+                    Authorization: "Bearer " + vimeoPass,
+                },
+            }),
+            client.getEntries({
+                content_type: "events",
+                // "fields.featuredOnHome": true,
+                "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
+                "fields.homePagePassword": "Psalm 46:1",
+                order: "fields.date",
+                // limit: 3
+            }),
+            client.getEntries({
+                content_type: "blog",
+                "fields.featureOnHomePage": true,
+                "fields.homePagePassword": "Psalm 46:1",
+                order: "-fields.datePosted",
+                limit: 3,
+            }),
+            client.getEntry("5yMSI9dIzpsdb55JvXkZk")
 
-            vimeoRecord = JSON.parse(body);
+        ]).then(resultArray => {
+            // console.log("RES ARR: ", resultArray)
+
+
+            var vimeoRecord = resultArray[0].data;
+            // let vimeoAnnRecord = resultArray[1].data;
+            let dbEvent = resultArray[2];
+            let dbBlog = resultArray[3];
+            let entry = resultArray[4]
+            // let vimeoAnnURL = null;
+            let welcomeRecord = null;
+
+            // request(vimeoOptionsHome, function (error, response, body) {
+            // if (error) throw new Error(error);
+
+
+            // vimeoRecord = JSON.parse(body);
+
             // console.log(`Vimeo Record ${vimeoRecord.data}`);
 
             if (vimeoRecord.data) {
@@ -414,168 +472,166 @@ module.exports = function (app) {
                 });
             }
 
-            request(vimeoOptionsAnnHome, function (error, response, body) {
-                if (error) throw new Error(error);
+            // request(vimeoOptionsAnnHome, function (error, response, body) {
 
-                vimeoAnnRecord = JSON.parse(body);
+            // vimeoAnnRecord = JSON.parse(body);
 
-                // a = vimeoAnnRecord.data[0].link;
-                var items = vimeoAnnRecord.data;
-                if (items.length > 0) {
-                    // console.log("ITEMS: ", items)
-                    let trimmedURL = getIdFromVimeoURL(items[0].link);
+            // var items = vimeoAnnRecord.data;
+            // if (items.length > 0) {
+            //     let trimmedURL = getIdFromVimeoURL(items[0].link);
 
-                    let editedEmbed = items[0].embed.html;
-                    // console.log("TRIMMED URL: ", trimmedURL)
-                    editedEmbed = editedEmbed.replace(
-                        `" `,
-                        `" data-aos="fade-right" class="about_image" `
-                    );
-                    // a = a.replace(`https://`,`//`)
-                    // console.log("HERE: ", a)
-                    // console.log(vimeoAnnRecord)
+            //     let editedEmbed = items[0].embed.html;
+            //     // console.log("TRIMMED URL: ", trimmedURL)
+            //     editedEmbed = editedEmbed.replace(
+            //         `" `,
+            //         `" data-aos="fade-right" class="about_image" `
+            //     );
+            //     // a = a.replace(`https://`,`//`)
+            //     // console.log("HERE: ", a)
+            //     // console.log(vimeoAnnRecord)
 
-                    // vimeoAnnURL = getIdFromVimeoURL(a);
-                    // vimeoAnnURL = trimmedURL;
-                    // vimeoAnnURL = items[0].embed.html;
-                    vimeoAnnURL = editedEmbed;
-                    // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
-                }
+            //     // vimeoAnnURL = getIdFromVimeoURL(a);
+            //     // vimeoAnnURL = trimmedURL;
+            //     // vimeoAnnURL = items[0].embed.html;
+            //     vimeoAnnURL = editedEmbed;
+            //     // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
+            // }
 
-                client
-                    .getEntries({
-                        content_type: "events",
-                        // "fields.featuredOnHome": true,
-                        "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
-                        "fields.homePagePassword": "Psalm 46:1",
-                        order: "fields.date",
-                        // limit: 3
-                    })
-                    .then(function (dbEvent) {
-                        // console.log("EVENT: ", dbEvent)
-                        // console.log("LOOK HERE: ", dbEvent.items[0].fields);
-                        var items = dbEvent.items;
+            // client
+            //     .getEntries({
+            //         content_type: "events",
+            //         // "fields.featuredOnHome": true,
+            //         "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
+            //         "fields.homePagePassword": "Psalm 46:1",
+            //         order: "fields.date",
+            //         // limit: 3
+            //     })
+            //     .then(function (dbEvent) {
+            // console.log("EVENT: ", dbEvent)
+            // console.log("LOOK HERE: ", dbEvent.items[0].fields);
+            var items = dbEvent.items;
 
-                        // Converting times for template
-                        items.forEach((item) => {
-                            Object.assign(item.fields, {
-                                shortMonth: moment(item.fields.date).format("MMM"),
-                            });
-                            Object.assign(item.fields, {
-                                shortDay: moment(item.fields.date).format("DD"),
-                            });
-                            // if (item.fields.featured) {
-                            Object.assign(item.fields, {
-                                dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
-                            });
-                            // }
-                            // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
-                            if (item.fields.repeatsEveryDays > 0) {
-                                if (moment(item.fields.date).isSameOrBefore(moment())) {
-                                    let start = moment(item.fields.date);
-                                    let end = moment().format("YYYY-MM-DD");
+            // Converting times for template
+            items.forEach((item) => {
+                Object.assign(item.fields, {
+                    shortMonth: moment(item.fields.date).format("MMM"),
+                });
+                Object.assign(item.fields, {
+                    shortDay: moment(item.fields.date).format("DD"),
+                });
+                // if (item.fields.featured) {
+                Object.assign(item.fields, {
+                    dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
+                });
+                // }
+                // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
+                if (item.fields.repeatsEveryDays > 0) {
+                    if (moment(item.fields.date).isSameOrBefore(moment())) {
+                        let start = moment(item.fields.date);
+                        let end = moment().format("YYYY-MM-DD");
 
-                                    while (start.isBefore(end)) {
-                                        start.add(item.fields.repeatsEveryDays, "day");
-                                    }
-                                    item.fields.date = start.format("YYYY-MM-DD");
-                                    item.fields.shortMonth = start.format("MMM");
-                                    item.fields.shortDay = start.format("DD");
-                                }
-                                Object.assign(item.fields, {
-                                    dateToCountTo: moment(item.fields.date).format(
-                                        "MMMM D, YYYY"
-                                    ),
-                                });
-                            }
-                        });
-
-                        secondRecord = dbEvent;
-
-                        client
-                            .getEntries({
-                                content_type: "blog",
-                                "fields.featureOnHomePage": true,
-                                "fields.homePagePassword": "Psalm 46:1",
-                                order: "-fields.datePosted",
-                                limit: 3,
-                            })
-                            .then(function (dbBlog) {
-                                var items = [];
-                                var itemsIncludingExpired = dbBlog.items;
-
-
-                                // ELIMINATING OLD ENTRIES FROM PAGE
-                                itemsIncludingExpired.forEach((earlyItem) => {
-                                    if (
-                                        moment(earlyItem.fields.expirationDate).isBefore(
-                                            moment().format("YYYY-MM-DD")
-                                        )
-                                    ) { } else {
-                                        items.push(earlyItem);
-                                    }
-                                });
-                                // console.log("ITEMS: ", dbBlog.items)
-
-                                // Converting times for template
-                                items.forEach((item) => {
-                                    Object.assign(item.fields, {
-                                        formattedDate: moment(item.fields.datePosted)
-                                            .format("DD MMM, YYYY")
-                                            .toUpperCase(),
-                                    });
-
-                                    if (item.fields.body) {
-                                        var truncatedString = JSON.stringify(
-                                            item.fields.body.content[0].content[0].value.replace(
-                                                /^(.{165}[^\s]*).*/,
-                                                "$1"
-                                            )
-                                        );
-                                        var truncatedLength = truncatedString.length;
-                                        truncatedString = truncatedString.substring(
-                                            1,
-                                            truncatedLength - 1
-                                        );
-
-                                        Object.assign(item.fields, {
-                                            excerpt: truncatedString,
-                                        });
-                                    }
-                                });
-
-                                thirdRecord = items;
-
-                                client.getEntry("5yMSI9dIzpsdb55JvXkZk").then(function (entry) {
-                                    // console.log("LOOK HERE: ", entry);
-                                    const rawRichTextField = entry.fields.body;
-
-                                    Object.assign(entry.fields, {
-                                        renderedHtml: documentToHtmlString(rawRichTextField),
-                                    });
-                                    welcomeRecord = entry;
-                                    // console.log("LOOK HERE: ", welcomeRecord)
-
-                                    // .then(function(body) {
-
-                                    var hbsObject = {
-                                        events: secondRecord.items,
-                                        vimeo: vimeoRecord,
-                                        vimeoAnn: vimeoAnnURL,
-                                        blogpost: thirdRecord,
-                                        homeWelcome: welcomeRecord.fields.renderedHtml,
-                                        metaTitle: "Rancho Bernardo Community Presbyterian Church | RBCPC San Diego",
-                                        headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
-              <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
-                                        title: `Rancho Bernardo Community Presbyterian Church | RBCPC San Diego`,
-                                    };
-
-                                    res.render("home", hbsObject);
-                                    // });
-                                });
-                            });
+                        while (start.isBefore(end)) {
+                            start.add(item.fields.repeatsEveryDays, "day");
+                        }
+                        item.fields.date = start.format("YYYY-MM-DD");
+                        item.fields.shortMonth = start.format("MMM");
+                        item.fields.shortDay = start.format("DD");
+                    }
+                    Object.assign(item.fields, {
+                        dateToCountTo: moment(item.fields.date).format(
+                            "MMMM D, YYYY"
+                        ),
                     });
+                }
             });
+
+            // secondRecord = dbEvent;
+
+            // client
+            //     .getEntries({
+            //         content_type: "blog",
+            //         "fields.featureOnHomePage": true,
+            //         "fields.homePagePassword": "Psalm 46:1",
+            //         order: "-fields.datePosted",
+            //         limit: 3,
+            //     })
+            //     .then(function (dbBlog) {
+            var blogItems = [];
+            var itemsIncludingExpired = dbBlog.items;
+
+
+            // ELIMINATING OLD ENTRIES FROM PAGE
+            itemsIncludingExpired.forEach((earlyItem) => {
+                if (
+                    moment(earlyItem.fields.expirationDate).isBefore(
+                        moment().format("YYYY-MM-DD")
+                    )
+                ) { } else {
+                    blogItems.push(earlyItem);
+                }
+            });
+            // console.log("ITEMS: ", dbBlog.items)
+
+            // Converting times for template
+            blogItems.forEach((item) => {
+                Object.assign(item.fields, {
+                    formattedDate: moment(item.fields.datePosted)
+                        .format("DD MMM, YYYY")
+                        .toUpperCase(),
+                });
+
+                if (item.fields.body) {
+                    var truncatedString = JSON.stringify(
+                        item.fields.body.content[0].content[0].value.replace(
+                            /^(.{165}[^\s]*).*/,
+                            "$1"
+                        )
+                    );
+                    var truncatedLength = truncatedString.length;
+                    truncatedString = truncatedString.substring(
+                        1,
+                        truncatedLength - 1
+                    );
+
+                    Object.assign(item.fields, {
+                        excerpt: truncatedString,
+                    });
+                }
+            });
+
+            // thirdRecord = items;
+
+            // client.getEntry("5yMSI9dIzpsdb55JvXkZk").then(function (entry) {
+            // console.log("LOOK HERE: ", entry);
+            const rawRichTextField = entry.fields.body;
+
+            Object.assign(entry.fields, {
+                renderedHtml: documentToHtmlString(rawRichTextField),
+            });
+            welcomeRecord = entry;
+            // console.log("LOOK HERE: ", welcomeRecord)
+
+            // .then(function(body) {
+
+            var hbsObject = {
+                events: dbEvent.items,
+                vimeo: vimeoRecord,
+                // vimeoAnn: vimeoAnnURL,
+                blogpost: blogItems,
+                homeWelcome: welcomeRecord.fields.renderedHtml,
+                metaTitle: "Rancho Bernardo Community Presbyterian Church | RBCPC San Diego",
+                headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
+              <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
+                title: `Rancho Bernardo Community Presbyterian Church | RBCPC San Diego`,
+            };
+
+            res.render("home", hbsObject);
+            // });
+            // });
+            // });
+            // });
+            // });
+            // })
         });
     });
 
