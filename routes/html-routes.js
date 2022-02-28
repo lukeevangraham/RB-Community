@@ -747,10 +747,6 @@ module.exports = function(app) {
         var thirdRecord = null;
         let youTubeRecord = null;
 
-        console.log("HERE: ", req.params.id)
-
-        console.log("TIME: ", moment().format())
-
         client
             .getEntries({
                 content_type: "blog",
@@ -759,8 +755,10 @@ module.exports = function(app) {
                 limit: 10,
             })
             .then(function(entry) {
+                var items = [];
+                console.log("TOTAL: ", entry.total)
                 if (entry.total >= 1) {
-                    Object.assign(entry.items, {
+                    Object.assign(items, {
                         multipleEntries: true,
                     });
                 }
@@ -771,7 +769,6 @@ module.exports = function(app) {
                     });
                 }
 
-                var items = [];
                 var itemsIncludingExpired = entry.items;
                 // ELIMINATING OLD ENTRIES FROM PAGE
                 itemsIncludingExpired.forEach((earlyItem) => {
@@ -779,7 +776,7 @@ module.exports = function(app) {
                         moment(earlyItem.fields.expirationDate).isBefore(
                             moment().format("YYYY-MM-DD")
                         )
-                    ) { console.log("exclude: ", earlyItem) } else {
+                    ) { null } else {
                         items.push(earlyItem);
                     }
                 });
@@ -825,6 +822,12 @@ module.exports = function(app) {
                 });
 
                 // console.log("ITEMS: ", items)
+
+
+
+                // items[multipleEntries] = entry.multipleEntries
+
+                console.log("ITEMS: ", items)
 
                 firstRecord = items;
 
