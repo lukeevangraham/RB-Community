@@ -65,7 +65,7 @@
 {
 	.main_nav li:not(:last-child)
 	{
-		margin-right: 37px;
+		margin-right: 30px;
 	}
 	.footer_links
 	{
