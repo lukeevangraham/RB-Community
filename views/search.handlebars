@@ -1,3 +1,8 @@
+<link rel="stylesheet" type="text/css" href="styles/events.css" />
+<link rel="stylesheet" type="text/css" href="styles/events_responsive.css" />
+<link rel="stylesheet" type="text/css" href="styles/blog.css">
+<link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">
+
 <!-- Home -->
 
 <div class="home">
@@ -24,12 +29,12 @@
   </div>
 </div>
 
-<div class="about">
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <h2>Search: {{term}}</h2>
-        {{!-- {{log results}} --}}
+<div class="about events_items">
+
+        <h2 class="mb-4">Search: {{term}}</h2>
+
+
+        <div class="row justify-content-around">
 
         {{#each results.0.items}}
 
@@ -39,10 +44,8 @@
             {{! IS ENDDATE CURRENT OR FUTURE? }}
             {{#if (isEventCurrentOrFuture this.fields.endDate)}}
 
-              <a href="/event-{{changeSpacesToDashes this.fields.title}}">
+              {{> events/event-block this }}
 
-                <div>EVENT: {{this.fields.title}}</div>
-              </a>
             {{/if}}
 
           {{/if}}
@@ -50,20 +53,44 @@
           {{! IF WE HAVE A NEWS ARTICLE }}
           {{#if (isBlog this.sys.contentType.sys.id)}}
 
+          {{!-- if it's a header for a ministry page --}}
+            {{#if this.fields.featureOnMinistryPage}}
+
+            
+            <div class="events_item">
+            <a href="/ministry:{{this.fields.ministry.[0]}}">
+              <div style="background-color: #327091;
+              color: #eee;
+              font-size: 2rem;
+              text-align:center;
+              padding: 3rem 1rem;
+              ">{{this.fields.ministry.[0]}}</div>
+              <div class="py-3" style="color: #7c7c7c !important">{{this.fields.excerpt}}...</div>
+              </a>
+              </div>
+
+{{!-- OTHERWISE RENDER BLOG SUMMARY CARD --}}
+            {{else}}
+
             {{! IS expirationDate CURRENT OR FUTURE? }}
             {{#if (isBlogCurrent this.fields.expirationDate)}}
 
-              <a href="./blog-{{changeSpacesToDashes this.fields.title}}">
-                <div>NEWS: {{this.fields.title}}</div>
-              </a>
+            {{> blog/blog-block this }}
+
             {{/if}}
+
+
+            {{/if}}
+
           {{/if}}
 
         {{/each}}
 
-      </div>
+        </div>
+
+      {{!-- </div>
     </div>
-  </div>
+  </div> --}}
 </div>
 
 <script src="/js/jquery-3.2.1.min.js"></script>

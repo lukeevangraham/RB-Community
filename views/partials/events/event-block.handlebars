@@ -1,23 +1,27 @@
+
+
 <!-- Event -->
-			<div class="events_item">
-				<div class="events_item_image"><img src="images/event_2.jpg" alt=""></div>
+<div class="events_item">
+				<div class="events_item_image"><a href="/event-{{changeSpacesToDashes this.fields.title}}"><img
+							data-src="{{this.fields.eventImage.fields.file.url}}" class="lazyload" alt=""></a></div>
 				<div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
 					<div class="event_date">
 						<div class="d-flex flex-column align-items-center justify-content-center">
-							<div class="event_day">19</div>
-							<div class="event_month">mar</div>
+							<div class="event_month">{{this.fields.shortMonth}}</div>
+							<div class="event_day">{{this.fields.shortDay}}</div>
+							<div class="event_day_of_week">{{this.fields.dayOfWeek}}</div>
 						</div>
 					</div>
 					<div class="event_content">
-						<div class="event_title"><a href="#">To Love and to Cherish, The Wedding</a></div>
+						<div class="event_title"><a href="/event-{{changeSpacesToDashes this.fields.title}}">{{this.fields.title}}</a></div>
 						<ul class="event_row">
 							<li>
 								<div class="event_icon"><img src="images/calendar.png" alt=""></div>
-								<span>08:00 AM - 11:00 AM</span>
+								<span>{{this.fields.time}}</span>
 							</li>
 							<li>
 								<div class="event_icon"><img src="images/location.png" alt=""></div>
-								<span>1195 Lobortis Rd, New Orleans, New Hampshire</span>
+								<span>{{this.fields.location}}</span>
 							</li>
 						</ul>
 					</div>
