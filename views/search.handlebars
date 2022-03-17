@@ -34,7 +34,7 @@
         <h2 class="mb-4">Search: {{term}}</h2>
 
 
-        <div class="row justify-content-around">
+        <div id="results" class="row justify-content-around">
 
         {{#each results.0.items}}
 
@@ -87,10 +87,18 @@
 
         </div>
 
-      {{!-- </div>
-    </div>
-  </div> --}}
 </div>
 
 <script src="/js/jquery-3.2.1.min.js"></script>
 <script src="js/about.js"></script>
+
+<script>
+
+if (document.querySelector("#results").innerHTML.trim() === "") {
+  document.querySelector("#results").innerHTML = `<h3 style="text-align: center">No results found.  Bummer. <br /> You might want to search for something else.</h3>`
+}
+  
+
+
+
+</script>
