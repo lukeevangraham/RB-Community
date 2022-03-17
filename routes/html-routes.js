@@ -1398,6 +1398,34 @@ module.exports = function(app) {
             });
     });
 
+    app.get("/search:term", async (req, res) => {
+        let searchTerm = req.params.term.substring(1)
+
+        try {   
+            const results = await Promise.all([
+                client.getEntries({"query": searchTerm})
+
+            ])
+            
+            // BLOG
+            
+            // EVENTS
+            
+            // SERMONS
+            
+            let hbsObject = {
+                headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+                      <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
+                title: `Search`,
+                term: searchTerm,
+                results: results
+            }
+            res.render("search", hbsObject)
+        } catch (error) {
+            console.log("ERROR: ", error)
+        }
+    })
+
     app.use(function(req, res) {
         var bloghbsObject = {
             // article: entry.fields,

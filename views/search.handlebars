@@ -1,0 +1,70 @@
+<!-- Home -->
+
+<div class="home">
+  <div
+    class="home_background"
+    style="background-image:url(images/events.jpg)"
+  ></div>
+  <div class="home_content">
+    <div class="container">
+      <div class="row">
+        <div
+          class="col d-flex flex-row align-items-center justify-content-start"
+        >
+          <div class="home_title">Search</div>
+          <div class="breadcrumbs ml-auto">
+            <ul>
+              <li><a href="/home">Home</a></li>
+              <li>Search</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="about">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h2>Search: {{term}}</h2>
+        {{!-- {{log results}} --}}
+
+        {{#each results.0.items}}
+
+          {{! IF WE HAVE AN EVENT }}
+          {{#if this.fields.eventImage}}
+
+            {{! IS ENDDATE CURRENT OR FUTURE? }}
+            {{#if (isEventCurrentOrFuture this.fields.endDate)}}
+
+              <a href="/event-{{changeSpacesToDashes this.fields.title}}">
+
+                <div>EVENT: {{this.fields.title}}</div>
+              </a>
+            {{/if}}
+
+          {{/if}}
+
+          {{! IF WE HAVE A NEWS ARTICLE }}
+          {{#if (isBlog this.sys.contentType.sys.id)}}
+
+            {{! IS expirationDate CURRENT OR FUTURE? }}
+            {{#if (isBlogCurrent this.fields.expirationDate)}}
+
+              <a href="./blog-{{changeSpacesToDashes this.fields.title}}">
+                <div>NEWS: {{this.fields.title}}</div>
+              </a>
+            {{/if}}
+          {{/if}}
+
+        {{/each}}
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/jquery-3.2.1.min.js"></script>
+<script src="js/about.js"></script>

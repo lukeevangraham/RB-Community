@@ -17,6 +17,15 @@ module.exports = {
   isDefined: function (value) {
     return value !== undefined;
   },
+  isBlog: (value) => {
+    return value === "blog";
+  },
+  isEventCurrentOrFuture: (endDate) => {
+    return moment(endDate).isSameOrAfter(moment(), "day");
+  },
+  isBlogCurrent: (expirationDate) => {
+    return moment(expirationDate).isSameOrAfter(moment(), "day");
+  },
   // function(name, options) {
   //     if(!this._sections) this._section = {};
   //     this._sections[name] = options.fn(this);

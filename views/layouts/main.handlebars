@@ -167,8 +167,8 @@
 										<li class="{{#if active.contact}}active{{/if}}"><a href="/contact">contact</a>
 										</li>
 									</ul>
-									{{!-- <div class="search_button"><i class="fa fa-search" aria-hidden="true"></i>
-									</div> --}}
+									<div class="search_button"><i class="fa fa-search" aria-hidden="true"></i>
+									</div>
 								</nav>
 
 								<!-- Hamburger -->
@@ -190,7 +190,7 @@
 					<div class="row">
 						<div class="col">
 							<div class="header_search_content d-flex flex-row align-items-center justify-content-end">
-								<form action="#" class="header_search_form">
+								<form onsubmit="event.preventDefault(); searchSite();" class="header_search_form">
 									<input type="search" class="search_input" placeholder="Search" required="required">
 									<button
 										class="header_search_button d-flex flex-column align-items-center justify-content-center">
@@ -412,6 +412,7 @@
 	<script src="plugins/easing/easing.js"></script>
 	<script src="plugins/parallax-js-master/parallax.min.js"></script>
 	<script src="plugins/colorbox/jquery.colorbox-min.js"></script>
+	<script src="/js/search.js"></script>
 
 </body>
 

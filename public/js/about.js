@@ -72,6 +72,7 @@ $(document).ready(function()
 		{
 			$('.search_button').on('click', function()
 			{
+				document.querySelector(".search_input").focus();
 				if($('.header_search_container').length)
 				{
 					$('.header_search_container').toggleClass('active');
