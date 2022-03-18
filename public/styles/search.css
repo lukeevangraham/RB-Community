@@ -1,0 +1,5 @@
+@media only screen and (max-width: 575px) {
+    .results {
+        padding: 0 15px;
+    }
+}
