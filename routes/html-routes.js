@@ -1358,6 +1358,10 @@ module.exports = function (app) {
     res.redirect("/ministry:Concert%20Series");
   });
 
+  app.get("/theater", (req, res) => {
+    res.redirect("/ministry:Youth,%20Music%20and%20Theater");
+  });
+
   app.get("/nativity", (req, res) => {
     res.redirect("/blog-nativity");
   });
