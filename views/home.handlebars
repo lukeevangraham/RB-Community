@@ -100,7 +100,8 @@
             <div class="row about_row" style="align-items: center">
                 <div class="col-lg-6">
                     <iframe data-aos="fade-right" class="about_image" width="560" height="315"
-                        src="https://www.youtube.com/embed/gYd0a9ERA2M" title="YouTube video player" frameborder="0"
+                        {{!-- src="https://www.youtube.com/embed/gYd0a9ERA2M" title="YouTube video player" frameborder="0" --}}
+                        src="https://www.youtube.com/embed/{{youtubeStream.snippet.resourceId.videoId}}" title="YouTube video player" frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowfullscreen></iframe>
                     {{!-- <div data-aos="fade-right" class="about_image"><img data-src="images/about2.jpg" alt=""
