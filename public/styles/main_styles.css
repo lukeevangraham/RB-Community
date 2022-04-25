@@ -763,13 +763,14 @@ section {
 }
 .about_image {
   width: 100%;
+  aspect-ratio: 16 / 9;
 }
 .about_image img {
   max-width: 100%;
 }
 .about_content {
   padding-left: 30px;
-  padding-top: 11px;
+  /* padding-top: 11px; */
 }
 .about_button {
   margin-top: 31px;

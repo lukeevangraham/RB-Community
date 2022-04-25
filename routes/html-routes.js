@@ -55,6 +55,21 @@ let newYouTubeOptions = (playlistId) => {
     // },
   };
 };
+let streamYouTubeOptions = (playlistId) => {
+  return {
+    method: "GET",
+    url: "https://www.googleapis.com/youtube/v3/playlistItems",
+    qs: {
+      key: process.env.GOOGLE_KEY,
+      playlistId: "PLZ13IHPbJRZ7amo_md0SxN_CZgnu9DnxJ",
+      part: "snippet,contentDetails",
+      maxResults: "10",
+    },
+    // headers: {
+    //   Authorization: "Bearer " + vimeoPass,
+    // },
+  };
+};
 
 var vimeoOptions = {
   method: "GET",
@@ -255,33 +270,32 @@ const prepEventDataForTemplate = (eventData) => {
   }
 };
 
-const prepBlogDataForTemplate = blogData => {
-    Object.assign(blogData.fields, {
-        formattedDate: moment(blogData.fields.datePosted)
-          .format("DD MMM, YYYY")
-          .toUpperCase(),
-      });
+const prepBlogDataForTemplate = (blogData) => {
+  Object.assign(blogData.fields, {
+    formattedDate: moment(blogData.fields.datePosted)
+      .format("DD MMM, YYYY")
+      .toUpperCase(),
+  });
 
-      if (blogData.fields.body) {
-        if (blogData.fields.body.content[0].content[0]) {
-          var truncatedString = JSON.stringify(
-            blogData.fields.body.content[0].content[0].value.replace(
-              /^(.{165}[^\s]*).*/,
-              "$1"
-            ).replace(/(\r\n|\n|\r)/gm, "")
-          );
-          var truncatedLength = truncatedString.length;
-          truncatedString = truncatedString
-            .substring(1, truncatedLength - 1)
-            .replace(/RBCC/g, "RB Community");
-        }
-      }
+  if (blogData.fields.body) {
+    if (blogData.fields.body.content[0].content[0]) {
+      var truncatedString = JSON.stringify(
+        blogData.fields.body.content[0].content[0].value
+          .replace(/^(.{165}[^\s]*).*/, "$1")
+          .replace(/(\r\n|\n|\r)/gm, "")
+      );
+      var truncatedLength = truncatedString.length;
+      truncatedString = truncatedString
+        .substring(1, truncatedLength - 1)
+        .replace(/RBCC/g, "RB Community");
+    }
+  }
 
-      Object.assign(blogData.fields, {
-        excerpt: truncatedString,
-        today: moment().format("YYYY-MM-DD"),
-      });
-}
+  Object.assign(blogData.fields, {
+    excerpt: truncatedString,
+    today: moment().format("YYYY-MM-DD"),
+  });
+};
 
 // Routes
 module.exports = function (app) {
@@ -311,32 +325,32 @@ module.exports = function (app) {
 
         // Converting times for template
         items.forEach((item) => {
-        //   Object.assign(item.fields, {
-        //     formattedDate: moment(item.fields.datePosted)
-        //       .format("DD MMM, YYYY")
-        //       .toUpperCase(),
-        //   });
+          //   Object.assign(item.fields, {
+          //     formattedDate: moment(item.fields.datePosted)
+          //       .format("DD MMM, YYYY")
+          //       .toUpperCase(),
+          //   });
 
-        //   if (item.fields.body) {
-        //     if (item.fields.body.content[0].content[0]) {
-        //       var truncatedString = JSON.stringify(
-        //         item.fields.body.content[0].content[0].value.replace(
-        //           /^(.{165}[^\s]*).*/,
-        //           "$1"
-        //         )
-        //       );
-        //       var truncatedLength = truncatedString.length;
-        //       truncatedString = truncatedString
-        //         .substring(1, truncatedLength - 1)
-        //         .replace(/RBCC/g, "RB Community");
-        //     }
-        //   }
+          //   if (item.fields.body) {
+          //     if (item.fields.body.content[0].content[0]) {
+          //       var truncatedString = JSON.stringify(
+          //         item.fields.body.content[0].content[0].value.replace(
+          //           /^(.{165}[^\s]*).*/,
+          //           "$1"
+          //         )
+          //       );
+          //       var truncatedLength = truncatedString.length;
+          //       truncatedString = truncatedString
+          //         .substring(1, truncatedLength - 1)
+          //         .replace(/RBCC/g, "RB Community");
+          //     }
+          //   }
 
-        //   Object.assign(item.fields, {
-        //     excerpt: truncatedString,
-        //     today: moment().format("YYYY-MM-DD"),
-        //   });
-        prepBlogDataForTemplate(item)
+          //   Object.assign(item.fields, {
+          //     excerpt: truncatedString,
+          //     today: moment().format("YYYY-MM-DD"),
+          //   });
+          prepBlogDataForTemplate(item);
         });
 
         // console.log(dbBlog);
@@ -407,6 +421,7 @@ module.exports = function (app) {
     let vimeoAnnRecord = null;
     let vimeoAnnURL = null;
     let welcomeRecord = null;
+    let youTubeRecord = null;
 
     request(vimeoOptionsHome, function (error, response, body) {
       if (error) throw new Error(error);
@@ -524,7 +539,6 @@ module.exports = function (app) {
                   }
                 });
 
-
                 // Converting times for template
                 items.forEach((item) => {
                   Object.assign(item.fields, {
@@ -564,23 +578,100 @@ module.exports = function (app) {
                   welcomeRecord = entry;
                   // console.log("LOOK HERE: ", welcomeRecord)
 
-                  // .then(function(body) {
+                  request(
+                    streamYouTubeOptions(),
+                    function (error, response, body) {
+                      youTubeRecord = JSON.parse(body).items;
 
-                  var hbsObject = {
-                    events: secondRecord.items,
-                    vimeo: vimeoRecord,
-                    vimeoAnn: vimeoAnnURL,
-                    blogpost: thirdRecord,
-                    homeWelcome: welcomeRecord.fields.renderedHtml,
-                    metaTitle:
-                      "Rancho Bernardo Community Presbyterian Church | RBCPC San Diego",
-                    headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
+                      // Filter out deleted videos
+                      let trimmedYouTubeRecord = youTubeRecord.filter(record => record.snippet.title !== "Deleted video")
+                      // })
+
+                      let mostRecentStream = null;
+
+                      // GO THROUGH 10 MOST RECENT LIVESTREAMS
+
+                      trimmedYouTubeRecord.forEach((stream) => {
+                        // PARSING THE DATE OF THIS LIVESTREAM
+                        const startToGetDateInfoFromDescription =
+                          stream.snippet.description.split(/, /g)[0].split(" ");
+                        if (stream.snippet.description) {
+                          const yearStarter = stream.snippet.description
+                            .split(/(\d{4}. )/g)[1]
+                            .split(". ")[0];
+
+                          stream.parsedDate = moment(
+                            `${
+                              startToGetDateInfoFromDescription[
+                                startToGetDateInfoFromDescription.length - 2
+                              ]
+                            } ${
+                              startToGetDateInfoFromDescription[
+                                startToGetDateInfoFromDescription.length - 1
+                              ]
+                            }, ${yearStarter}`,
+                            "MMMM DD, YYYY"
+                          );
+
+                          // console.log("PARSED DATE: ", parsedDate);
+
+                          // // IS THE STREAM CONNECTED TO TODAY?
+                          // if (moment(parsedDate).isSame(moment(), 'day')) {
+                          //   mostRecentStream = stream
+                          // } else {
+                          //   console.log("NOT SAME DAY")
+                          // }
+                        }
+                      });
+
+                      // SORT YOUTUBE RESULTS TO NEWEST IS FIRST
+                      trimmedYouTubeRecord.sort((left, right) =>
+                        moment
+                          .utc(right.parsedDate)
+                          .diff(moment.utc(left.parsedDate))
+                      );
+
+                      trimmedYouTubeRecord.forEach((stream) => {
+                        // DOES THE STREAM HAPPEN TODAY??
+                        if (moment(stream.parsedDate).isSame(moment(), "day")) {
+                          mostRecentStream = stream;
+                          return;
+
+                          // IF THE STREAM HAPPENS BEFORE TODAY
+                        }
+                        if (
+                          moment(stream.parsedDate).isBefore(moment(), "day")
+                        ) {
+                          if (mostRecentStream) {
+                            return;
+                          } else {
+                            mostRecentStream = stream;
+                          }
+                        }
+                      });
+
+                      // console.log("STREAM ", mostRecentStream)
+
+                      // .then(function(body) {
+
+                      var hbsObject = {
+                        events: secondRecord.items,
+                        vimeo: vimeoRecord,
+                        vimeoAnn: vimeoAnnURL,
+                        blogpost: thirdRecord,
+                        youtubeStream: mostRecentStream,
+                        homeWelcome: welcomeRecord.fields.renderedHtml,
+                        metaTitle:
+                          "Rancho Bernardo Community Presbyterian Church | RBCPC San Diego",
+                        headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
               <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
-                    title: `Rancho Bernardo Community Presbyterian Church | RBCPC San Diego`,
-                  };
+                        title: `Rancho Bernardo Community Presbyterian Church | RBCPC San Diego`,
+                      };
 
-                  res.render("home", hbsObject);
-                  // });
+                      res.render("home", hbsObject);
+                      // });
+                    }
+                  );
                 });
               });
           });
@@ -1456,7 +1547,7 @@ module.exports = function (app) {
         }
         // IF IT'S A BLOG
         if (entry.sys.contentType.sys.id === "blog") {
-            prepBlogDataForTemplate(entry)
+          prepBlogDataForTemplate(entry);
         }
       });
 
