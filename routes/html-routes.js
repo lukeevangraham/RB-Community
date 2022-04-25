@@ -582,13 +582,16 @@ module.exports = function (app) {
                     streamYouTubeOptions(),
                     function (error, response, body) {
                       youTubeRecord = JSON.parse(body).items;
+
+                      // Filter out deleted videos
+                      let trimmedYouTubeRecord = youTubeRecord.filter(record => record.snippet.title !== "Deleted video")
                       // })
 
                       let mostRecentStream = null;
 
                       // GO THROUGH 10 MOST RECENT LIVESTREAMS
 
-                      youTubeRecord.forEach((stream) => {
+                      trimmedYouTubeRecord.forEach((stream) => {
                         // PARSING THE DATE OF THIS LIVESTREAM
                         const startToGetDateInfoFromDescription =
                           stream.snippet.description.split(/, /g)[0].split(" ");
@@ -622,13 +625,13 @@ module.exports = function (app) {
                       });
 
                       // SORT YOUTUBE RESULTS TO NEWEST IS FIRST
-                      youTubeRecord.sort((left, right) =>
+                      trimmedYouTubeRecord.sort((left, right) =>
                         moment
                           .utc(right.parsedDate)
                           .diff(moment.utc(left.parsedDate))
                       );
 
-                      youTubeRecord.forEach((stream) => {
+                      trimmedYouTubeRecord.forEach((stream) => {
                         // DOES THE STREAM HAPPEN TODAY??
                         if (moment(stream.parsedDate).isSame(moment(), "day")) {
                           mostRecentStream = stream;
