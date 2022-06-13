@@ -887,7 +887,7 @@ module.exports = function (app) {
       .then(function (entry) {
         var items = [];
         console.log("TOTAL: ", entry.total);
-        if (entry.total >= 1) {
+        if (entry.total > 1) {
           Object.assign(items, {
             multipleEntries: true,
           });
