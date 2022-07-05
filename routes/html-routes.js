@@ -1445,7 +1445,7 @@ module.exports = function (app) {
     });
   });
 
-  app.get("/concert", (req, res) => {
+  app.get(["/concert", "/concertseries"], (req, res) => {
     res.redirect("/ministry:Concert%20Series");
   });
 
