@@ -27,7 +27,7 @@
     "express": "^4.17.1",
     "express-handlebars": "^3.1.0",
     "handlebars.moment": "^1.0.4",
-    "marked": "^0.7.0",
+    "marked": "^4.0.10",
     "moment": "^2.29.3",
     "mongoose": "^5.9.21",
     "mysql2": "^1.6.5",
