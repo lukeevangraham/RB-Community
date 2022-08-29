@@ -115,8 +115,6 @@ $(document).ready(function () {
     // var element = $(".emailStaff").colorbox.element();
     // console.log("HERE: ", element);
 
-    console.log("setting up!");
-
     $(".emailStaff").on("click", function (e) {
       $.colorbox({
         html: `
