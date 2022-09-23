@@ -1,0 +1,59 @@
+{{#if events}}
+
+<div class="bg_selection" style="padding-bottom: 0">
+
+	<!-- Events -->
+
+	<div class="events">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="section_title_container text-center">
+						<div class="section_title">list of {{request}} events</div>
+						<div class="section_subtitle">Events held and scheduled by us</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div
+			class="events_items d-flex flex-lg-row flex-column align-items-lg-start align-items-center justify-content-lg-between justify-content-center flex-wrap">
+			{{/if}}
+
+            {{#each events}}
+
+
+			<!-- Event -->
+
+			<div class="events_item">
+				<div class="events_item_image"><a href="/event-{{changeSpacesToDashes this.fields.title}}"><img
+							src="{{this.fields.eventImage.fields.file.url}}" alt=""></a></div>
+				<div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
+					<div class="event_date">
+						<div class="d-flex flex-column align-items-center justify-content-center">
+							<div class="event_day">{{this.fields.shortDay}}</div>
+							<div class="event_month">{{this.fields.shortMonth}}</div>
+						</div>
+					</div>
+					<div class="event_content">
+						<div class="event_title"><a href="/event-{{changeSpacesToDashes this.fields.title}}">{{this.fields.title}}</a></div>
+						<ul class="event_row">
+							<li>
+								<div class="event_icon"><img src="images/calendar.png" alt=""></div>
+								<span>{{this.fields.time}}</span>
+							</li>
+							<li>
+								<div class="event_icon"><img src="images/location.png" alt=""></div>
+								<span>{{this.fields.location}}</span>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+
+			{{/each}}
+
+			</div>
+			</div>
+			</div>

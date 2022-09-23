@@ -26,6 +26,16 @@ module.exports = {
   isBlogCurrent: (expirationDate) => {
     return moment(expirationDate).isSameOrAfter(moment(), "day");
   },
+  isHighOrMiddleSchool: (value) => {
+    switch (value) {
+      case "Middle School":
+        return true;
+      case "High School":
+        return true;
+      default:
+        break;
+    }
+  },
   // function(name, options) {
   //     if(!this._sections) this._section = {};
   //     this._sections[name] = options.fn(this);
