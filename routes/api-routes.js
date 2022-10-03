@@ -30,6 +30,6 @@ module.exports = function (app) {
   });
 
   app.post("/api/contact", (req, res) => {
-    main(req.body, "luke@rbcpc.org").then(res.json("Message sent"));
+    main(req.body, "info@rbcpc.org").then(res.json("Message sent"));
   });
 };
