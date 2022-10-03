@@ -363,21 +363,26 @@ async function handleContactSubmission(e) {
   // e.preventDefault();
   const values = document.querySelector("#contactForm").elements;
 
-  const response = await fetch("/api/contact", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: values.name.value,
-      email: values.email.value,
-      message: values.message.value,
-    }),
-  });
+  if (values.email.value === "jeannewassef63@gmail.com") {
+    document.querySelector("#contactForm").innerHTML =
+      "<h3>Your message was delivered</h3>";
+  } else {
+    const response = await fetch("/api/contact", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: values.name.value,
+        email: values.email.value,
+        message: values.message.value,
+      }),
+    });
 
-  const content = await response.json();
+    const content = await response.json();
 
-  document.querySelector("#contactForm").innerHTML =
-    "<h3>Your message was delivered</h3>";
+    document.querySelector("#contactForm").innerHTML =
+      "<h3>Your message was delivered</h3>";
+  }
 }
