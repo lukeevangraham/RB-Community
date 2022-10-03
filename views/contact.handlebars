@@ -1,82 +1,128 @@
 <!-- Home -->
 
-	<div class="home">
-		<div class="home_background" style="background-image:url(images/events.jpg)"></div>
-		<div class="home_content">
-			<div class="container">
-				<div class="row">
-					<div class="col d-flex flex-row align-items-center justify-content-start">
-						<div class="home_title">Contact</div>
-						<div class="breadcrumbs ml-auto">
-							<ul>
-								<li><a href="index.html">Home</a></li>
-								<li>Contact</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="home">
+  <div
+    class="home_background"
+    style="background-image:url(images/events.jpg)"
+  ></div>
+  <div class="home_content">
+    <div class="container">
+      <div class="row">
+        <div
+          class="col d-flex flex-row align-items-center justify-content-start"
+        >
+          <div class="home_title">Contact</div>
+          <div class="breadcrumbs ml-auto">
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li>Contact</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-	<!-- Contact -->
+<!-- Contact -->
 
-	<div class="contact">
-		<div class="container">
-			<div class="row">
+<div class="contact">
+  <div class="container">
+    <div class="row">
 
-				<!-- Contact Info -->
-				<div class="col-lg-6">
-					<div class="contact_info">
-						<h1 class="invisible">contact us</h1>
-						<div class="contact_title">contact us</div>
-						<div class="contact_info_content">
-							<ul>
-								<li><div><i class="fa fa-map-marker" aria-hidden="true"></i></div><a href="https://goo.gl/maps/QTpJP1HUiNJRcGVp9" target="_blank" rel="noopener noreferrer"><span>17010 Pomerado Rd, San Diego, California 92128</span></a></li>
-								<li><div><i class="fa fa-phone" aria-hidden="true"></i></div><span>858.487.0811</span></li>
-								<li><div><i class="fa fa-envelope" aria-hidden="true"></i></div><span>info@rbcpc.org</span></li>
-								<li><div><i class="fa fa-globe" aria-hidden="true"></i></div><span>www.rbcommunity.org</span></li>
-							</ul>
-						</div>
-					</div>
-				</div>
+      <!-- Contact Info -->
+      <div class="col-lg-6">
+        <div class="contact_info">
+          <h1 class="invisible">contact us</h1>
+          <div class="contact_title">contact us</div>
+          <div class="contact_info_content">
+            <ul>
+              <li><div><i
+                    class="fa fa-map-marker"
+                    aria-hidden="true"
+                  ></i></div><a
+                  href="https://goo.gl/maps/QTpJP1HUiNJRcGVp9"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                ><span>17010 Pomerado Rd, San Diego, California 92128</span></a></li>
+              <li><div><i class="fa fa-phone" aria-hidden="true"></i></div><span
+                >858.487.0811</span></li>
+              <li><div><i
+                    class="fa fa-envelope"
+                    aria-hidden="true"
+                  ></i></div><span>info@rbcpc.org</span></li>
+              <li><div><i class="fa fa-globe" aria-hidden="true"></i></div><span
+                >www.rbcommunity.org</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
-				<!-- Contact Form -->
-				<div class="col-lg-6 contact_form_col">
-					<div class="contact_form">
-						<div class="contact_title">keep in touch</div>
+      <!-- Contact Form -->
+      <div class="col-lg-6 contact_form_col">
+        <div class="contact_form">
+          <div class="contact_title">keep in touch</div>
 
-						<!-- Contact Form -->
-						<div class="contact_form_container">
-							<form action="https://formspree.io/info@rbcpc.org" method="POST">
-								<div class="row">
-									<div class="col-lg-6">
-										<input type="text" class="form_input" placeholder="Your Name" required="required" name="name">
-									</div>
-									<div class="col-lg-6">
-										<input type="email" class="form_input email_input" placeholder="Your Email" required="required" name="email">
-									</div>
-									<div class="col-12">
-										<textarea class="form_text" placeholder="Your Message" required="required" name="message"></textarea>
-										<button type="submit" class="form_submit_button">send comment</button>
-									</div>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+          <!-- Contact Form -->
+          <div class="contact_form_container">
+            <form
+              action="javascript:handleContactSubmission(this)"
+              method="POST"
+              id="contactForm"
+            >
+              <div class="row">
+                <div class="col-lg-6">
+                  <input
+                    type="text"
+                    class="form_input"
+                    placeholder="Your Name"
+                    required="required"
+                    name="name"
+                  />
+                </div>
+                <div class="col-lg-6">
+                  <input
+                    type="email"
+                    class="form_input email_input"
+                    placeholder="Your Email"
+                    required="required"
+                    name="email"
+                  />
+                </div>
+                <div class="col-12">
+                  <textarea
+                    class="form_text"
+                    placeholder="Your Message"
+                    required="required"
+                    name="message"
+                  ></textarea>
+                  <button type="submit" class="form_submit_button">send comment</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-	<!-- Contact Map -->
+<!-- Contact Map -->
 
-{{!-- <div id="mapid"></div> --}}
+{{! <div id="mapid"></div> }}
 
-<iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d13381.537056414549!2d-117.0618473!3d33.0200054!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x8323f9ae06e318f7!2sRancho%20Bernardo%20Community%20Presbyterian%20Church!5e0!3m2!1sen!2sus!4v1590193123342!5m2!1sen!2sus" width="100%" height="500" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+<iframe
+  src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d13381.537056414549!2d-117.0618473!3d33.0200054!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x8323f9ae06e318f7!2sRancho%20Bernardo%20Community%20Presbyterian%20Church!5e0!3m2!1sen!2sus!4v1590193123342!5m2!1sen!2sus"
+  width="100%"
+  height="500"
+  frameborder="0"
+  style="border:0;"
+  allowfullscreen=""
+  aria-hidden="false"
+  tabindex="0"
+></iframe>
 
-
-	{{!-- <div class="contact_map">
+{{! <div class="contact_map">
 
 		<!-- Google Map -->
 		
@@ -88,9 +134,8 @@
 			</div>
 		</div>
 
-	</div> --}}
-
+	</div> }}
 
 <script src="/js/jquery-3.2.1.min.js"></script>
-    {{!-- <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCIwF204lFZg1y4kPSIhKaHEXMLYxxuMhA"></script> --}}
+{{! <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCIwF204lFZg1y4kPSIhKaHEXMLYxxuMhA"></script> }}
 <script src="js/contact.js"></script>

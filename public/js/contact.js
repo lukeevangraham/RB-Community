@@ -13,7 +13,7 @@
 
 ******************************/
 
-$(document).ready(function() {
+$(document).ready(function () {
   "use strict";
 
   /* 
@@ -31,11 +31,11 @@ $(document).ready(function() {
 
   setHeader();
 
-  $(window).on("resize", function() {
+  $(window).on("resize", function () {
     setHeader();
   });
 
-  $(document).on("scroll", function() {
+  $(document).on("scroll", function () {
     setHeader();
   });
 
@@ -66,7 +66,7 @@ $(document).ready(function() {
 
   function initHeaderSearch() {
     if ($(".search_button").length) {
-      $(".search_button").on("click", function() {
+      $(".search_button").on("click", function () {
         document.querySelector(".search_input").focus();
         if ($(".header_search_container").length) {
           $(".header_search_container").toggleClass("active");
@@ -84,7 +84,7 @@ $(document).ready(function() {
   function initMenu() {
     if (hamb.length) {
       if (menu.length) {
-        hamb.on("click", function() {
+        hamb.on("click", function () {
           if (menuActive) {
             closeMenu();
           } else {
@@ -92,7 +92,7 @@ $(document).ready(function() {
           }
         });
 
-        $(".menu_close").on("click", function() {
+        $(".menu_close").on("click", function () {
           if (menuActive) {
             closeMenu();
           } else {
@@ -129,7 +129,7 @@ $(document).ready(function() {
       scrollwheel: false,
       zoomControl: true,
       zoomControlOptions: {
-        position: google.maps.ControlPosition.RIGHT_CENTER
+        position: google.maps.ControlPosition.RIGHT_CENTER,
       },
       mapTypeControl: false,
       scaleControl: false,
@@ -141,171 +141,171 @@ $(document).ready(function() {
           elementType: "geometry",
           stylers: [
             {
-              color: "#f5f5f5"
-            }
-          ]
+              color: "#f5f5f5",
+            },
+          ],
         },
         {
           elementType: "labels.icon",
           stylers: [
             {
-              visibility: "off"
-            }
-          ]
+              visibility: "off",
+            },
+          ],
         },
         {
           elementType: "labels.text.fill",
           stylers: [
             {
-              color: "#717171"
-            }
-          ]
+              color: "#717171",
+            },
+          ],
         },
         {
           featureType: "administrative.land_parcel",
           elementType: "labels.text.fill",
           stylers: [
             {
-              color: "#bdbdbd"
-            }
-          ]
+              color: "#bdbdbd",
+            },
+          ],
         },
         {
           featureType: "poi",
           elementType: "geometry",
           stylers: [
             {
-              color: "#eeeeee"
-            }
-          ]
+              color: "#eeeeee",
+            },
+          ],
         },
         {
           featureType: "poi",
           elementType: "labels.text.fill",
           stylers: [
             {
-              color: "#757575"
-            }
-          ]
+              color: "#757575",
+            },
+          ],
         },
         {
           featureType: "poi.park",
           elementType: "geometry",
           stylers: [
             {
-              color: "#e5e5e5"
-            }
-          ]
+              color: "#e5e5e5",
+            },
+          ],
         },
         {
           featureType: "poi.park",
           elementType: "labels.text.fill",
           stylers: [
             {
-              color: "#9e9e9e"
-            }
-          ]
+              color: "#9e9e9e",
+            },
+          ],
         },
         {
           featureType: "road",
           elementType: "geometry",
           stylers: [
             {
-              color: "#ffffff"
-            }
-          ]
+              color: "#ffffff",
+            },
+          ],
         },
         {
           featureType: "road.arterial",
           elementType: "labels.text.fill",
           stylers: [
             {
-              color: "#757575"
-            }
-          ]
+              color: "#757575",
+            },
+          ],
         },
         {
           featureType: "road.highway",
           elementType: "geometry",
           stylers: [
             {
-              color: "#dadada"
-            }
-          ]
+              color: "#dadada",
+            },
+          ],
         },
         {
           featureType: "road.highway",
           elementType: "geometry.fill",
           stylers: [
             {
-              color: "#ffffff"
-            }
-          ]
+              color: "#ffffff",
+            },
+          ],
         },
         {
           featureType: "road.highway",
           elementType: "geometry.stroke",
           stylers: [
             {
-              visibility: "off"
-            }
-          ]
+              visibility: "off",
+            },
+          ],
         },
         {
           featureType: "road.highway",
           elementType: "labels.text.fill",
           stylers: [
             {
-              color: "#616161"
-            }
-          ]
+              color: "#616161",
+            },
+          ],
         },
         {
           featureType: "road.local",
           elementType: "labels.text.fill",
           stylers: [
             {
-              color: "#9e9e9e"
-            }
-          ]
+              color: "#9e9e9e",
+            },
+          ],
         },
         {
           featureType: "transit.line",
           elementType: "geometry",
           stylers: [
             {
-              color: "#e5e5e5"
-            }
-          ]
+              color: "#e5e5e5",
+            },
+          ],
         },
         {
           featureType: "transit.station",
           elementType: "geometry",
           stylers: [
             {
-              color: "#eeeeee"
-            }
-          ]
+              color: "#eeeeee",
+            },
+          ],
         },
         {
           featureType: "water",
           elementType: "geometry",
           stylers: [
             {
-              color: "#c9c9c9"
-            }
-          ]
+              color: "#c9c9c9",
+            },
+          ],
         },
         {
           featureType: "water",
           elementType: "labels.text.fill",
           stylers: [
             {
-              color: "#9e9e9e"
-            }
-          ]
-        }
-      ]
+              color: "#9e9e9e",
+            },
+          ],
+        },
+      ],
     };
 
     // Initialize a map with options
@@ -316,12 +316,12 @@ $(document).ready(function() {
     var marker = new google.maps.Marker({
       position: new google.maps.LatLng(42.992849, -71.060134),
       map: map,
-      icon: image
+      icon: image,
     });
 
     // Re-center map after window resize
-    google.maps.event.addDomListener(window, "resize", function() {
-      setTimeout(function() {
+    google.maps.event.addDomListener(window, "resize", function () {
+      setTimeout(function () {
         google.maps.event.trigger(map, "resize");
         map.setCenter(myLatlng);
       }, 1400);
@@ -331,22 +331,53 @@ $(document).ready(function() {
   // 6. Leaflet
 
   function initLeafletMap() {
-    var mymap = L.map('mapid').setView([33.020, -117.061], 13);
-	
-	
-	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-		maxZoom: 18,
-		id: 'mapbox.streets',
-		accessToken: 'pk.eyJ1IjoiZGVsaXJpb3U1OCIsImEiOiJjazBraXp1MXgwbHNlM2ZvNGJsOW0xNzZsIn0.IRf4OdH3qM8cVwcZoVTHAA'
-	}).addTo(mymap);
+    var mymap = L.map("mapid").setView([33.02, -117.061], 13);
 
-	var marker = L.marker([33.020, -117.061]).addTo(mymap);
+    L.tileLayer(
+      "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}",
+      {
+        attribution:
+          'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: "mapbox.streets",
+        accessToken:
+          "pk.eyJ1IjoiZGVsaXJpb3U1OCIsImEiOiJjazBraXp1MXgwbHNlM2ZvNGJsOW0xNzZsIn0.IRf4OdH3qM8cVwcZoVTHAA",
+      }
+    ).addTo(mymap);
 
-	marker.bindPopup("<b>RB Community Church</b><br>17010 Pomerado Rd.<br>San Diego, CA 92128").openPopup();
+    var marker = L.marker([33.02, -117.061]).addTo(mymap);
 
-	mymap.scrollWheelZoom.disable()
-	
-	mapid = mymap;
+    marker
+      .bindPopup(
+        "<b>RB Community Church</b><br>17010 Pomerado Rd.<br>San Diego, CA 92128"
+      )
+      .openPopup();
+
+    mymap.scrollWheelZoom.disable();
+
+    mapid = mymap;
   }
 });
+
+async function handleContactSubmission(e) {
+  // e.preventDefault();
+  const values = document.querySelector("#contactForm").elements;
+
+  const response = await fetch("/api/contact", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: values.name.value,
+      email: values.email.value,
+      message: values.message.value,
+    }),
+  });
+
+  const content = await response.json();
+
+  document.querySelector("#contactForm").innerHTML =
+    "<h3>Your message was delivered</h3>";
+}

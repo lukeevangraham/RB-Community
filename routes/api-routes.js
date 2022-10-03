@@ -28,4 +28,8 @@ module.exports = function (app) {
       .get(`https://admin.rbcommunity.org/staff-members/${req.body.recipient}`)
       .then((res) => main(req.body, res.data.Email));
   });
+
+  app.post("/api/contact", (req, res) => {
+    main(req.body, "luke@rbcpc.org").then(res.json("Message sent"));
+  });
 };
