@@ -363,7 +363,7 @@ async function handleContactSubmission(e) {
   // e.preventDefault();
   const values = document.querySelector("#contactForm").elements;
 
-  if (values.email.value === "jeannewassef63@gmail.com") {
+  if (values.email.value === "jeannewassef63@gmail.com" || values.email.value === "jeannewassef@hotmail.com") {
     document.querySelector("#contactForm").innerHTML =
       "<h3>Your message was delivered</h3>";
   } else {
