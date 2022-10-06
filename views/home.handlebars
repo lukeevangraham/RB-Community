@@ -1,194 +1,229 @@
 <div class="super_container">
 
-    {{!-- {{> easter/easter }} --}}
+  {{!-- {{> easter/easter }} --}}
 
+  <!-- Home -->
 
-    <!-- Home -->
-
-    <div class="home">
-        <div class="home_background" style="background-image:url(images/index.jpg)"></div>
-        <div class="home_content text-center">
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        <div class="home_title">“From you will flow living waters.” John 7:38 </div>
-                        <div class="home_text mb-4">Jesus said it. Believe it.</div>
-                        {{!-- <div style="width: 300px; background-color: #eee" class="button home_link"><a
+  <div class="home">
+    <div
+      class="home_background"
+      style="background-image:url(images/index.jpg)"
+    ></div>
+    <div class="home_content text-center">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <div class="home_title">“From you will flow living waters.” John
+              7:38
+            </div>
+            <div class="home_text mb-4">Jesus said it. Believe it.</div>
+            {{! <div style="width: 300px; background-color: #eee" class="button home_link"><a
                                 target="_blank" style="color: #317091"
                                 href="https://www.youtube.com/playlist?list=PLZ13IHPbJRZ5KfFIv3qODc2FymwvNrRAp">view
-                                Christmas Eve Services Here</a></div> --}}
-                    </div>
-                </div>
-            </div>
+                                Christmas Eve Services Here</a></div> }}
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 
-
-    {{#each events}}
+  {{#each events}}
     {{#if this.fields.featured}}
 
-    <!-- Event -->
+      <!-- Event -->
 
-    <div class="event">
+      <div class="event">
         <div class="container">
-            <div class="row">
-                <div class="col">
-                    <div
-                        class="event_container d-flex flex-lg-row flex-column align-items-center justify-content-start">
-                        <div class="event_date d-flex flex-column align-items-center justify-content-center">
-                            <div class="event_day">{{this.fields.shortDay}}</div>
-                            <div class="event_month">{{this.fields.shortMonth}}</div>
-                        </div>
-                        <div class="event_content">
-                            <div class="event_title"><a
-                                    href="/event-{{changeSpacesToDashes this.fields.title}}">UPCOMING EVENT:
-                                    {{this.fields.title}}</a></div>
-                            <ul class="event_row">
-                                <li>
-                                    <div class="event_icon"><img src="images/calendar.png" alt=""></div>
-                                    <span id="time">{{this.fields.time}}</span>
-                                </li>
-                                <li>
-                                    <div class="event_icon"><img src="images/location.png" alt=""></div>
-                                    <span>{{this.fields.location}}</span>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="event_timer_container ml-lg-auto">
-                            <ul class="event_timer">
-                                <div id="dateToCountTo" style="display:none">{{this.fields.dateToCountTo}}</div>
-                                <li>
-                                    <div id="day" class="event_num">00</div>
-                                    <div class="event_ss">day</div>
-                                </li>
-                                <li>
-                                    <div id="hour" class="event_num">00</div>
-                                    <div class="event_ss">hrs</div>
-                                </li>
-                                <li>
-                                    <div id="minute" class="event_num">00</div>
-                                    <div class="event_ss">min</div>
-                                </li>
-                                <li>
-                                    <div id="second" class="event_num">00</div>
-                                    <div class="event_ss">sec</div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+          <div class="row">
+            <div class="col">
+              <div
+                class="event_container d-flex flex-lg-row flex-column align-items-center justify-content-start"
+              >
+                <div
+                  class="event_date d-flex flex-column align-items-center justify-content-center"
+                >
+                  <div class="event_day">{{this.fields.shortDay}}</div>
+                  <div class="event_month">{{this.fields.shortMonth}}</div>
                 </div>
+                <div class="event_content">
+                  <div class="event_title"><a
+                      href="/event-{{changeSpacesToDashes this.fields.title}}"
+                    >UPCOMING EVENT:
+                      {{this.fields.title}}</a></div>
+                  <ul class="event_row">
+                    <li>
+                      <div class="event_icon"><img
+                          src="images/calendar.png"
+                          alt=""
+                        /></div>
+                      <span id="time">{{this.fields.time}}</span>
+                    </li>
+                    <li>
+                      <div class="event_icon"><img
+                          src="images/location.png"
+                          alt=""
+                        /></div>
+                      <span>{{this.fields.location}}</span>
+                    </li>
+                  </ul>
+                </div>
+                <div class="event_timer_container ml-lg-auto">
+                  <ul class="event_timer">
+                    <div
+                      id="dateToCountTo"
+                      style="display:none"
+                    >{{this.fields.dateToCountTo}}</div>
+                    <li>
+                      <div id="day" class="event_num">00</div>
+                      <div class="event_ss">day</div>
+                    </li>
+                    <li>
+                      <div id="hour" class="event_num">00</div>
+                      <div class="event_ss">hrs</div>
+                    </li>
+                    <li>
+                      <div id="minute" class="event_num">00</div>
+                      <div class="event_ss">min</div>
+                    </li>
+                    <li>
+                      <div id="second" class="event_num">00</div>
+                      <div class="event_ss">sec</div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
+      </div>
 
     {{/if}}
-    {{/each}}
+  {{/each}}
 
-    <!-- About -->
+  <!-- About -->
 
-    <div class="about pb-5 pt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <div data-aos="fade-down" class="section_title_container text-center">
-                        <h1 class="invisible">Welcome to RB Community Church</h1>
-                        <div class="section_title">welcome to rb community church</div>
-                        <div class="section_subtitle">Presbyterian Church, U.S.A.</div>
-                    </div>
-                </div>
-            </div>
-            <div class="row about_row" style="align-items: center">
-                <div class="col-lg-6">
-                    <iframe data-aos="fade-right" class="about_image" width="560"
-                        {{!-- src="https://www.youtube.com/embed/gYd0a9ERA2M" title="YouTube video player" frameborder="0" --}}
-                        src="https://www.youtube.com/embed/{{youtubeStream.snippet.resourceId.videoId}}" title="YouTube video player" frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen></iframe>
-                    {{!-- <div data-aos="fade-right" class="about_image"><img data-src="images/about2.jpg" alt=""
-                            class="lazyload"></div> --}}
-                    {{!-- {{{this.vimeoAnn}}} --}}
-                    {{!-- <iframe
+  <div class="about pb-5 pt-5">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div data-aos="fade-down" class="section_title_container text-center">
+            <h1 class="invisible">Welcome to RB Community Church</h1>
+            <div class="section_title">welcome to rb community church</div>
+            <div class="section_subtitle">Presbyterian Church, U.S.A.</div>
+          </div>
+        </div>
+      </div>
+      <div class="row about_row" style="align-items: center">
+        <div class="col-lg-6">
+          <iframe
+            data-aos="fade-right"
+            class="about_image"
+            width="560"
+            {{! src="https://www.youtube.com/embed/gYd0a9ERA2M" title="YouTube video player" frameborder="0" }}
+            src="https://www.youtube.com/embed/{{youtubeStream.snippet.resourceId.videoId}}"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+          {{! <div data-aos="fade-right" class="about_image"><img data-src="images/about2.jpg" alt=""
+                            class="lazyload"></div> }}
+          {{!-- {{{this.vimeoAnn}}} --}}
+          {{! <iframe
                         src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2Frbcpc%2Fvideos%2F424474422108613%2F&show_text=false&width=560"
                         width="560" height="314" style="border:none;overflow:hidden" scrolling="no" frameborder="0"
                         allowfullscreen="true"
                         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                        allowFullScreen="true"></iframe> --}}
+                        allowFullScreen="true"></iframe> }}
 
-                </div>
-                <div class="col-lg-6">
-                    <div data-aos="fade-left" class="about_content">
-                        <div class="about_text">
-                            {{!-- <p>In response to the coronavirus we are providing updates at our <a
+        </div>
+        <div class="col-lg-6">
+          <div data-aos="fade-left" class="about_content">
+            <div class="about_text">
+              {{! <p>In response to the coronavirus we are providing updates at our <a
                                     href="/blog_single:1UYpjxDwHFi1uF7avuwzG3">COVID-19 Update page</a>. Due to COVID-19
                                 our weekend worship services will only be available online through March 29.</p>
                             <p>Our weeked worship services will be posted Sundays at 10am on <a
                                     href="https://www.facebook.com/rbcpc">our Facebook page</a>. (You do not need a
                                 Facebook account to watch them.)
-                            </p> --}}
-                            {{{ homeWelcome }}}
-                        </div>
-                        {{!-- <div class="button about_button"><a href="/blog_single:3JEwFofQhW3MQcReiGLCYu">read
-                                story</a></div> --}}
-                    </div>
-                </div>
+                            </p> }}
+              {{{homeWelcome}}}
             </div>
+            {{! <div class="button about_button"><a href="/blog_single:3JEwFofQhW3MQcReiGLCYu">read
+                                story</a></div> }}
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 
+  <!-- Events -->
 
-    <!-- Events -->
-
-    <div class="events pt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <div data-aos="fade-down" class="section_title_container text-center">
-                        <div class="section_title">featured events</div>
-                        <div class="section_subtitle">“If anyone is in Christ, they are a new creation.” 2 Corinthians
-                            5:17</div>
-                    </div>
-                </div>
-            </div>
+  <div class="events pt-5">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div data-aos="fade-down" class="section_title_container text-center">
+            <div class="section_title">featured events</div>
+            <div class="section_subtitle">“If anyone is in Christ, they are a
+              new creation.” 2 Corinthians 5:17</div>
+          </div>
         </div>
-        <div data-aos="fade-down"
-            class="events_items d-flex flex-lg-row flex-column align-items-lg-start align-items-center justify-content-lg-between justify-content-center">
-            {{#each events}}
-            {{#unless this.fields.featured}}
-            {{#if this.fields.featuredOnHome}}
-
-
-
+      </div>
+    </div>
+    <div
+      data-aos="fade-down"
+      class="events_items d-flex flex-lg-row flex-column align-items-lg-start align-items-center justify-content-lg-between justify-content-center"
+    >
+      {{#each events}}
+        {{#unless this.fields.featured}}
+          {{#if this.fields.featuredOnHome}}
 
             <!-- Event -->
             <div class="events_item">
-                <div class="events_item_image"><a href="/event-{{changeSpacesToDashes this.fields.title}}"><img
-                            src="{{this.fields.eventImage.fields.file.url}}" alt=""></a></div>
-                <div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
-                    <div class="event_date d-flex flex-column align-items-center justify-content-center">
-                        <div class="event_day">{{this.fields.shortDay}}</div>
-                        <div class="event_month">{{this.fields.shortMonth}}</div>
-                    </div>
-                    <div class="event_content">
-                        <div class="event_title"><a
-                                href="/event-{{changeSpacesToDashes this.fields.title}}">{{this.fields.title}}</a></div>
-                        <ul class="event_row">
-                            <li>
-                                <div class="event_icon"><img src="images/calendar.png" alt=""></div>
-                                <span>{{this.fields.time}}</span>
-                            </li>
-                            <li>
-                                <div class="event_icon"><img src="images/location.png" alt=""></div>
-                                <span>{{this.fields.location}}</span>
-                            </li>
-                        </ul>
-                    </div>
+              <div class="events_item_image"><a
+                  href="/event-{{changeSpacesToDashes this.fields.title}}"
+                ><img
+                    src="{{this.fields.eventImage.fields.file.url}}"
+                    alt=""
+                  /></a></div>
+              <div
+                class="events_item_content d-flex flex-row align-items-start justfy-content-start"
+              >
+                <div
+                  class="event_date d-flex flex-column align-items-center justify-content-center"
+                >
+                  <div class="event_day">{{this.fields.shortDay}}</div>
+                  <div class="event_month">{{this.fields.shortMonth}}</div>
                 </div>
+                <div class="event_content">
+                  <div class="event_title"><a
+                      href="/event-{{changeSpacesToDashes this.fields.title}}"
+                    >{{this.fields.title}}</a></div>
+                  <ul class="event_row">
+                    <li>
+                      <div class="event_icon"><img
+                          src="images/calendar.png"
+                          alt=""
+                        /></div>
+                      <span>{{this.fields.time}}</span>
+                    </li>
+                    <li>
+                      <div class="event_icon"><img
+                          src="images/location.png"
+                          alt=""
+                        /></div>
+                      <span>{{this.fields.location}}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
-            {{/if}}
-            {{/unless}}
-            {{/each}}
+          {{/if}}
+        {{/unless}}
+      {{/each}}
 
-            {{!--
+      {{!
             <!-- Event -->
             <div class="events_item">
                 <div class="events_item_image"><img src="images/event_2.jpg" alt=""></div>
@@ -235,301 +270,406 @@
                         </ul>
                     </div>
                 </div>
-            </div> --}}
+            </div> }}
 
-        </div>
     </div>
+  </div>
 
+  <!-- Mission -->
 
+  <div class="mission">
+    <div
+      class="mission_background parallax-window"
+      data-parallax="scroll"
+      data-image-src="images/mission.jpg"
+      data-speed="0.8"
+    ></div>
+    <div
+      class="mission_items d-flex flex-row flex-wrap align-items-start justify-content-start"
+    >
 
-    <!-- Mission -->
+      <div data-aos="fade-up" class="mission_item text-center">
+        <div class="mission_icon"><i
+            class="fa fa-book"
+            aria-hidden="true"
+          ></i></div>
+        <div class="mission_title">our story</div>
+        <div class="mission_text">Founded as the first church in the community
+          plan for Rancho Bernardo, our church has served the surrounding Poway,
+          Escondido, 4S, Penasquitos and north San Diego neighborhoods for over
+          50 years. We are a Presbyterian church in the PCUSA family of
+          churches.</div>
+      </div>
 
-    <div class="mission">
-        <div class="mission_background parallax-window" data-parallax="scroll" data-image-src="images/mission.jpg"
-            data-speed="0.8"></div>
-        <div class="mission_items d-flex flex-row flex-wrap align-items-start justify-content-start">
+      <div data-aos="fade-up" class="mission_item text-center">
+        <div class="mission_icon"><i
+            class="fas fa-compass"
+            aria-hidden="true"
+          ></i></div>
+        <div class="mission_title">our purpose</div>
+        <div class="mission_text">Put simply, our church exists “For the glory
+          of God alone.” The Latin, “Soli Deo gloria,” claimed by the church
+          leaders as a centering belief, focuses us on seeking to reveal the
+          true nature of God and is our starting point for our purpose and our
+          beliefs.</div>
+      </div>
 
-            <div data-aos="fade-up" class="mission_item text-center">
-                <div class="mission_icon"><i class="fa fa-book" aria-hidden="true"></i></div>
-                <div class="mission_title">our story</div>
-                <div class="mission_text">Founded as the first church in the community plan for Rancho Bernardo, our
-                    church has served the surrounding Poway, Escondido, 4S, Penasquitos and north San Diego
-                    neighborhoods for over 50 years. We are a Presbyterian church in the PCUSA family of churches.</div>
-            </div>
+      <div data-aos="fade-up" class="mission_item text-center">
+        <div class="mission_icon"><i
+            class="fas fa-sun"
+            aria-hidden="true"
+          ></i></div>
+        <div class="mission_title">our future</div>
+        <div class="mission_text">We’re a church community that is experiencing
+          healing from God right now. We’re growing back into strength in Jesus
+          and through the Spirit’s presence. We believe Jesus knows what it
+          means and what it takes to be human, and so we live expectantly that
+          God will create opportunities where we can work with the Spirit’s
+          guidance.</div>
+      </div>
 
-            <div data-aos="fade-up" class="mission_item text-center">
-                <div class="mission_icon"><i class="fas fa-compass" aria-hidden="true"></i></div>
-                <div class="mission_title">our purpose</div>
-                <div class="mission_text">Put simply, our church exists “For the glory of God alone.” The Latin, “Soli
-                    Deo gloria,” claimed by the church leaders as a centering belief, focuses us on seeking to reveal
-                    the true nature of God and is our starting point for our purpose and our beliefs.</div>
-            </div>
-
-            <div data-aos="fade-up" class="mission_item text-center">
-                <div class="mission_icon"><i class="fas fa-sun" aria-hidden="true"></i></div>
-                <div class="mission_title">our future</div>
-                <div class="mission_text">We’re a church community that is experiencing healing from God right now.
-                    We’re growing back into strength in Jesus and through the Spirit’s presence. We believe Jesus knows
-                    what it means and what it takes to be human, and so we live expectantly that God will create
-                    opportunities where we can work with the Spirit’s guidance.</div>
-            </div>
-
-            <div data-aos="fade-up" class="mission_item text-center">
-                <div class="mission_icon"><i class="fa fa-user" aria-hidden="true"></i></div>
-                <div class="mission_title">you</div>
-                <div class="mission_text">Believers belong in a faith family - a place to join folks of all ages, grow
-                    in Christ, and bless the world. We offer you a chance to learn more about us and your place in God’s
-                    kingdom. See the Events page for details.
-                </div>
-            </div>
-
+      <div data-aos="fade-up" class="mission_item text-center">
+        <div class="mission_icon"><i
+            class="fa fa-user"
+            aria-hidden="true"
+          ></i></div>
+        <div class="mission_title">you</div>
+        <div class="mission_text">Believers belong in a faith family - a place
+          to join folks of all ages, grow in Christ, and bless the world. We
+          offer you a chance to learn more about us and your place in God’s
+          kingdom. See the Events page for details.
         </div>
+      </div>
+
     </div>
+  </div>
 
+  <!-- Sermons -->
 
-    <!-- Sermons -->
-
-
-
-
-
-    <div class="sermons">
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <div data-aos="fade-down" class="section_title_container text-center">
-                        <div class="section_title">sermons today</div>
-                        <div class="section_subtitle">“Your word is a lamp to my feet and a light to my path.” Psalm
-                            119:105</div>
-                    </div>
-                </div>
-            </div>
-            <div data-aos="fade-down" class="row sermons_row">
-
-                {{#each vimeo.data}}
-
-
-
-                <div class="col-lg-4 sermon_col">
-                    <div class="card">
-                        <a target="blank" href="{{this.link}}" target="blank"><img class="card-img-top" target="blank"
-                                src="{{this.pictures.sizes.[0].link}}" alt=""></a>
-                        <div class="card-body text-center">
-                            <div class="card-title sermon_title"><a target="blank"
-                                    href="{{this.link}}">{{this.shortTitle}}</a></div>
-                            <div class="card-text sermon_info_container">
-                                <div class="sermon_links">
-                                    <ul>
-                                        {{!-- <li><a href="#"><i class="fa fa-link" aria-hidden="true"></i></a></li>
-                                        --}}
-                                        {{!-- <li><a href="#"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
-                                        </li> --}}
-                                        {{!-- <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
-                                        --}}
-                                        {{!-- <li><a href="#"><i class="fa fa-download" aria-hidden="true"></i></a></li>
-                                        --}}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{/each}}
-
-
-            </div>
+  <div class="sermons">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div data-aos="fade-down" class="section_title_container text-center">
+            <div class="section_title">sermons today</div>
+            <div class="section_subtitle">“Your word is a lamp to my feet and a
+              light to my path.” Psalm 119:105</div>
+          </div>
         </div>
+      </div>
+      <div data-aos="fade-down" class="row sermons_row">
+
+        {{#each vimeo.data}}
+
+          <div class="col-lg-4 sermon_col">
+            <div class="card">
+              <a target="blank" href="{{this.link}}" target="blank"><img
+                  class="card-img-top"
+                  target="blank"
+                  src="{{this.pictures.sizes.0.link}}"
+                  alt=""
+                /></a>
+              <div class="card-body text-center">
+                <div class="card-title sermon_title"><a
+                    target="blank"
+                    href="{{this.link}}"
+                  >{{this.shortTitle}}</a></div>
+                <div class="card-text sermon_info_container">
+                  <div class="sermon_links">
+                    <ul>
+                      {{! <li><a href="#"><i class="fa fa-link" aria-hidden="true"></i></a></li>
+                                        }}
+                      {{! <li><a href="#"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+                                        </li> }}
+                      {{! <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                        }}
+                      {{! <li><a href="#"><i class="fa fa-download" aria-hidden="true"></i></a></li>
+                                        }}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        {{/each}}
+
+      </div>
     </div>
+  </div>
 
+  <!-- Donations -->
 
-    <!-- Donations -->
-
-    <div class="donations">
-        <div class="donations_background parallax-window" data-parallax="scroll" data-image-src="images/donation.jpg"
-            data-speed="0.8"></div>
-        <div class="container">
-            <div class="row">
-                <div data-aos="fade-right" class="col-lg-6">
-                    <div class="donations_content pb-4">
-                        <div class="donation_title">online giving</div>
-                        <div class="donation_info_container">
-                            {{!-- <div class="donation_info">
+  <div class="donations">
+    <div
+      class="donations_background parallax-window"
+      data-parallax="scroll"
+      data-image-src="images/donation.jpg"
+      data-speed="0.8"
+    ></div>
+    <div class="container">
+      <div class="row">
+        <div data-aos="fade-right" class="col-lg-6">
+          <div class="donations_content pb-4">
+            <div class="donation_title">online giving</div>
+            <div class="donation_info_container">
+              {{! <div class="donation_info">
                                 <div class="donation_info_title">Donation Caller: </div>
                                 <ul class="donation_info_list">
                                     <li><a href="#">John Connor</a></li>
                                 </ul>
-                            </div> --}}
-                            {{!-- <div class="donation_info">
+                            </div> }}
+              {{! <div class="donation_info">
                                 <div class="donation_info_title">Categories: </div>
                                 <ul class="donation_info_list">
                                     <li><a href="/ministry:Missions">Missions</a></li>
                                 </ul>
-                            </div> --}}
-                            {{!-- <div class="donation_info">
+                            </div> }}
+              {{! <div class="donation_info">
                                 <div class="donation_info_title">On: </div>
                                 <ul class="donation_info_list">
                                     <li><a href="#">Friday 16 MAR, 2018</a></li>
                                 </ul>
-                            </div> --}}
-                        </div>
-                        <div class="donation_text">
-                            <p>
-                                Because you give we are able to share the message of Jesus' love in our community and
-                                around the world. Giving our tithes and offerings reflects a grateful heart that wants
-                                to give back to God a portion of what He has given us.</p>
-                        </div>
-                    </div>
-                </div>
+                            </div> }}
+            </div>
+            <div class="donation_text">
+              <p>
+                Because you give we are able to share the message of Jesus' love
+                in our community and around the world. Giving our tithes and
+                offerings reflects a grateful heart that wants to give back to
+                God a portion of what He has given us.</p>
+            </div>
+          </div>
+        </div>
 
-                {{!-- Removed around COVID-19 time --}}
-                <div data-aos="fade-left" class="col-lg-6 d-flex">
-                    <div class="donation_details_container align-self-center">
-                        <div class="donation_details">
-                            {{!-- <div class="donation_funds">
+        {{! Removed around COVID-19 time }}
+        <div data-aos="fade-left" class="col-lg-6 d-flex">
+          <div class="donation_details_container align-self-center">
+            <div class="donation_details">
+              {{! <div class="donation_funds">
                                 <div class="donation_funds_title">Remaining: </div>
                                 <div class="donations_funds_value">$0,000</div>
-                            </div> --}}
-                            <div class="donation_progress_container mt-0">
-                                {{!-- <div class="donation_progress_outer">
+                            </div> }}
+              <div class="donation_progress_container mt-0">
+                {{! <div class="donation_progress_outer">
                                     <div class="donation_progress" style="width: 100%;">
                                         <div class="donation_progress_value">159%</div>
                                     </div>
-                                </div> --}}
-                                {{!-- <div
+                                </div> }}
+                {{! <div
                                     class="donation_info d-flex flex-row align-items-center justify-content-start">
                                     <div class="donation_current">Raised: <span>$79,380</span></div>
                                     <div class="donation_goal ml-auto">Goal: <span>$50,000</span></div>
-                                </div> --}}
-                                <div class="button donation_button mt-0"><a href="/giving">donate now</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                </div> }}
+                <div class="button donation_button mt-0"><a
+                    href="/giving"
+                  >donate now</a></div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Quote -->
+  <div class="sermons">
+    {{! <div class="container"> }}
+    {{! <div class="row"> }}
+    <div class="section_title_container text-center">
 
-    <div class="quote">
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <div class="quote_container text-center">
-                        <div data-aos="fade-down" class="quote_quote">“We believe encounters with Jesus transform
-                            lives.”</div>
-                        <div class="quote_icon"><img src="images/quote.png" alt=""></div>
-                        {{!-- <div class="quote_source">Ignatius of Antioch</div> --}}
-                    </div>
+      <div class="section_title">Family Ministries
+      </div>
+    </div>
+    <div class="familyGroup">
+      <div class="familyGroup__ministry familyGroup__ministry--kids">
+        <h4>Kids Ministry</h4>
+      </div>
+      <div class="familyGroup__ministry familyGroup__ministry--msm">
+        <h4>Middle School Ministry</h4>
+      </div>
+      <div class="familyGroup__ministry familyGroup__ministry--high">
+        <h4>High School Ministry</h4>
+      </div>
+      <div class="familyGroup__ministry familyGroup__ministry--theater">
+        <h4>Music &amp; Theater Ministry</h4>
+      </div>
+    </div>
+  </div>
+  {{! </div> }}
+
+  <!-- Quote -->
+
+  <div class="quote">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div class="quote_container text-center">
+            <div data-aos="fade-down" class="quote_quote">“We believe encounters
+              with Jesus transform lives.”</div>
+            <div class="quote_icon"><img src="images/quote.png" alt="" /></div>
+            {{! <div class="quote_source">Ignatius of Antioch</div> }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gallery -->
+
+  <div
+    class="gallery d-flex flex-row flex-wrap align-items-start justify-content-start"
+    style="z-index: 1"
+  >
+    <div class="gallery_item">
+      <a class="colorbox" href="images/gallery_1.jpg">
+        <img
+          data-src="images/gallery_1.jpg"
+          class="lazyload"
+          alt="https://unsplash.com/@mantashesthaven"
+        />
+      </a>
+    </div>
+    <div class="gallery_item">
+      <a class="colorbox" href="images/gallery_2.jpg">
+        <img
+          data-src="images/gallery_2.jpg"
+          class="lazyload"
+          alt="https://unsplash.com/@mantashesthaven"
+        />
+      </a>
+    </div>
+    <div class="gallery_item">
+      <a class="colorbox" href="images/gallery_3.jpg">
+        <img
+          data-src="images/gallery_3.jpg"
+          class="lazyload"
+          alt="https://unsplash.com/@mantashesthaven"
+        />
+      </a>
+    </div>
+    <div class="gallery_item">
+      <a class="colorbox" href="images/gallery_4.jpg">
+        <img
+          data-src="images/gallery_4.jpg"
+          class="lazyload"
+          alt="https://unsplash.com/@mantashesthaven"
+        />
+      </a>
+    </div>
+    <div class="gallery_item">
+      <a class="colorbox" href="images/gallery_5.jpg">
+        <img
+          data-src="images/gallery_5.jpg"
+          class="lazyload"
+          alt="https://unsplash.com/@mantashesthaven"
+        />
+      </a>
+    </div>
+    <div class="gallery_item">
+      <a class="colorbox" href="images/gallery_6.jpg">
+        <img
+          data-src="images/gallery_6.jpg"
+          class="lazyload"
+          alt="https://unsplash.com/@mantashesthaven"
+        />
+      </a>
+    </div>
+    <div class="gallery_item">
+      <a class="colorbox" href="images/gallery_7.jpg">
+        <img
+          data-src="images/gallery_7.jpg"
+          class="lazyload"
+          alt="https://unsplash.com/@mantashesthaven"
+        />
+      </a>
+    </div>
+    <div class="gallery_item">
+      <a class="colorbox" href="images/gallery_8.jpg">
+        <img
+          data-src="images/gallery_8.jpg"
+          class="lazyload"
+          alt="https://unsplash.com/@mantashesthaven"
+        />
+      </a>
+    </div>
+    <div class="gallery_item">
+      <a class="colorbox" href="images/gallery_9.jpg">
+        <img
+          data-src="images/gallery_9.jpg"
+          class="lazyload"
+          alt="https://unsplash.com/@mantashesthaven"
+        />
+      </a>
+    </div>
+    <div class="gallery_item">
+      <a class="colorbox" href="images/gallery_10.jpg">
+        <img
+          data-src="images/gallery_10.jpg"
+          class="lazyload"
+          alt="https://unsplash.com/@mantashesthaven"
+        />
+      </a>
+    </div>
+  </div>
+
+  <!-- Latest News -->
+
+  <div class="latest_news">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div class="section_title_container text-center" data-aos="fade-down">
+            <div class="section_title">latest news</div>
+            <div class="section_subtitle">“By grace you have been saved through
+              faith.” Ephesians 2:8</div>
+          </div>
+        </div>
+      </div>
+      <div class="row news_row" id="news-container">
+
+        {{#each blogpost}}
+
+          <!-- News Post -->
+          <div class="col-lg-4 news_post_col" data-aos="fade-down">
+            <div class="news_post">
+              <div class="news_image"><a
+                  href="./blog-{{changeSpacesToDashes this.fields.title}}"
+                ><img
+                    data-src="{{fields.image.fields.file.url}}"
+                    class="lazyload"
+                    alt=""
+                  /></a></div>
+              <div class="news_post_content">
+                <div class="news_post_title">
+                  <a
+                    href="./blog-{{changeSpacesToDashes this.fields.title}}"
+                  >{{fields.title}}</a>
                 </div>
+                <div class="news_post_meta">
+                  <ul>
+                    <li><i class="fa fa-user" aria-hidden="true"></i><a
+                        href="#"
+                      >{{#each fields.author}}{{this}}{{/each}}</a></li>
+                    <li><i class="fa fa-calendar-o" aria-hidden="true"></i><a
+                        href="#"
+                      >{{fields.formattedDate}}</a>
+                    </li>
+                    {{! <li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">15</a></li>
+                                    }}
+                  </ul>
+                </div>
+                <div class="news_post_text">
+                  {{#if fields.excerpt}}
+                    <p>{{this.fields.excerpt}}...</p>
+                  {{/if}}
+                </div>
+              </div>
             </div>
-        </div>
-    </div>
+          </div>
 
-    <!-- Gallery -->
+        {{/each}}
 
-    <div class="gallery d-flex flex-row flex-wrap align-items-start justify-content-start" style="z-index: 1">
-        <div class="gallery_item">
-            <a class="colorbox" href="images/gallery_1.jpg">
-                <img data-src="images/gallery_1.jpg" class="lazyload" alt="https://unsplash.com/@mantashesthaven">
-            </a>
-        </div>
-        <div class="gallery_item">
-            <a class="colorbox" href="images/gallery_2.jpg">
-                <img data-src="images/gallery_2.jpg" class="lazyload" alt="https://unsplash.com/@mantashesthaven">
-            </a>
-        </div>
-        <div class="gallery_item">
-            <a class="colorbox" href="images/gallery_3.jpg">
-                <img data-src="images/gallery_3.jpg" class="lazyload" alt="https://unsplash.com/@mantashesthaven">
-            </a>
-        </div>
-        <div class="gallery_item">
-            <a class="colorbox" href="images/gallery_4.jpg">
-                <img data-src="images/gallery_4.jpg" class="lazyload" alt="https://unsplash.com/@mantashesthaven">
-            </a>
-        </div>
-        <div class="gallery_item">
-            <a class="colorbox" href="images/gallery_5.jpg">
-                <img data-src="images/gallery_5.jpg" class="lazyload" alt="https://unsplash.com/@mantashesthaven">
-            </a>
-        </div>
-        <div class="gallery_item">
-            <a class="colorbox" href="images/gallery_6.jpg">
-                <img data-src="images/gallery_6.jpg" class="lazyload" alt="https://unsplash.com/@mantashesthaven">
-            </a>
-        </div>
-        <div class="gallery_item">
-            <a class="colorbox" href="images/gallery_7.jpg">
-                <img data-src="images/gallery_7.jpg" class="lazyload" alt="https://unsplash.com/@mantashesthaven">
-            </a>
-        </div>
-        <div class="gallery_item">
-            <a class="colorbox" href="images/gallery_8.jpg">
-                <img data-src="images/gallery_8.jpg" class="lazyload" alt="https://unsplash.com/@mantashesthaven">
-            </a>
-        </div>
-        <div class="gallery_item">
-            <a class="colorbox" href="images/gallery_9.jpg">
-                <img data-src="images/gallery_9.jpg" class="lazyload" alt="https://unsplash.com/@mantashesthaven">
-            </a>
-        </div>
-        <div class="gallery_item">
-            <a class="colorbox" href="images/gallery_10.jpg">
-                <img data-src="images/gallery_10.jpg" class="lazyload" alt="https://unsplash.com/@mantashesthaven">
-            </a>
-        </div>
-    </div>
-
-    <!-- Latest News -->
-
-    <div class="latest_news">
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <div class="section_title_container text-center" data-aos="fade-down">
-                        <div class="section_title">latest news</div>
-                        <div class="section_subtitle">“By grace you have been saved through faith.” Ephesians 2:8</div>
-                    </div>
-                </div>
-            </div>
-            <div class="row news_row" id="news-container">
-
-                {{#each blogpost}}
-
-                <!-- News Post -->
-                <div class="col-lg-4 news_post_col" data-aos="fade-down">
-                    <div class="news_post">
-                        <div class="news_image"><a href="./blog-{{changeSpacesToDashes this.fields.title}}"><img
-                                    data-src="{{fields.image.fields.file.url}}" class="lazyload" alt=""></a></div>
-                        <div class="news_post_content">
-                            <div class="news_post_title">
-                                <a href="./blog-{{changeSpacesToDashes this.fields.title}}">{{fields.title}}</a>
-                            </div>
-                            <div class="news_post_meta">
-                                <ul>
-                                    <li><i class="fa fa-user" aria-hidden="true"></i><a href="#">{{#each
-                                            fields.author}}{{this}}{{/each}}</a></li>
-                                    <li><i class="fa fa-calendar-o" aria-hidden="true"></i><a
-                                            href="#">{{fields.formattedDate}}</a>
-                                    </li>
-                                    {{!-- <li><i class="fa fa-comment" aria-hidden="true"></i><a href="#">15</a></li>
-                                    --}}
-                                </ul>
-                            </div>
-                            <div class="news_post_text">
-                                {{#if fields.excerpt}}
-                                <p>{{this.fields.excerpt}}...</p>
-                                {{/if}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{/each}}
-
-                {{!--
+        {{!
                 <!-- News Post -->
                 <div class="col-xl-4 col-lg-6 news_post_col">
                     <div class="news_post">
@@ -578,15 +718,12 @@
                             </div>
                         </div>
                     </div>
-                </div> --}}
+                </div> }}
 
-            </div>
-        </div>
+      </div>
     </div>
+  </div>
 </div>
-
-
-
 
 <script src="/js/jquery-3.2.1.min.js"></script>
 <script src="plugins/OwlCarousel2-2.2.1/owl.carousel.js"></script>

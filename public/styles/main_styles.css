@@ -630,7 +630,7 @@ section {
   margin-top: 33px;
 }
 .invisible {
-	display: none;
+  display: none;
 }
 
 /*********************************
@@ -1455,14 +1455,44 @@ section {
 }
 
 .colorbox img {
-  opacity: .7;
+  opacity: 0.7;
   width: 100%;
   height: auto;
-transform: scale(1.15);
-transition: transform 0.5s, opacity 0.5s;
+  transform: scale(1.15);
+  transition: transform 0.5s, opacity 0.5s;
 }
 
 .colorbox img:hover {
   transform: scale(1.03);
   opacity: 1;
+}
+
+.familyGroup {
+  display: flex;
+  margin-top: 4rem;
+  justify-content: space-around;
+}
+
+.familyGroup__ministry {
+  width: 100%;
+  text-align: center;
+  height: 260px;
+  background-size: cover;
+  background-position: center;
+}
+
+.familyGroup__ministry--kids {
+  background-image: url("../images/children.jpg");
+}
+
+.familyGroup__ministry--msm {
+  background-image: url("../images/middleSchool.jpg");
+}
+
+.familyGroup__ministry--high {
+  background-image: url("../images/highSchool.jpg");
+}
+
+.familyGroup__ministry--theater {
+  background-image: url("../images/theater.jpg");
 }
