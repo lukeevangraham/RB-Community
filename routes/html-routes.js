@@ -591,64 +591,65 @@ module.exports = function (app) {
 
                       // GO THROUGH 10 MOST RECENT LIVESTREAMS
 
-                      trimmedYouTubeRecord.forEach((stream) => {
-                        // PARSING THE DATE OF THIS LIVESTREAM
-                        const startToGetDateInfoFromDescription =
-                          stream.snippet.description.split(/, /g)[0].split(" ");
-                        if (stream.snippet.description) {
-                          const yearStarter = stream.snippet.description
-                            .split(/(\d{4}. )/g)[1]
-                            .split(". ")[0];
+                      // trimmedYouTubeRecord.forEach((stream) => {
+                      //   // PARSING THE DATE OF THIS LIVESTREAM
+                      //   console.log("STREAM: ", stream)
+                      //   const startToGetDateInfoFromDescription =
+                      //     stream.snippet.description.split(/, /g)[0].split(" ");
+                      //   if (stream.snippet.description) {
+                      //     const yearStarter = stream.snippet.description
+                      //       .split(/(\d{4}. )/g)[1]
+                      //       .split(". ")[0];
 
-                          stream.parsedDate = moment(
-                            `${
-                              startToGetDateInfoFromDescription[
-                                startToGetDateInfoFromDescription.length - 2
-                              ]
-                            } ${
-                              startToGetDateInfoFromDescription[
-                                startToGetDateInfoFromDescription.length - 1
-                              ]
-                            }, ${yearStarter}`,
-                            "MMMM DD, YYYY"
-                          );
+                      //     stream.parsedDate = moment(
+                      //       `${
+                      //         startToGetDateInfoFromDescription[
+                      //           startToGetDateInfoFromDescription.length - 2
+                      //         ]
+                      //       } ${
+                      //         startToGetDateInfoFromDescription[
+                      //           startToGetDateInfoFromDescription.length - 1
+                      //         ]
+                      //       }, ${yearStarter}`,
+                      //       "MMMM DD, YYYY"
+                      //     );
 
-                          // console.log("PARSED DATE: ", parsedDate);
+                      //     // console.log("PARSED DATE: ", parsedDate);
 
-                          // // IS THE STREAM CONNECTED TO TODAY?
-                          // if (moment(parsedDate).isSame(moment(), 'day')) {
-                          //   mostRecentStream = stream
-                          // } else {
-                          //   console.log("NOT SAME DAY")
-                          // }
-                        }
-                      });
+                      //     // // IS THE STREAM CONNECTED TO TODAY?
+                      //     // if (moment(parsedDate).isSame(moment(), 'day')) {
+                      //     //   mostRecentStream = stream
+                      //     // } else {
+                      //     //   console.log("NOT SAME DAY")
+                      //     // }
+                      //   }
+                      // });
 
                       // SORT YOUTUBE RESULTS TO NEWEST IS FIRST
-                      trimmedYouTubeRecord.sort((left, right) =>
-                        moment
-                          .utc(right.parsedDate)
-                          .diff(moment.utc(left.parsedDate))
-                      );
+                      // trimmedYouTubeRecord.sort((left, right) =>
+                      //   moment
+                      //     .utc(right.parsedDate)
+                      //     .diff(moment.utc(left.parsedDate))
+                      // );
 
-                      trimmedYouTubeRecord.forEach((stream) => {
-                        // DOES THE STREAM HAPPEN TODAY??
-                        if (moment(stream.parsedDate).isSame(moment(), "day")) {
-                          mostRecentStream = stream;
-                          return;
+                      // trimmedYouTubeRecord.forEach((stream) => {
+                      //   // DOES THE STREAM HAPPEN TODAY??
+                      //   if (moment(stream.parsedDate).isSame(moment(), "day")) {
+                      //     mostRecentStream = stream;
+                      //     return;
 
-                          // IF THE STREAM HAPPENS BEFORE TODAY
-                        }
-                        if (
-                          moment(stream.parsedDate).isBefore(moment(), "day")
-                        ) {
-                          if (mostRecentStream) {
-                            return;
-                          } else {
-                            mostRecentStream = stream;
-                          }
-                        }
-                      });
+                      //     // IF THE STREAM HAPPENS BEFORE TODAY
+                      //   }
+                      //   if (
+                      //     moment(stream.parsedDate).isBefore(moment(), "day")
+                      //   ) {
+                      //     if (mostRecentStream) {
+                      //       return;
+                      //     } else {
+                      //       mostRecentStream = stream;
+                      //     }
+                      //   }
+                      // });
 
                       // console.log("STREAM ", mostRecentStream)
 
@@ -659,7 +660,7 @@ module.exports = function (app) {
                         vimeo: vimeoRecord,
                         vimeoAnn: vimeoAnnURL,
                         blogpost: thirdRecord,
-                        youtubeStream: mostRecentStream,
+                        // youtubeStream: mostRecentStream,
                         homeWelcome: welcomeRecord.fields.renderedHtml,
                         metaTitle:
                           "Rancho Bernardo Community Presbyterian Church | RBCPC San Diego",
