@@ -156,12 +156,21 @@ function doReq(url, what) {
 function compare(a, b) {
   const dateA = moment(a.fields.date).format("YYYY-MM-DD");
   const dateB = moment(b.fields.date).format("YYYY-MM-DD");
+  const timeA = moment(`${dateA} ${a.fields.time}`);
+  const timeB = moment(`${dateB} ${b.fields.time}`);
 
   let comparison = 0;
   if (dateA > dateB) {
     comparison = 1;
   } else if (dateA < dateB) {
     comparison = -1;
+  } else if (dateA === dateB) {
+    // console.log("we have a tie!", a.fields.title, timeA)
+    if (timeA > timeB) {
+      comparison = 1;
+    } else if (timeA < timeB) {
+      comparison = -1;
+    }
   }
   return comparison;
 }
@@ -584,7 +593,9 @@ module.exports = function (app) {
                       youTubeRecord = JSON.parse(body).items;
 
                       // Filter out deleted videos
-                      let trimmedYouTubeRecord = youTubeRecord.filter(record => record.snippet.title !== "Deleted video")
+                      let trimmedYouTubeRecord = youTubeRecord.filter(
+                        (record) => record.snippet.title !== "Deleted video"
+                      );
                       // })
 
                       let mostRecentStream = null;
@@ -956,7 +967,6 @@ module.exports = function (app) {
         // console.log("ITEMS: ", items)
 
         // items[multipleEntries] = entry.multipleEntries
-
 
         firstRecord = items;
 
