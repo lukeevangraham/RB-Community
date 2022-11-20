@@ -1,370 +1,411 @@
 :root {
-    --color-primary: #dd1c37;
-    --color-primary-light: #f13f56;
-    --color-primary-dark: #9e091d;
-    --color-secondary: #e36273;
-    --color-secondary-light: #f78191;
-    --color-secondary-dark: #c04858;
-    --color-tertiary: #5e2930;
-    --color-tertiary-light: #70383f;
-    --color-tertiary-dark: #421b20;
-    --color-quaternary: #5e0c17;
-    --color-quaternary-light: #6e1722;
-    --color-quaternary-dark: #46050e;
-    --color-quinary: #ab162a;
-    --color-quinary-light: #c2263b;
-    --color-quinary-dark: #8f0b1d;
+  --color-primary: #dd1c37;
+  --color-primary-light: #f13f56;
+  --color-primary-dark: #9e091d;
+  --color-secondary: #e36273;
+  --color-secondary-light: #f78191;
+  --color-secondary-dark: #c04858;
+  --color-tertiary: #5e2930;
+  --color-tertiary-light: #70383f;
+  --color-tertiary-dark: #421b20;
+  --color-quaternary: #5e0c17;
+  --color-quaternary-light: #6e1722;
+  --color-quaternary-dark: #46050e;
+  --color-quinary: #ab162a;
+  --color-quinary-light: #c2263b;
+  --color-quinary-dark: #8f0b1d;
 }
 
 .top {
-    background-image: linear-gradient(to bottom, #2e080d00 70%, #2e080d),
-        linear-gradient(to bottom right, #dd1c3686, #5e0c1780), url("/images/pierWeb.jpg");
-    background-position: center;
-    background-size: cover;
-    height: 55vw;
-    margin-top: 114px;
+  background-image: linear-gradient(to bottom, #272f1d53 80%, #15190f),
+    /* linear-gradient(to bottom right, #dd1c36c2, #5e0c17ce), */
+    url("/images/trainWeb.jpg");
+  background-position: bottom;
+  background-size: cover;
+  height: 55vw;
+  margin-top: 114px;
 }
 
 .maintainMaxWidth {
-    max-width: 1170px;
-    margin: auto;
-    padding: 0 1rem;
+  max-width: 1170px;
+  margin: auto;
+  padding: 0 1rem;
 }
 
 .section {
-    font-family: "PT Serif", serif;
-    padding: 5rem 0;
-    color: #eee;
-    text-align: center;
+  font-family: "PT Serif", serif;
+  padding: 5rem 0;
+  color: #eee;
+  text-align: center;
 }
 
 .sectionHeading {
-    font-size: 2rem;
-    text-transform: uppercase;
-    padding: 2rem 0;
-    /* padding-bottom: 5rem; */
+  font-size: 2rem;
+  text-transform: uppercase;
+  padding: 2rem 0;
+  /* padding-bottom: 5rem; */
 }
 
 .xmasContainer {
-    width: 100%;
-    /* max-width: 1170px; */
-    height: 55vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    color: #eee;
-    /* margin-top: 114px; */
-    /* margin: 114px auto 0 auto; */
-    margin-top: 114px;
+  width: 100%;
+  /* max-width: 1170px; */
+  height: 55vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #eee;
+  /* margin-top: 114px; */
+  /* margin: 114px auto 0 auto; */
+  margin-top: 114px;
 }
 
 .title {
-    font-size: 4vw;
-    font-family: "PT Serif", serif;
-    text-shadow: 0 0 15px black;
-    text-align: center;
+  font-size: 4vw;
+  font-family: "PT Serif", serif;
+  text-shadow: 0 0 15px black;
+  text-align: center;
 }
 
 .adventEvents {
-    background-image: linear-gradient(to bottom, #2e080d, #2e080d);
+  background-image: linear-gradient(to bottom, #15190f, #2a321f);
 }
 
 .card {
-    /* border: none; */
-    perspective: 150rem;
-    -moz-perspective: 150rem;
-    position: relative;
-    height: 33rem;
-    background-color: #2e080d;
+  /* border: none; */
+  perspective: 150rem;
+  -moz-perspective: 150rem;
+  position: relative;
+  height: 33rem;
+  background-color: #2e080d;
 }
 
 .card__side {
-    height: 33rem;
-    transition: all 0.8s ease;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    border-radius: 6px;
-    overflow: hidden;
-    box-shadow: 0 0 21px #ffdbdfaf;
+  height: 33rem;
+  transition: all 0.8s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 0 21px #ffdbdfaf;
 }
 
 .card__side--front {
-    background-color: #eee;
+  background-color: #eee;
 }
 
 .card__side--back {
-    transform: rotateY(180deg);
-    color: #eee;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  transform: rotateY(180deg);
+  color: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card__side--back .button {
-    background-color: var(--color-primary-dark);
-    margin: 2.5rem;
+  background-color: var(--color-primary-dark);
+  margin: 2.5rem;
 }
 
 .card:hover .card__side--front {
-    transform: rotateY(-180deg);
+  transform: rotateY(-180deg);
 }
 .card:hover .card__side--back {
-    transform: rotateY(0deg);
+  transform: rotateY(0deg);
 }
 
 .card__side--back-1 {
-    background-image: linear-gradient(to bottom right, var(--color-primary-light), var(--color-primary-dark));
+  background-image: linear-gradient(
+    to bottom right,
+    var(--color-primary-light),
+    var(--color-primary-dark)
+  );
 }
 
 .card__side--back-2 {
-    background-image: linear-gradient(to bottom right, var(--color-secondary-light), var(--color-secondary-dark));
+  background-image: linear-gradient(
+    to bottom right,
+    var(--color-secondary-light),
+    var(--color-secondary-dark)
+  );
 }
 
 .card__side--back-3 {
-    background-image: linear-gradient(to bottom right, var(--color-quaternary-light), var(--color-quaternary-dark));
+  background-image: linear-gradient(
+    to bottom right,
+    var(--color-quaternary-light),
+    var(--color-quaternary-dark)
+  );
 }
 
 .card__side--back-4 {
-    background-image: linear-gradient(to bottom right, var(--color-tertiary-light), var(--color-tertiary-dark));
+  background-image: linear-gradient(
+    to bottom right,
+    var(--color-tertiary-light),
+    var(--color-tertiary-dark)
+  );
 }
 
 .card__side--back-5 {
-    background-image: linear-gradient(to bottom right, var(--color-quinary-light), var(--color-quinary-dark));
+  background-image: linear-gradient(
+    to bottom right,
+    var(--color-quinary-light),
+    var(--color-quinary-dark)
+  );
 }
 
 .cardWrapper {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    grid-gap: 3rem;
-    justify-content: center;
-    padding: 5rem 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-gap: 3rem;
+  justify-content: center;
+  padding: 5rem 0;
 }
 
 .card__heading {
-    position: absolute;
-    top: 12rem;
-    right: 1rem;
-    font-size: 1.75rem;
-    text-align: right;
-    line-height: 1.2;
+  position: absolute;
+  top: 12rem;
+  right: 1rem;
+  font-size: 1.75rem;
+  text-align: right;
+  line-height: 1.2;
 }
 
 .card__heading span {
-    padding: 0.15rem 1rem;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
+  padding: 0.15rem 1rem;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 .card_heading--1 span {
-    background-color: var(--color-primary);
+  background-color: var(--color-primary);
 }
 
 .card_heading--2 span {
-    background-color: var(--color-secondary);
+  background-color: var(--color-secondary);
 }
 
 .card_heading--3 span {
-    background-color: var(--color-quaternary);
+  background-color: var(--color-quaternary);
 }
 
 .card_heading--4 span {
-    background-color: var(--color-tertiary);
+  background-color: var(--color-tertiary);
 }
 
 .card_heading--5 span {
-    background-color: var(--color-quinary);
+  background-color: var(--color-quinary);
 }
 
 .card .card__side .card__picture {
-    height: 14rem;
-    background-size: cover;
-    background-position: center;
-    background-blend-mode: screen;
+  height: 14rem;
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: screen;
 }
 
 .card .card__side .card__picture--1 {
-    background-image: linear-gradient(to bottom right, var(--color-primary-light), var(--color-primary-dark)),
-        url("https://images.ctfassets.net/v1a9n1zktijq/7GJqhPHvnodP6xc0YuLB8n/ad30995ea94280a1a3621ed17f6443de/Reveal_web_graphic.png");
+  background-image: linear-gradient(
+      to bottom right,
+      var(--color-primary-light),
+      var(--color-primary-dark)
+    ),
+    url("https://images.ctfassets.net/v1a9n1zktijq/7GJqhPHvnodP6xc0YuLB8n/ad30995ea94280a1a3621ed17f6443de/Reveal_web_graphic.png");
 }
 .card .card__side .card__picture--2 {
-    background-image: linear-gradient(to bottom right, var(--color-secondary-light), var(--color-secondary-dark)),
-        url("https://images.ctfassets.net/v1a9n1zktijq/705vis77Un12igRzhkAJn7/0b1b07f43b2d76939703bfbc6d3c520a/pageant.jpg");
+  background-image: linear-gradient(
+      to bottom right,
+      var(--color-secondary-light),
+      var(--color-secondary-dark)
+    ),
+    url("https://images.ctfassets.net/v1a9n1zktijq/705vis77Un12igRzhkAJn7/0b1b07f43b2d76939703bfbc6d3c520a/pageant.jpg");
 }
 .card .card__side .card__picture--3 {
-    background-image: linear-gradient(to bottom right, var(--color-quaternary-light), var(--color-quaternary-dark)),
-        url("https://images.ctfassets.net/v1a9n1zktijq/6dCmv6e4Y4XwaNu8UMjDEX/a20ca6daec6b72b3b65076a1c62f94ff/blueChristmasWeb.jpg");
+  background-image: linear-gradient(
+      to bottom right,
+      var(--color-quaternary-light),
+      var(--color-quaternary-dark)
+    ),
+    url("https://images.ctfassets.net/v1a9n1zktijq/6dCmv6e4Y4XwaNu8UMjDEX/a20ca6daec6b72b3b65076a1c62f94ff/blueChristmasWeb.jpg");
 }
 .card .card__side .card__picture--4 {
-    background-image: linear-gradient(to bottom right, var(--color-tertiary-light), var(--color-tertiary-light)),
-        url("https://images.ctfassets.net/v1a9n1zktijq/6TMj3FNaQSbtxLxjvGAprm/e87361b8a8a104610f5b9e9f0d7c13ed/ChristmasBrunch_1920x1080.jpg");
+  background-image: linear-gradient(
+      to bottom right,
+      var(--color-tertiary-light),
+      var(--color-tertiary-light)
+    ),
+    url("https://images.ctfassets.net/v1a9n1zktijq/6TMj3FNaQSbtxLxjvGAprm/e87361b8a8a104610f5b9e9f0d7c13ed/ChristmasBrunch_1920x1080.jpg");
 }
 .card .card__side .card__picture--5 {
-    background-image: linear-gradient(to bottom right, var(--color-quinary-light), var(--color-quinary-dark)),
-        url("https://images.ctfassets.net/v1a9n1zktijq/3wuUhukI35gRpnjBXuCyYo/050aff2d7e7868f92c29cabd06e4960a/nativity.jpg");
+  background-image: linear-gradient(
+      to bottom right,
+      var(--color-quinary-light),
+      var(--color-quinary-dark)
+    ),
+    url("https://images.ctfassets.net/v1a9n1zktijq/3wuUhukI35gRpnjBXuCyYo/050aff2d7e7868f92c29cabd06e4960a/nativity.jpg");
 }
 
 .card__details {
-    margin: 1rem;
-    padding: 1rem;
+  margin: 1rem;
+  padding: 1rem;
 }
 
 .card__details,
 .card__details p {
-    color: rgb(22, 22, 22);
-    text-align: left;
-    font-size: 16px;
+  color: rgb(22, 22, 22);
+  text-align: left;
+  font-size: 16px;
 }
 
 .event_icon {
-    margin: 0.3rem 0.25rem 0.3rem 0;
+  margin: 0.3rem 0.25rem 0.3rem 0;
 }
 
 .description {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px rgb(214, 214, 214) solid;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px rgb(214, 214, 214) solid;
 }
 
 .sundaySeries {
-    background-image: linear-gradient(to bottom, #2e080d, transparent 10%), url("/images/withStarWeb.jpg");
-    background-position: left center;
-    background-size: cover;
-    padding: 9rem 0;
+  background-image: linear-gradient(to bottom, #2e080d, transparent 10%),
+    url("/images/withStarWeb.jpg");
+  background-position: left center;
+  background-size: cover;
+  padding: 9rem 0;
 }
 
 .makeRightColumn {
-    margin-left: 50%;
-    background-color: rgba(20, 20, 20, 0.774);
-    padding: 0 1.5rem 2rem 1.5rem;
-    border-radius: 6px;
+  margin-left: 50%;
+  background-color: rgba(20, 20, 20, 0.774);
+  padding: 0 1.5rem 2rem 1.5rem;
+  border-radius: 6px;
 }
 
 .sundayTimes {
-    font-size: 20px;
-    /* padding: 2rem 0; */
-    padding-bottom: 2rem;
-    margin-top: -1rem;
+  font-size: 20px;
+  /* padding: 2rem 0; */
+  padding-bottom: 2rem;
+  margin-top: -1rem;
 }
 
 .sundaySeries p {
-    font-family: "PT Serif", serif;
-    color: #eee;
-    font-weight: 700;
-    text-align: left;
+  font-family: "PT Serif", serif;
+  color: #eee;
+  font-weight: 700;
+  text-align: left;
 }
 
 .christmasEve {
-    background-color: var(--color-quaternary);
-    background-image: linear-gradient(to bottom, #5e0c17a6, #5e0c17a6), url("/images/xmasEve.jpg");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+  background-color: var(--color-quaternary);
+  background-image: linear-gradient(to bottom, #5e0c17a6, #5e0c17a6),
+    url("/images/xmasEve.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 .christmasEve p {
-    font-family: "PT Serif", serif;
-    color: #eee;
-    font-weight: 700;
-    max-width: 50rem;
-    margin: auto;
+  font-family: "PT Serif", serif;
+  color: #eee;
+  font-weight: 700;
+  max-width: 50rem;
+  margin: auto;
 }
 
 .topBox {
-    background-color: #310309c0;
-    padding: 0 3rem 2rem 3rem;
-    width: fit-content;
-    margin: auto;
-    border-radius: 6px;
+  background-color: #310309c0;
+  padding: 0 3rem 2rem 3rem;
+  width: fit-content;
+  margin: auto;
+  border-radius: 6px;
 }
 
 .eveServiceWrapper {
-    padding: 3rem 1rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    grid-gap: 2rem;
-    font-size: 16px;
+  padding: 3rem 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-gap: 2rem;
+  font-size: 16px;
 }
 
 .eveService {
-    background-color: rgba(241, 241, 241, 0.977);
-    border-radius: 6px;
-    padding: 2rem 1rem;
-    color: #000;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    transition: all .2s;
-    box-shadow: 0 0 5px #111;
+  background-color: rgba(241, 241, 241, 0.977);
+  border-radius: 6px;
+  padding: 2rem 1rem;
+  color: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 0 5px #111;
 }
 
 .eveService:hover {
-    transform: scale(1.03) translateY(-.33rem);
+  transform: scale(1.03) translateY(-0.33rem);
 }
 
 .eveService .Title {
-    font-size: 1.5rem;
-    font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
 .eveService .Time {
-    font-size: 1.2rem;
-    padding-bottom: 1rem;
+  font-size: 1.2rem;
+  padding-bottom: 1rem;
 }
 
 .eveService img {
-    /* font-weight: 700; */
-    height: 4rem;
-    margin-bottom: 1rem;
+  /* font-weight: 700; */
+  height: 4rem;
+  margin-bottom: 1rem;
 }
 
 #oneColumn {
-    columns: 1 !important;
-    -webkit-columns: 1 !important;
-    -moz-columns: 1 !important;
-    margin-top: 15px !important;
-  }
-
+  columns: 1 !important;
+  -webkit-columns: 1 !important;
+  -moz-columns: 1 !important;
+  margin-top: 15px !important;
+}
 
 /* RESPONSIVE */
 
 @media only screen and (max-width: 900px) {
-.title {
+  .title {
     font-size: 2.5rem;
     padding: 0 2rem;
-}
+  }
 
-    .makeRightColumn {
-        margin-left: unset;
-        margin-top: 800px;
-    }
+  .makeRightColumn {
+    margin-left: unset;
+    margin-top: 800px;
+  }
 
-    .card {
-        height: auto;
-        background-color: #eee;
-    }
+  .card {
+    height: auto;
+    background-color: #eee;
+  }
 
-    .card__side {
-        height: auto;
-        position: relative;
-    }
+  .card__side {
+    height: auto;
+    position: relative;
+  }
 
-    .card__side--back {
-        transform: rotateY(0);
-    }
+  .card__side--back {
+    transform: rotateY(0);
+  }
 
-    .card:hover .card__side--front {
-        transform: rotateY(0);
-    }
+  .card:hover .card__side--front {
+    transform: rotateY(0);
+  }
 }
 
 @media only screen and (max-width: 600px) {
-    .title {
-        font-size: 1.75rem;
-    }
+  .title {
+    font-size: 1.75rem;
+  }
 }
-
