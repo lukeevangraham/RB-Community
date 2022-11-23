@@ -1,17 +1,17 @@
 :root {
-  --color-primary: #243B28;
+  --color-primary: #243b28;
   --color-primary-light: #305035;
   --color-primary-dark: #19291b;
-  --color-secondary: #33522E;
+  --color-secondary: #33522e;
   --color-secondary-light: #496944;
   --color-secondary-dark: #233b1f;
-  --color-tertiary: #2E523E;
+  --color-tertiary: #2e523e;
   --color-tertiary-light: #4d715d;
   --color-tertiary-dark: #244231;
   --color-quaternary: #374728;
   --color-quaternary-light: #516340;
   --color-quaternary-dark: #222d18;
-  --color-quinary: #28473F;
+  --color-quinary: #28473f;
   --color-quinary-light: #476c63;
   --color-quinary-dark: #1a302a;
 }
@@ -19,7 +19,7 @@
 .top {
   background-image: linear-gradient(to bottom, #272f1d53 80%, #1f2517),
     /* linear-gradient(to bottom right, #dd1c36c2, #5e0c17ce), */
-    url("/images/trainWeb.jpg");
+      url("/images/trainWeb.jpg");
   background-position: bottom;
   background-size: cover;
   height: 55vw;
@@ -303,7 +303,7 @@
 
 .christmasEve {
   background-color: var(--color-quaternary);
-  background-image: linear-gradient(to bottom, var(--color-primary), var(--color-primary-dark)),
+  background-image: linear-gradient(to bottom, #30583771, #243b2878),
     url("/images/xmasEve.jpg");
   background-size: cover;
   background-position: center;
