@@ -1,23 +1,23 @@
 :root {
-  --color-primary: #dd1c37;
-  --color-primary-light: #f13f56;
-  --color-primary-dark: #9e091d;
-  --color-secondary: #e36273;
-  --color-secondary-light: #f78191;
-  --color-secondary-dark: #c04858;
-  --color-tertiary: #5e2930;
-  --color-tertiary-light: #70383f;
-  --color-tertiary-dark: #421b20;
-  --color-quaternary: #5e0c17;
-  --color-quaternary-light: #6e1722;
-  --color-quaternary-dark: #46050e;
-  --color-quinary: #ab162a;
-  --color-quinary-light: #c2263b;
-  --color-quinary-dark: #8f0b1d;
+  --color-primary: #243B28;
+  --color-primary-light: #305035;
+  --color-primary-dark: #19291b;
+  --color-secondary: #33522E;
+  --color-secondary-light: #496944;
+  --color-secondary-dark: #233b1f;
+  --color-tertiary: #2E523E;
+  --color-tertiary-light: #4d715d;
+  --color-tertiary-dark: #244231;
+  --color-quaternary: #374728;
+  --color-quaternary-light: #516340;
+  --color-quaternary-dark: #222d18;
+  --color-quinary: #28473F;
+  --color-quinary-light: #476c63;
+  --color-quinary-dark: #1a302a;
 }
 
 .top {
-  background-image: linear-gradient(to bottom, #272f1d53 80%, #15190f),
+  background-image: linear-gradient(to bottom, #272f1d53 80%, #1f2517),
     /* linear-gradient(to bottom right, #dd1c36c2, #5e0c17ce), */
     url("/images/trainWeb.jpg");
   background-position: bottom;
@@ -68,7 +68,8 @@
 }
 
 .adventEvents {
-  background-image: linear-gradient(to bottom, #15190f, #2a321f);
+  /* background-image: linear-gradient(to bottom, #15190f, #2a321f); */
+  background-color: #1f2517;
 }
 
 .card {
@@ -77,7 +78,7 @@
   -moz-perspective: 150rem;
   position: relative;
   height: 33rem;
-  background-color: #2e080d;
+  background-color: #1f2517;
 }
 
 .card__side {
@@ -214,7 +215,7 @@
       var(--color-primary-light),
       var(--color-primary-dark)
     ),
-    url("https://images.ctfassets.net/v1a9n1zktijq/7GJqhPHvnodP6xc0YuLB8n/ad30995ea94280a1a3621ed17f6443de/Reveal_web_graphic.png");
+    url("http://images.ctfassets.net/v1a9n1zktijq/4JMaOvHpwtBn8pvSm1qIgR/56bbab85de17bb73f4ac48c78c378216/the_first_nowell.png");
 }
 .card .card__side .card__picture--2 {
   background-image: linear-gradient(
@@ -222,7 +223,7 @@
       var(--color-secondary-light),
       var(--color-secondary-dark)
     ),
-    url("https://images.ctfassets.net/v1a9n1zktijq/705vis77Un12igRzhkAJn7/0b1b07f43b2d76939703bfbc6d3c520a/pageant.jpg");
+    url("http://images.ctfassets.net/v1a9n1zktijq/6TMj3FNaQSbtxLxjvGAprm/e87361b8a8a104610f5b9e9f0d7c13ed/ChristmasBrunch_1920x1080.jpg");
 }
 .card .card__side .card__picture--3 {
   background-image: linear-gradient(
@@ -238,7 +239,7 @@
       var(--color-tertiary-light),
       var(--color-tertiary-light)
     ),
-    url("https://images.ctfassets.net/v1a9n1zktijq/6TMj3FNaQSbtxLxjvGAprm/e87361b8a8a104610f5b9e9f0d7c13ed/ChristmasBrunch_1920x1080.jpg");
+    url("http://images.ctfassets.net/v1a9n1zktijq/705vis77Un12igRzhkAJn7/0b1b07f43b2d76939703bfbc6d3c520a/pageant.jpg");
 }
 .card .card__side .card__picture--5 {
   background-image: linear-gradient(
@@ -272,15 +273,15 @@
 }
 
 .sundaySeries {
-  background-image: linear-gradient(to bottom, #2e080d, transparent 10%),
-    url("/images/withStarWeb.jpg");
-  background-position: left center;
+  background-image: linear-gradient(to bottom, #1f2517, transparent 10%),
+    url("/images/sundaySeries.jpg");
+  background-position: bottom;
   background-size: cover;
   padding: 9rem 0;
 }
 
 .makeRightColumn {
-  margin-left: 50%;
+  margin-right: 50%;
   background-color: rgba(20, 20, 20, 0.774);
   padding: 0 1.5rem 2rem 1.5rem;
   border-radius: 6px;
@@ -302,7 +303,7 @@
 
 .christmasEve {
   background-color: var(--color-quaternary);
-  background-image: linear-gradient(to bottom, #5e0c17a6, #5e0c17a6),
+  background-image: linear-gradient(to bottom, var(--color-primary), var(--color-primary-dark)),
     url("/images/xmasEve.jpg");
   background-size: cover;
   background-position: center;
@@ -318,7 +319,7 @@
 }
 
 .topBox {
-  background-color: #310309c0;
+  background-color: var(--color-primary-dark);
   padding: 0 3rem 2rem 3rem;
   width: fit-content;
   margin: auto;
