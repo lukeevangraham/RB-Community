@@ -24,7 +24,7 @@
     "axios": "^0.21.1",
     "contentful": "^7.9.1",
     "dotenv": "^8.0.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-handlebars": "^3.1.0",
     "handlebars.moment": "^1.0.4",
     "marked": "^0.7.0",
