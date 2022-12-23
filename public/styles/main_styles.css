@@ -1469,30 +1469,78 @@ section {
 
 .familyGroup {
   display: flex;
+  margin: auto;
   margin-top: 4rem;
   justify-content: space-around;
+  max-width: 1170px;
+  padding: 0 2%;
+  gap: 2rem;
 }
 
-.familyGroup__ministry {
+.familyGroup a {
+  width: 100%;
+}
+
+.familyGroup a .familyGroup__ministry {
   width: 100%;
   text-align: center;
   height: 260px;
   background-size: cover;
   background-position: center;
+  position: relative;
+  transition: all 0.2s;
 }
 
-.familyGroup__ministry--kids {
+a .familyGroup__ministry--kids {
   background-image: url("../images/children.jpg");
 }
 
-.familyGroup__ministry--msm {
+a .familyGroup__ministry--msm {
   background-image: url("../images/middleSchool.jpg");
 }
 
-.familyGroup__ministry--high {
+a .familyGroup__ministry--high {
   background-image: url("../images/highSchool.jpg");
 }
 
-.familyGroup__ministry--theater {
+a .familyGroup__ministry--theater {
   background-image: url("../images/theater.jpg");
+}
+
+.familyGroup a:hover .familyGroup__ministry {
+  scale: 1.05;
+}
+
+a .familyGroup__ministry h4 {
+  background-color: #fff;
+  position: absolute;
+  bottom: -4.3rem;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-bottom: 0;
+  color: #111;
+  font-weight: 700;
+  font-family: "Assistant";
+  text-transform: uppercase;
+  padding: 1.5rem 0;
+}
+
+.belowFamilyGroup {
+  height: 6.5rem;
+}
+
+@media only screen and (max-width: 991px) {
+  .familyGroup {
+    flex-direction: column;
+    max-width: 90%;
+  }
+
+  .familyGroup a .familyGroup__ministry {
+    margin-bottom: 5rem;
+  }
+
+  .belowFamilyGroup {
+    height: 0;
+  }
 }
