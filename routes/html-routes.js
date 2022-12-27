@@ -593,9 +593,9 @@ module.exports = function (app) {
                       youTubeRecord = JSON.parse(body).items;
 
                       // Filter out deleted videos
-                      let trimmedYouTubeRecord = youTubeRecord.filter(
-                        (record) => record.snippet.title !== "Deleted video"
-                      );
+                      // let trimmedYouTubeRecord = youTubeRecord.filter(
+                      //   (record) => record.snippet.title !== "Deleted video"
+                      // );
                       // })
 
                       let mostRecentStream = null;
