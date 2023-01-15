@@ -367,6 +367,7 @@ async function handleContactSubmission(e) {
     values.email.value === "jeannewassef63@gmail.com" ||
     values.email.value === "jeannewassef@hotmail.com" ||
     values.email.value === "jeannewassef@hotmail.cimq" ||
+    values.email.value === "joshuawassef26@gmail.com" ||
     values.email.value === "jeannewassef@hotmail.cima"
   ) {
     document.querySelector("#contactForm").innerHTML =
