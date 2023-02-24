@@ -33,7 +33,7 @@
     "mysql2": "^1.6.5",
     "nodemailer": "^6.7.7",
     "request": "^2.88.0",
-    "sequelize": "^5.21.7",
+    "sequelize": "^6.29.0",
     "showdown": "^1.9.1",
     "socket.io": "^2.3.0",
     "vimeo": "^2.1.1"
