@@ -32,6 +32,8 @@ module.exports = {
         return true;
       case "High School":
         return true;
+      case "Youth, Music and Theater":
+        return true;
       default:
         break;
     }
