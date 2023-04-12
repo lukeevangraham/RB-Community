@@ -1545,6 +1545,10 @@ module.exports = function (app) {
     });
   })
 
+app.get("/nominate", async (req, res) => {
+  res.redirect("https://res.cloudinary.com/rb-community-church/image/upload/v1678901190/Nomination_form_59cc98b615.pdf")
+})
+
   app.get("/search:term", async (req, res) => {
     let searchTerm = req.params.term.substring(1);
 
