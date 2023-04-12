@@ -1537,6 +1537,14 @@ module.exports = function (app) {
       });
   });
 
+  app.get(["/summit", "thesummit"], async (req, res) => {
+    res.render("summit", {
+      headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+        <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
+      title: `The Summit`,
+    });
+  })
+
   app.get("/search:term", async (req, res) => {
     let searchTerm = req.params.term.substring(1);
 
