@@ -937,6 +937,7 @@ module.exports = function (app) {
 
       // console.log("ITEMS: ", items)
 
+      // KEEP IT TO SIX ITEMS AFTER MERGING CONTENTFUL AND STRAPI APIS
       firstRecord = items.slice(0, 5);
 
       client
