@@ -597,7 +597,6 @@ module.exports = function (app) {
                         (record) => record.snippet.title !== "Deleted video"
                       );
 
-
                       let mostRecentStream = null;
 
                       // GO THROUGH 10 MOST RECENT LIVESTREAMS
@@ -1543,11 +1542,13 @@ module.exports = function (app) {
         <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
       title: `The Summit`,
     });
-  })
+  });
 
-app.get("/nominate", async (req, res) => {
-  res.redirect("https://res.cloudinary.com/rb-community-church/image/upload/v1678901190/Nomination_form_59cc98b615.pdf")
-})
+  app.get("/nominate", async (req, res) => {
+    res.redirect(
+      "https://res.cloudinary.com/rb-community-church/image/upload/v1678901190/Nomination_form_59cc98b615.pdf"
+    );
+  });
 
   app.get("/search:term", async (req, res) => {
     let searchTerm = req.params.term.substring(1);
