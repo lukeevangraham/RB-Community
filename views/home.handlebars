@@ -17,11 +17,11 @@
               7:38
             </div>
             <div class="home_text mb-4">Jesus said it. Believe it.</div>
-            {{!-- <div
+            {{! <div
               style="width: 325px; background-color: #eee"
               class="button home_link"
             ><a style="color: #317091" href="/lent">view our Holy Week &#38;
-                Easter Events</a></div> --}}
+                Easter Events</a></div> }}
           </div>
         </div>
       </div>
@@ -644,13 +644,25 @@
           <!-- News Post -->
           <div class="col-lg-4 news_post_col" data-aos="fade-down">
             <div class="news_post">
-              <div class="news_image"><a
-                  href="./blog-{{changeSpacesToDashes this.fields.title}}"
-                ><img
-                    data-src="{{fields.image.fields.file.url}}"
-                    class="lazyload"
-                    alt=""
-                  /></a></div>
+              {{#if this.strapi}}
+                <div class="news_image"><a
+                    href="./blog-{{changeSpacesToDashes this.fields.title}}"
+                  ><img
+                      data-src="{{fields.image.url}}"
+                      class="lazyload"
+                      alt=""
+                    /></a></div>
+
+              {{else}}
+                <div class="news_image"><a
+                    href="./blog-{{changeSpacesToDashes this.fields.title}}"
+                  ><img
+                      data-src="{{fields.image.fields.file.url}}"
+                      class="lazyload"
+                      alt=""
+                    /></a></div>
+
+              {{/if}}
               <div class="news_post_content">
                 <div class="news_post_title">
                   <a

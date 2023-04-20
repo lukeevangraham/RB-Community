@@ -32,7 +32,16 @@
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<div class="blog_image"><img src="{{this.image.fields.file.url}}" alt=""></div>
+
+					 {{!-- STRAPI IMAGES ARE LOCATED IN A DIFFERENT STRUCTURE  --}}
+				{{#if this.image.url}}
+				<div class="blog_image"><img src="{{this.image.url}}" alt=""></div>
+
+				{{!-- NON-STRAPI IMAGES USE THE CODE BELOW --}}
+				{{else}}
+				<div class="blog_image"><img src="{{this.image.fields.file.url}}" alt=""></div>
+
+				{{/if}}
 
 					<!-- Blog Post Title -->
 					<div class="blog_post_title_container d-flex flex-row align-items-lg-center align-items-start justify-content-start">

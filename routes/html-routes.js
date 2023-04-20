@@ -55,21 +55,21 @@ let newYouTubeOptions = (playlistId) => {
     // },
   };
 };
-let streamYouTubeOptions = (playlistId) => {
-  return {
-    method: "GET",
-    url: "https://www.googleapis.com/youtube/v3/playlistItems",
-    qs: {
-      key: process.env.GOOGLE_KEY,
-      playlistId: "PLZ13IHPbJRZ7amo_md0SxN_CZgnu9DnxJ",
-      part: "snippet,contentDetails",
-      maxResults: "10",
-    },
-    // headers: {
-    //   Authorization: "Bearer " + vimeoPass,
-    // },
-  };
-};
+// let streamYouTubeOptions = (playlistId) => {
+//   return {
+//     method: "GET",
+//     url: "https://www.googleapis.com/youtube/v3/playlistItems",
+//     qs: {
+//       key: process.env.GOOGLE_KEY,
+//       playlistId: "PLZ13IHPbJRZ7amo_md0SxN_CZgnu9DnxJ",
+//       part: "snippet,contentDetails",
+//       maxResults: "10",
+//     },
+//     // headers: {
+//     //   Authorization: "Bearer " + vimeoPass,
+//     // },
+//   };
+// };
 
 var vimeoOptions = {
   method: "GET",
@@ -88,23 +88,23 @@ var vimeoOptions = {
     Authorization: "Bearer " + vimeoPass,
   },
 };
-var vimeoOptionsHome = {
-  method: "GET",
-  url: "https://api.vimeo.com/users/14320074/videos",
-  qs: {
-    query: "Sermon",
-    fields:
-      "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button",
-    sizes: "960",
-    per_page: "3",
-    page: "1",
-    sort: "date",
-    direction: "desc",
-  },
-  headers: {
-    Authorization: "Bearer " + vimeoPass,
-  },
-};
+// var vimeoOptionsHome = {
+//   method: "GET",
+//   url: "https://api.vimeo.com/users/14320074/videos",
+//   qs: {
+//     query: "Sermon",
+//     fields:
+//       "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button",
+//     sizes: "960",
+//     per_page: "3",
+//     page: "1",
+//     sort: "date",
+//     direction: "desc",
+//   },
+//   headers: {
+//     Authorization: "Bearer " + vimeoPass,
+//   },
+// };
 
 var vimeoOptionsAnnHome = {
   method: "GET",
@@ -175,6 +175,17 @@ function compare(a, b) {
   return comparison;
 }
 
+// SORT ALL ITEMS BY DATE POSTED
+function compareItemDatePosted(a, b) {
+  if (a.fields.datePosted > b.fields.datePosted) {
+    return -1;
+  }
+  if (a.fields.datesPosted < b.fields.datesPosted) {
+    return 1;
+  }
+  return 0;
+}
+
 function prepareBlogEntryForSinglePage(entry, requestId) {
   // console.log("ENTRY: ", entry.fields.body.content)
 
@@ -201,15 +212,23 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
     },
   };
 
-  const rawRichTextField = entry.fields.body;
-  // let renderedHtml = documentToHtmlString(rawRichTextField);
-  Object.assign(entry.fields, {
-    renderedHtml: documentToHtmlString(rawRichTextField, options).replace(
-      /RBCC/g,
-      "RB Community"
-    ),
-    id: requestId,
-  });
+  if (entry.strapi) {
+    Object.assign(entry.fields, {
+      renderedHtml: entry.fields.body.replace(/RBCC/g, "RB Community"),
+      id: requestId,
+    });
+    entry.fields.renderedHtml;
+  } else {
+    const rawRichTextField = entry.fields.body;
+    // let renderedHtml = documentToHtmlString(rawRichTextField);
+    Object.assign(entry.fields, {
+      renderedHtml: documentToHtmlString(rawRichTextField, options).replace(
+        /RBCC/g,
+        "RB Community"
+      ),
+      id: requestId,
+    });
+  }
   // renderSingleBlog(entry)
   return entry;
 }
@@ -287,16 +306,28 @@ const prepBlogDataForTemplate = (blogData) => {
   });
 
   if (blogData.fields.body) {
-    if (blogData.fields.body.content[0].content[0]) {
-      var truncatedString = JSON.stringify(
-        blogData.fields.body.content[0].content[0].value
-          .replace(/^(.{165}[^\s]*).*/, "$1")
-          .replace(/(\r\n|\n|\r)/gm, "")
-      );
+    // CONTENTFUL ITEMS USE THE ".content" value
+    if (blogData.fields.body.content) {
+      if (blogData.fields.body.content[0].content[0]) {
+        var truncatedString = JSON.stringify(
+          blogData.fields.body.content[0].content[0].value
+            .replace(/^(.{165}[^\s]*).*/, "$1")
+            .replace(/(\r\n|\n|\r)/gm, "")
+        );
+        var truncatedLength = truncatedString.length;
+        truncatedString = truncatedString
+          .substring(1, truncatedLength - 1)
+          .replace(/RBCC/g, "RB Community");
+      }
+    } else if (blogData.fields.body) {
+      var truncatedString = blogData.fields.body
+        .toString()
+        .replace(/<br\s*[\/]?>/gi, "\n")
+        .replace(/<\/?[^>]+(>|$)/g, "")
+        .replace(/\&nbsp;/g, " ");
+      // console.log("TRUN: ", truncatedString)
       var truncatedLength = truncatedString.length;
-      truncatedString = truncatedString
-        .substring(1, truncatedLength - 1)
-        .replace(/RBCC/g, "RB Community");
+      truncatedString = truncatedString.substring(0, 165);
     }
   }
 
@@ -309,83 +340,63 @@ const prepBlogDataForTemplate = (blogData) => {
 // Routes
 module.exports = function (app) {
   app.get("/blog", function (req, res) {
-    client
-      .getEntries({
+    Promise.all([
+      client.getEntries({
         content_type: "blog",
         order: "-fields.datePosted",
         // remove about rB Community from the news feed
         "sys.id[nin]": "3JEwFofQhW3MQcReiGLCYu",
-      })
-      .then(function (dbBlog) {
-        var items = [];
-        var itemsIncludingExpired = dbBlog.items;
+      }),
+      axios.get("https://admin.rbcommunity.org/articles?_sort=datePosted"),
+    ]).then(function (resultArray) {
+      var items = [];
+      var itemsIncludingExpired = resultArray[0].items;
 
-        // ELIMINATING OLD ENTRIES FROM PAGE
-        itemsIncludingExpired.forEach((earlyItem) => {
-          if (
-            moment(earlyItem.fields.expirationDate).isBefore(
-              moment().format("YYYY-MM-DD")
-            )
-          ) {
-          } else {
-            items.push(earlyItem);
-          }
-        });
-
-        // Converting times for template
-        items.forEach((item) => {
-          //   Object.assign(item.fields, {
-          //     formattedDate: moment(item.fields.datePosted)
-          //       .format("DD MMM, YYYY")
-          //       .toUpperCase(),
-          //   });
-
-          //   if (item.fields.body) {
-          //     if (item.fields.body.content[0].content[0]) {
-          //       var truncatedString = JSON.stringify(
-          //         item.fields.body.content[0].content[0].value.replace(
-          //           /^(.{165}[^\s]*).*/,
-          //           "$1"
-          //         )
-          //       );
-          //       var truncatedLength = truncatedString.length;
-          //       truncatedString = truncatedString
-          //         .substring(1, truncatedLength - 1)
-          //         .replace(/RBCC/g, "RB Community");
-          //     }
-          //   }
-
-          //   Object.assign(item.fields, {
-          //     excerpt: truncatedString,
-          //     today: moment().format("YYYY-MM-DD"),
-          //   });
-          prepBlogDataForTemplate(item);
-        });
-
-        // console.log(dbBlog);
-        // let str = dbBlog[0].dataValues.maincontent
-
-        // let newTrimmedString = str.split('.')[0] + ".";
-        // dbBlog['shortenedMain'] = newTrimmedString;
-
-        // console.log("Look Here: ", dbBlog.items[3])
-
-        var hbsObject = {
-          blogpost: items,
-          active: { news: true },
-          headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
-                <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`,
-          title: `Latest News`,
-          // shortenedMain: newTrimmedString
-        };
-        res.render("blog", hbsObject);
+      // FORMATTING STRAPI DATA TO MATCH CONTENTFUL
+      resultArray[1].data.forEach((article) => {
+        let formattedArticle = {};
+        formattedArticle.fields = article;
+        itemsIncludingExpired.push(formattedArticle);
       });
+
+      // SORT ALL ITEMS BY DATE POSTED
+
+      itemsIncludingExpired.sort(compareItemDatePosted);
+
+      // itemsIncludingExpired.push(resultArray[1].data)
+
+      // console.log("2nd ARR: ", resultArray[1].data)
+
+      // ELIMINATING OLD ENTRIES FROM PAGE
+      itemsIncludingExpired.forEach((earlyItem) => {
+        if (
+          moment(earlyItem.fields.expirationDate).isBefore(
+            moment().format("YYYY-MM-DD")
+          )
+        ) {
+        } else {
+          items.push(earlyItem);
+        }
+      });
+
+      // Converting times for template
+      items.forEach((item) => {
+        prepBlogDataForTemplate(item);
+      });
+
+      var hbsObject = {
+        blogpost: items,
+        active: { news: true },
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
+                <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`,
+        title: `Latest News`,
+        // shortenedMain: newTrimmedString
+      };
+      res.render("blog", hbsObject);
+    });
   });
 
   app.get("/blog:id", function (req, res) {
-    // console.log("ORG URL: ", req.originalUrl)
-    // console.log("ID: ", req.params.id)
-    // console.log("LOOK HERE: ", req.params.id.match(/_single:/g).length)
     req.params.id.match(/_single:/g)
       ? (console.log("_blog_single: detected!!"),
         (req.params.id = req.params.id.substring(8)),
@@ -410,33 +421,78 @@ module.exports = function (app) {
         (newRes = decodeURI(str)),
         // console.log("LOOK HERE: ", newRes),
 
-        client
-          .getEntries({
+        Promise.all([
+          client.getEntries({
             content_type: "blog",
             "fields.title[match]": newRes,
-          })
-          .then(function (entry) {
-            // console.log("ENTRY no#: ", entry.items[0])
-            // blogEntry = entry.items[0]
-            prepareBlogEntryForSinglePage(entry.items[0], req.params.id);
-            renderSingleBlog(entry.items[0], res);
-          }));
+          }),
+          axios.get(`https://admin.rbcommunity.org/articles?_title=${newRes}`),
+        ]).then(function (resultArray) {
+          // .then(function (entry) {
+          // console.log("ENTRY no#: ", entry.items[0])
+          // blogEntry = entry.items[0]
+          formattedData = { strapi: true };
+          formattedData.fields = resultArray[1].data[0];
+
+          resultArray[0].items.length
+            ? (prepareBlogEntryForSinglePage(
+                resultArray[0].items[0],
+                req.params.id
+              ),
+              renderSingleBlog(resultArray[0].items[0], res))
+            : (prepareBlogEntryForSinglePage(formattedData, req.params.id),
+              renderSingleBlog(formattedData, res));
+        }));
   });
 
   app.get(["/", "/index.html", "/home"], function (req, res) {
-    var vimeoRecord = null;
-    let secondRecord = null;
-    let thirdRecord = null;
-    let vimeoAnnRecord = null;
-    let vimeoAnnURL = null;
-    let welcomeRecord = null;
-    let youTubeRecord = null;
-
-    request(vimeoOptionsHome, function (error, response, body) {
-      if (error) throw new Error(error);
-
-      vimeoRecord = JSON.parse(body);
-      // console.log(`Vimeo Record ${vimeoRecord.data}`);
+    Promise.all([
+      axios({
+        url: "https://api.vimeo.com/users/14320074/videos",
+        method: "GET",
+        params: {
+          query: "Sermon",
+          fields:
+            "name, description, link, pictures.sizes.link, pictures.sizes.link_with_play_button",
+          sizes: "960",
+          per_page: "3",
+          page: "1",
+          sort: "date",
+          direction: "desc",
+        },
+        headers: {
+          Authorization: "Bearer " + vimeoPass,
+        },
+      }),
+      client.getEntries({
+        content_type: "events",
+        // "fields.featuredOnHome": true,
+        "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
+        "fields.homePagePassword": "Psalm 46:1",
+        order: "fields.date",
+        // limit: 3
+      }),
+      client.getEntries({
+        content_type: "blog",
+        "fields.featureOnHomePage": true,
+        "fields.homePagePassword": "Psalm 46:1",
+        order: "-fields.datePosted",
+        limit: 3,
+      }),
+      client.getEntry("5yMSI9dIzpsdb55JvXkZk"),
+      axios.get("https://admin.rbcommunity.org/home"),
+      axios({
+        url: "https://www.googleapis.com/youtube/v3/playlistItems",
+        method: "get",
+        params: {
+          key: process.env.GOOGLE_KEY,
+          playlistId: "PLZ13IHPbJRZ7amo_md0SxN_CZgnu9DnxJ",
+          part: "snippet,contentDetails",
+          maxResults: "10",
+        },
+      }),
+    ]).then((resultArray) => {
+      let vimeoRecord = resultArray[0].data;
 
       if (vimeoRecord.data) {
         vimeoRecord.data.forEach((item) => {
@@ -446,245 +502,320 @@ module.exports = function (app) {
         });
       }
 
-      request(vimeoOptionsAnnHome, function (error, response, body) {
-        if (error) throw new Error(error);
+      // HANDLING EVENTS
+      let dbEvent = resultArray[1];
+      // var items = dbEvent.items;
 
-        vimeoAnnRecord = JSON.parse(body);
+      // Converting times for template
+      dbEvent.items.forEach((item) => {
+        Object.assign(item.fields, {
+          shortMonth: moment(item.fields.date).format("MMM"),
+        });
+        Object.assign(item.fields, {
+          shortDay: moment(item.fields.date).format("DD"),
+        });
+        // if (item.fields.featured) {
+        Object.assign(item.fields, {
+          dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
+        });
+        // }
+        // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
+        if (item.fields.repeatsEveryDays > 0) {
+          if (moment(item.fields.date).isSameOrBefore(moment())) {
+            let start = moment(item.fields.date);
+            let end = moment().format("YYYY-MM-DD");
 
-        // a = vimeoAnnRecord.data[0].link;
-        var items = vimeoAnnRecord.data;
-        if (items.length > 0) {
-          // console.log("ITEMS: ", items)
-          let trimmedURL = getIdFromVimeoURL(items[0].link);
-
-          let editedEmbed = items[0].embed.html;
-          // console.log("TRIMMED URL: ", trimmedURL)
-          editedEmbed = editedEmbed.replace(
-            `" `,
-            `" data-aos="fade-right" class="about_image" `
-          );
-          // a = a.replace(`https://`,`//`)
-          // console.log("HERE: ", a)
-          // console.log(vimeoAnnRecord)
-
-          // vimeoAnnURL = getIdFromVimeoURL(a);
-          // vimeoAnnURL = trimmedURL;
-          // vimeoAnnURL = items[0].embed.html;
-          vimeoAnnURL = editedEmbed;
-          // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
-        }
-
-        client
-          .getEntries({
-            content_type: "events",
-            // "fields.featuredOnHome": true,
-            "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
-            "fields.homePagePassword": "Psalm 46:1",
-            order: "fields.date",
-            // limit: 3
-          })
-          .then(function (dbEvent) {
-            // console.log("EVENT: ", dbEvent)
-            // console.log("LOOK HERE: ", dbEvent.items[0].fields);
-            var items = dbEvent.items;
-
-            // Converting times for template
-            items.forEach((item) => {
-              Object.assign(item.fields, {
-                shortMonth: moment(item.fields.date).format("MMM"),
-              });
-              Object.assign(item.fields, {
-                shortDay: moment(item.fields.date).format("DD"),
-              });
-              // if (item.fields.featured) {
-              Object.assign(item.fields, {
-                dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
-              });
-              // }
-              // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
-              if (item.fields.repeatsEveryDays > 0) {
-                if (moment(item.fields.date).isSameOrBefore(moment())) {
-                  let start = moment(item.fields.date);
-                  let end = moment().format("YYYY-MM-DD");
-
-                  while (start.isBefore(end)) {
-                    start.add(item.fields.repeatsEveryDays, "day");
-                  }
-                  item.fields.date = start.format("YYYY-MM-DD");
-                  item.fields.shortMonth = start.format("MMM");
-                  item.fields.shortDay = start.format("DD");
-                }
-                Object.assign(item.fields, {
-                  dateToCountTo: moment(item.fields.date).format(
-                    "MMMM D, YYYY"
-                  ),
-                });
-              }
-            });
-
-            secondRecord = dbEvent;
-
-            client
-              .getEntries({
-                content_type: "blog",
-                "fields.featureOnHomePage": true,
-                "fields.homePagePassword": "Psalm 46:1",
-                order: "-fields.datePosted",
-                limit: 3,
-              })
-              .then(function (dbBlog) {
-                var items = [];
-                var itemsIncludingExpired = dbBlog.items;
-
-                // ELIMINATING OLD ENTRIES FROM PAGE
-                itemsIncludingExpired.forEach((earlyItem) => {
-                  if (
-                    moment(earlyItem.fields.expirationDate).isBefore(
-                      moment().format("YYYY-MM-DD")
-                    )
-                  ) {
-                  } else {
-                    items.push(earlyItem);
-                  }
-                });
-
-                // Converting times for template
-                items.forEach((item) => {
-                  Object.assign(item.fields, {
-                    formattedDate: moment(item.fields.datePosted)
-                      .format("DD MMM, YYYY")
-                      .toUpperCase(),
-                  });
-
-                  if (item.fields.body) {
-                    var truncatedString = JSON.stringify(
-                      item.fields.body.content[0].content[0].value.replace(
-                        /^(.{165}[^\s]*).*/,
-                        "$1"
-                      )
-                    );
-                    var truncatedLength = truncatedString.length;
-                    truncatedString = truncatedString.substring(
-                      1,
-                      truncatedLength - 1
-                    );
-
-                    Object.assign(item.fields, {
-                      excerpt: truncatedString,
-                    });
-                  }
-                });
-
-                thirdRecord = items;
-
-                client.getEntry("5yMSI9dIzpsdb55JvXkZk").then(function (entry) {
-                  // console.log("LOOK HERE: ", entry);
-                  const rawRichTextField = entry.fields.body;
-
-                  Object.assign(entry.fields, {
-                    renderedHtml: documentToHtmlString(rawRichTextField),
-                  });
-                  welcomeRecord = entry;
-                  // console.log("LOOK HERE: ", welcomeRecord)
-
-                  request(
-                    streamYouTubeOptions(),
-                    function (error, response, body) {
-                      youTubeRecord = JSON.parse(body).items;
-
-                      // Filter out deleted videos
-                      let trimmedYouTubeRecord = youTubeRecord.filter(
-                        (record) => record.snippet.title !== "Deleted video"
-                      );
-
-                      let mostRecentStream = null;
-
-                      // GO THROUGH 10 MOST RECENT LIVESTREAMS
-
-                      trimmedYouTubeRecord.forEach((stream) => {
-                        // PARSING THE DATE OF THIS LIVESTREAM
-                        const startToGetDateInfoFromDescription =
-                          stream.snippet.description.split(/, /g)[0].split(" ");
-                        if (stream.snippet.description) {
-                          const yearStarter = stream.snippet.description
-                            .split(/(\d{4}. )/g)[1]
-                            .split(". ")[0];
-
-                          stream.parsedDate = moment(
-                            `${
-                              startToGetDateInfoFromDescription[
-                                startToGetDateInfoFromDescription.length - 2
-                              ]
-                            } ${
-                              startToGetDateInfoFromDescription[
-                                startToGetDateInfoFromDescription.length - 1
-                              ]
-                            }, ${yearStarter}`,
-                            "MMMM DD, YYYY"
-                          );
-
-                          // console.log("PARSED DATE: ", parsedDate);
-
-                          // // IS THE STREAM CONNECTED TO TODAY?
-                          // if (moment(parsedDate).isSame(moment(), 'day')) {
-                          //   mostRecentStream = stream
-                          // } else {
-                          //   console.log("NOT SAME DAY")
-                          // }
-                        }
-                      });
-
-                      // SORT YOUTUBE RESULTS TO NEWEST IS FIRST
-                      trimmedYouTubeRecord.sort((left, right) =>
-                        moment
-                          .utc(right.parsedDate)
-                          .diff(moment.utc(left.parsedDate))
-                      );
-
-                      trimmedYouTubeRecord.forEach((stream) => {
-                        // DOES THE STREAM HAPPEN TODAY??
-                        if (moment(stream.parsedDate).isSame(moment(), "day")) {
-                          mostRecentStream = stream;
-                          return;
-
-                          // IF THE STREAM HAPPENS BEFORE TODAY
-                        }
-                        if (
-                          moment(stream.parsedDate).isBefore(moment(), "day")
-                        ) {
-                          if (mostRecentStream) {
-                            return;
-                          } else {
-                            mostRecentStream = stream;
-                          }
-                        }
-                      });
-
-                      // .then(function(body) {
-
-                      var hbsObject = {
-                        events: secondRecord.items,
-                        vimeo: vimeoRecord,
-                        vimeoAnn: vimeoAnnURL,
-                        blogpost: thirdRecord,
-                        youtubeStream: mostRecentStream,
-                        homeWelcome: welcomeRecord.fields.renderedHtml,
-                        metaTitle:
-                          "Rancho Bernardo Community Presbyterian Church | RBCPC San Diego",
-                        headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
-              <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
-                        title: `Rancho Bernardo Community Presbyterian Church | RBCPC San Diego`,
-                      };
-
-                      res.render("home", hbsObject);
-                      // });
-                    }
-                  );
-                });
-              });
+            while (start.isBefore(end)) {
+              start.add(item.fields.repeatsEveryDays, "day");
+            }
+            item.fields.date = start.format("YYYY-MM-DD");
+            item.fields.shortMonth = start.format("MMM");
+            item.fields.shortDay = start.format("DD");
+          }
+          Object.assign(item.fields, {
+            dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
           });
+        }
       });
+
+      // HANDLE BLOG
+      var blogItems = [];
+      var itemsIncludingExpired = resultArray[2].items;
+      let homeData = resultArray[4].data;
+
+      // MAKE HOMEDATA MATCH CONTENTFUL OUTPUT
+
+      // const newHomeData = {};
+
+      homeData.featuredArticles.forEach((article) => {
+        // console.log("Article: ", article)
+        itemsIncludingExpired.push({ fields: article, strapi: true });
+      });
+
+      // ELIMINATING OLD ENTRIES FROM PAGE
+      itemsIncludingExpired.forEach((earlyItem) => {
+        if (
+          moment(earlyItem.fields.expirationDate).isBefore(
+            moment().format("YYYY-MM-DD")
+          )
+        ) {
+        } else {
+          blogItems.push(earlyItem);
+        }
+      });
+
+      // Converting times for template
+      blogItems.forEach((item) => {
+        Object.assign(item.fields, {
+          formattedDate: moment(item.fields.datePosted)
+            .format("DD MMM, YYYY")
+            .toUpperCase(),
+        });
+
+        if (item.fields.body) {
+          if (item.strapi) {
+            var truncatedString = JSON.stringify(
+              item.fields.body.replace(/<[^>]*>/g, "")
+            );
+          } else {
+            var truncatedString = JSON.stringify(
+              item.fields.body.content[0].content[0].value.replace(
+                /^(.{165}[^\s]*).*/,
+                "$1"
+              )
+            );
+          }
+          var truncatedLength = truncatedString.length;
+          truncatedString = truncatedString.substring(1, truncatedLength - 1);
+
+          Object.assign(item.fields, {
+            excerpt: truncatedString,
+          });
+        }
+      });
+
+      // HANDLE TOP TEXT
+
+      let topText = resultArray[3];
+
+      const rawRichTextField = topText.fields.body;
+
+      Object.assign(topText.fields, {
+        renderedHtml: documentToHtmlString(rawRichTextField),
+      });
+      // welcomeRecord = topText;
+
+      youTubeRecord = resultArray[5].data.items;
+
+      // Filter out deleted videos
+      let trimmedYouTubeRecord = youTubeRecord.filter(
+        (record) => record.snippet.title !== "Deleted video"
+      );
+
+      let mostRecentStream = null;
+
+      // GO THROUGH 10 MOST RECENT LIVESTREAMS
+
+      trimmedYouTubeRecord.forEach((stream) => {
+        // PARSING THE DATE OF THIS LIVESTREAM
+        const startToGetDateInfoFromDescription = stream.snippet.description
+          .split(/, /g)[0]
+          .split(" ");
+        if (stream.snippet.description) {
+          const yearStarter = stream.snippet.description
+            .split(/(\d{4}. )/g)[1]
+            .split(". ")[0];
+
+          stream.parsedDate = moment(
+            `${
+              startToGetDateInfoFromDescription[
+                startToGetDateInfoFromDescription.length - 2
+              ]
+            } ${
+              startToGetDateInfoFromDescription[
+                startToGetDateInfoFromDescription.length - 1
+              ]
+            }, ${yearStarter}`,
+            "MMMM DD, YYYY"
+          );
+
+          // console.log("PARSED DATE: ", parsedDate);
+
+          // // IS THE STREAM CONNECTED TO TODAY?
+          // if (moment(parsedDate).isSame(moment(), 'day')) {
+          //   mostRecentStream = stream
+          // } else {
+          //   console.log("NOT SAME DAY")
+          // }
+        }
+      });
+
+      // SORT YOUTUBE RESULTS TO NEWEST IS FIRST
+      trimmedYouTubeRecord.sort((left, right) =>
+        moment.utc(right.parsedDate).diff(moment.utc(left.parsedDate))
+      );
+
+      trimmedYouTubeRecord.forEach((stream) => {
+        // DOES THE STREAM HAPPEN TODAY??
+        if (moment(stream.parsedDate).isSame(moment(), "day")) {
+          mostRecentStream = stream;
+          return;
+
+          // IF THE STREAM HAPPENS BEFORE TODAY
+        }
+        if (moment(stream.parsedDate).isBefore(moment(), "day")) {
+          if (mostRecentStream) {
+            return;
+          } else {
+            mostRecentStream = stream;
+          }
+        }
+      });
+
+      // .then(function(body) {
+
+      var hbsObject = {
+        events: dbEvent.items,
+        vimeo: vimeoRecord,
+        // vimeoAnn: vimeoAnnURL,
+        blogpost: blogItems,
+        youtubeStream: mostRecentStream,
+        homeWelcome: topText.fields.renderedHtml,
+        metaTitle:
+          "Rancho Bernardo Community Presbyterian Church | RBCPC San Diego",
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
+              <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
+        title: `Rancho Bernardo Community Presbyterian Church | RBCPC San Diego`,
+      };
+
+      res.render("home", hbsObject);
     });
+
+    // var vimeoRecord = null;
+    // let secondRecord = null;
+    // let thirdRecord = null;
+    // let vimeoAnnRecord = null;
+    // let vimeoAnnURL = null;
+    // let welcomeRecord = null;
+    let youTubeRecord = null;
+
+    // request(vimeoOptionsHome, function (error, response, body) {
+    // if (error) throw new Error(error);
+
+    // vimeoRecord = JSON.parse(body);
+    // console.log(`Vimeo Record ${vimeoRecord.data}`);
+
+    // request(vimeoOptionsAnnHome, function (error, response, body) {
+    // if (error) throw new Error(error);
+
+    // vimeoAnnRecord = JSON.parse(body);
+
+    // // a = vimeoAnnRecord.data[0].link;
+    // var items = vimeoAnnRecord.data;
+    // if (items.length > 0) {
+    //   // console.log("ITEMS: ", items)
+    //   let trimmedURL = getIdFromVimeoURL(items[0].link);
+
+    //   let editedEmbed = items[0].embed.html;
+    //   // console.log("TRIMMED URL: ", trimmedURL)
+    //   editedEmbed = editedEmbed.replace(
+    //     `" `,
+    //     `" data-aos="fade-right" class="about_image" `
+    //   );
+    //   // a = a.replace(`https://`,`//`)
+    //   // console.log("HERE: ", a)
+    //   // console.log(vimeoAnnRecord)
+
+    //   // vimeoAnnURL = getIdFromVimeoURL(a);
+    //   // vimeoAnnURL = trimmedURL;
+    //   // vimeoAnnURL = items[0].embed.html;
+    //   vimeoAnnURL = editedEmbed;
+    //   // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
+    // }
+
+    // client
+    //   .getEntries({
+    //     content_type: "events",
+    //     // "fields.featuredOnHome": true,
+    //     "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
+    //     "fields.homePagePassword": "Psalm 46:1",
+    //     order: "fields.date",
+    //     // limit: 3
+    //   })
+    // .then(function (dbEvent) {
+    // console.log("EVENT: ", dbEvent)
+    // console.log("LOOK HERE: ", dbEvent.items[0].fields);
+
+    // client
+    //   .getEntries({
+    //     content_type: "blog",
+    //     "fields.featureOnHomePage": true,
+    //     "fields.homePagePassword": "Psalm 46:1",
+    //     order: "-fields.datePosted",
+    //     limit: 3,
+    //   })
+    // .then(function (dbBlog) {
+    // var items = [];
+    // var itemsIncludingExpired = dbBlog.items;
+
+    // // ELIMINATING OLD ENTRIES FROM PAGE
+    // itemsIncludingExpired.forEach((earlyItem) => {
+    //   if (
+    //     moment(earlyItem.fields.expirationDate).isBefore(
+    //       moment().format("YYYY-MM-DD")
+    //     )
+    //   ) {
+    //   } else {
+    //     items.push(earlyItem);
+    //   }
+    // });
+
+    // // Converting times for template
+    // items.forEach((item) => {
+    //   Object.assign(item.fields, {
+    //     formattedDate: moment(item.fields.datePosted)
+    //       .format("DD MMM, YYYY")
+    //       .toUpperCase(),
+    //   });
+
+    //   if (item.fields.body) {
+    //     var truncatedString = JSON.stringify(
+    //       item.fields.body.content[0].content[0].value.replace(
+    //         /^(.{165}[^\s]*).*/,
+    //         "$1"
+    //       )
+    //     );
+    //     var truncatedLength = truncatedString.length;
+    //     truncatedString = truncatedString.substring(1, truncatedLength - 1);
+
+    //     Object.assign(item.fields, {
+    //       excerpt: truncatedString,
+    //     });
+    //   }
+    // });
+
+    // thirdRecord = items;
+
+    // client.getEntry("5yMSI9dIzpsdb55JvXkZk").then(function (entry) {
+    // // console.log("LOOK HERE: ", entry);
+    // const rawRichTextField = entry.fields.body;
+
+    // Object.assign(entry.fields, {
+    //   renderedHtml: documentToHtmlString(rawRichTextField),
+    // });
+    // welcomeRecord = entry;
+    // // console.log("LOOK HERE: ", welcomeRecord)
+
+    // request(streamYouTubeOptions(), function (error, response, body) {
+    // youTubeRecord = JSON.parse(body).items;
+
+    // });
+    // });
+    // });
+    // });
+    // });
+    // });
+    // });
   });
 
   app.get("/cms", function (req, res) {
@@ -885,51 +1016,89 @@ module.exports = function (app) {
     var thirdRecord = null;
     let youTubeRecord = null;
 
-    client
-      .getEntries({
+    Promise.all([
+      client.getEntries({
         content_type: "blog",
         order: "-fields.datePosted",
         "fields.ministry": req.params.id,
         limit: 10,
-      })
-      .then(function (entry) {
-        var items = [];
-        if (entry.total > 1) {
-          Object.assign(items, {
-            multipleEntries: true,
-          });
-        }
+      }),
+      axios.get(
+        `https://admin.rbcommunity.org/articles?ministries.name=${req.params.id}&_sort=datePosted&_limit=6`
+      ),
+    ]).then(function (resultArray) {
+      var items = { articles: [] };
 
-        if (entry.fields) {
-          Object.assign(entry.items[0].fields, {
-            request: req.params.id,
-          });
-        }
+      resultArray[1].data.forEach((strapiArticle) => {
+        // FORMATTING THE AUTHOR INFO INTO AN ARRAY TO CONFORM TO CONTENTFUL
+        let authorArray = [];
+        authorArray.push(strapiArticle.author);
+        strapiArticle.author = authorArray;
 
-        var itemsIncludingExpired = entry.items;
-        // ELIMINATING OLD ENTRIES FROM PAGE
-        itemsIncludingExpired.forEach((earlyItem) => {
-          if (
-            moment(earlyItem.fields.expirationDate).isBefore(
-              moment().format("YYYY-MM-DD")
-            )
-          ) {
-            null;
-          } else {
-            items.push(earlyItem);
-          }
+        // FORMATTING IMAGE
+        let formattedImage = {
+          fields: {
+            title: strapiArticle.image.name,
+            file: {
+              url: strapiArticle.image.url,
+              details: {
+                size: strapiArticle.image.size,
+                image: {
+                  width: strapiArticle.image.width,
+                  height: strapiArticle.image.height,
+                },
+              },
+              fileName: strapiArticle.image.name,
+              contentType: strapiArticle.image.mime,
+            },
+          },
+        };
+
+        strapiArticle.ministry = strapiArticle.ministries;
+        strapiArticle.image = formattedImage;
+        strapiArticle.fromStrapi = true;
+        resultArray[0].items.push({ fields: strapiArticle });
+      });
+
+      let entry = resultArray[0];
+
+      if (entry.total >= 1) {
+        Object.assign(items, {
+          multipleEntries: true,
+        });
+      }
+
+      if (entry.fields) {
+        Object.assign(entry.items[0].fields, {
+          request: req.params.id,
+        });
+      }
+
+      var itemsIncludingExpired = entry.items;
+      // ELIMINATING OLD ENTRIES FROM PAGE
+      itemsIncludingExpired.forEach((earlyItem) => {
+        if (
+          moment(earlyItem.fields.expirationDate).isBefore(
+            moment().format("YYYY-MM-DD")
+          )
+        ) {
+          null;
+        } else {
+          items.articles.push(earlyItem);
+        }
+      });
+
+      // Converting times for template
+      items.articles.forEach((item) => {
+        // Converting Date info
+        Object.assign(item.fields, {
+          formattedDate: moment(item.fields.datePosted)
+            .format("DD MMM, YYYY")
+            .toUpperCase(),
         });
 
-        // Converting times for template
-        items.forEach((item) => {
-          // Converting Date info
-          Object.assign(item.fields, {
-            formattedDate: moment(item.fields.datePosted)
-              .format("DD MMM, YYYY")
-              .toUpperCase(),
-          });
-
-          if (item.fields.body) {
+        if (item.fields.body) {
+          if (!item.fields.fromStrapi) {
             if (item.fields.body.content[0].content[0]) {
               // Creating article excerpt
               var truncatedString = JSON.stringify(
@@ -949,162 +1118,177 @@ module.exports = function (app) {
             }
           }
 
-          // Render HTML if featured on requested ministry
-          if (item.fields.featureOnMinistryPage) {
-            // console.log(item.fields)
-            const rawRichTextField = item.fields.body;
-            // let renderedHtml = documentToHtmlString(rawRichTextField);
-            Object.assign(item.fields, {
-              renderedHtml: documentToHtmlString(rawRichTextField),
-            });
+          if (item.fields.fromStrapi) {
+            let truncatedString = item.fields.body.replace(
+              /<\/?[^>]+(>|$)/g,
+              ""
+            );
+            item.fields.excerpt = truncatedString
+              .replace(/\s+/g, " ")
+              .split(/(?=\s)/gi)
+              .slice(0, 23)
+              .join("");
           }
-        });
+        }
 
-        // console.log("ITEMS: ", items)
+        // Render HTML if featured on requested ministry
+        if (item.fields.featureOnMinistryPage) {
+          // console.log(item.fields)
+          const rawRichTextField = item.fields.body;
+          // let renderedHtml = documentToHtmlString(rawRichTextField);
+          Object.assign(item.fields, {
+            renderedHtml: documentToHtmlString(rawRichTextField),
+          });
+        }
+      });
 
-        // items[multipleEntries] = entry.multipleEntries
+      // console.log("ITEMS: ", items)
 
-        firstRecord = items;
+      // items[multipleEntries] = entry.multipleEntries
 
-        client
-          .getEntries({
-            content_type: "events",
-            "fields.endDate[gte]": moment().format(),
-            "fields.ministry": req.params.id,
-            order: "fields.date",
-            limit: 6,
-          })
-          .then(function (dbEvent) {
-            var items = dbEvent.items;
+      // SORT ITEMS BY DATE POSTED
+      items.articles.sort(compareItemDatePosted);
 
-            // Converting times for template
-            items.forEach((item) => {
-              Object.assign(item.fields, {
-                shortMonth: moment(item.fields.date).format("MMM"),
-              });
-              Object.assign(item.fields, {
-                shortDay: moment(item.fields.date).format("DD"),
-              });
-              // if (item.fields.featured) {
+      // KEEP IT TO SIX ITEMS AFTER MERGING CONTENTFUL AND STRAPI APIS
+      firstRecord = items;
+
+      client
+        .getEntries({
+          content_type: "events",
+          "fields.endDate[gte]": moment().format(),
+          "fields.ministry": req.params.id,
+          order: "fields.date",
+          limit: 6,
+        })
+        .then(function (dbEvent) {
+          var items = dbEvent.items;
+
+          // Converting times for template
+          items.forEach((item) => {
+            Object.assign(item.fields, {
+              shortMonth: moment(item.fields.date).format("MMM"),
+            });
+            Object.assign(item.fields, {
+              shortDay: moment(item.fields.date).format("DD"),
+            });
+            // if (item.fields.featured) {
+            Object.assign(item.fields, {
+              dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
+            });
+            // CONVERT MARKDOWN TO HTML
+            if (item.fields.description) {
+              item.fields.description = marked(item.fields.description);
+            }
+            // }
+
+            // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
+            if (item.fields.repeatsEveryDays > 0) {
+              if (moment(item.fields.date).isBefore(moment())) {
+                let start = moment(item.fields.date);
+                let end = moment().format("YYYY-MM-DD");
+
+                while (start.isBefore(end)) {
+                  start.add(item.fields.repeatsEveryDays, "day");
+                }
+                // console.log(start.format("MM DD YYYY"));
+                item.fields.date = start.format("YYYY-MM-DD");
+                item.fields.shortMonth = start.format("MMM");
+                item.fields.shortDay = start.format("DD");
+              }
               Object.assign(item.fields, {
                 dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
               });
-              // CONVERT MARKDOWN TO HTML
-              if (item.fields.description) {
-                item.fields.description = marked(item.fields.description);
-              }
-              // }
+            }
+          });
 
-              // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
-              if (item.fields.repeatsEveryDays > 0) {
-                if (moment(item.fields.date).isBefore(moment())) {
-                  let start = moment(item.fields.date);
-                  let end = moment().format("YYYY-MM-DD");
+          // SORT EVENTS BY NEWLY CALCULATED DATE
+          items.sort(compare);
 
-                  while (start.isBefore(end)) {
-                    start.add(item.fields.repeatsEveryDays, "day");
-                  }
-                  // console.log(start.format("MM DD YYYY"));
-                  item.fields.date = start.format("YYYY-MM-DD");
-                  item.fields.shortMonth = start.format("MMM");
-                  item.fields.shortDay = start.format("DD");
-                }
+          secondRecord = items;
+
+          client
+            .getEntries({
+              content_type: "blog",
+              "fields.ministry": req.params.id,
+              "fields.featureOnMinistryPage": true,
+              limit: 1,
+            })
+            .then(function (entry) {
+              var item = entry.items[0];
+              if (item) {
+                const rawRichTextField = item.fields.body;
+                // let renderedHtml = documentToHtmlString(rawRichTextField);
                 Object.assign(item.fields, {
-                  dateToCountTo: moment(item.fields.date).format(
-                    "MMMM D, YYYY"
-                  ),
+                  renderedHtml: documentToHtmlString(rawRichTextField),
                 });
               }
-            });
 
-            // SORT EVENTS BY NEWLY CALCULATED DATE
-            items.sort(compare);
+              thirdRecord = item;
 
-            secondRecord = items;
+              if (
+                req.params.id === "Children" ||
+                req.params.id == "Family Ministries"
+              ) {
+                request(
+                  newYouTubeOptions("PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ"),
+                  function (error, response, body) {
+                    if (error) throw new Error(error);
 
-            client
-              .getEntries({
-                content_type: "blog",
-                "fields.ministry": req.params.id,
-                "fields.featureOnMinistryPage": true,
-                limit: 1,
-              })
-              .then(function (entry) {
-                var item = entry.items[0];
-                if (item) {
-                  const rawRichTextField = item.fields.body;
-                  // let renderedHtml = documentToHtmlString(rawRichTextField);
-                  Object.assign(item.fields, {
-                    renderedHtml: documentToHtmlString(rawRichTextField),
-                  });
-                }
+                    youTubeRecord = JSON.parse(body);
 
-                thirdRecord = item;
+                    prepMinistryPage();
+                  }
+                );
+              } else if (req.params.id === "Adult Education") {
+                request(
+                  newYouTubeOptions("PLZ13IHPbJRZ6Iz2cphwea8AzUqUqFiPUw"),
+                  function (error, response, body) {
+                    if (error) throw new Error(error);
 
-                if (
-                  req.params.id === "Children" ||
-                  req.params.id == "Family Ministries"
-                ) {
-                  request(
-                    newYouTubeOptions("PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ"),
-                    function (error, response, body) {
-                      if (error) throw new Error(error);
+                    youTubeRecord = JSON.parse(body);
 
-                      youTubeRecord = JSON.parse(body);
+                    prepMinistryPage();
+                  }
+                );
+              } else if (
+                req.params.id === "Chancel Choir, Ensembles & Orchestra"
+              ) {
+                request(
+                  newYouTubeOptions("PLZ13IHPbJRZ6B3OcxF4pXk6uKwrEKTz-t"),
+                  function (error, response, body) {
+                    if (error) throw new Error(error);
 
-                      prepMinistryPage();
-                    }
-                  );
-                } else if (req.params.id === "Adult Education") {
-                  request(
-                    newYouTubeOptions("PLZ13IHPbJRZ6Iz2cphwea8AzUqUqFiPUw"),
-                    function (error, response, body) {
-                      if (error) throw new Error(error);
+                    youTubeRecord = JSON.parse(body);
 
-                      youTubeRecord = JSON.parse(body);
+                    prepMinistryPage();
+                  }
+                );
+              } else {
+                prepMinistryPage();
+              }
 
-                      prepMinistryPage();
-                    }
-                  );
-                } else if (
-                  req.params.id === "Chancel Choir, Ensembles & Orchestra"
-                ) {
-                  request(
-                    newYouTubeOptions("PLZ13IHPbJRZ6B3OcxF4pXk6uKwrEKTz-t"),
-                    function (error, response, body) {
-                      if (error) throw new Error(error);
+              // console.log("SECOND RECORD: ", secondRecord);
 
-                      youTubeRecord = JSON.parse(body);
+              // console.log("LOOK HERE", entry)
 
-                      prepMinistryPage();
-                    }
-                  );
-                } else {
-                  prepMinistryPage();
-                }
-
-                // console.log("SECOND RECORD: ", secondRecord);
-
-                // console.log("LOOK HERE", entry)
-
-                function prepMinistryPage() {
-                  var bloghbsObject = {
-                    blogpost: firstRecord,
-                    request: req.params.id,
-                    events: secondRecord,
-                    header: thirdRecord,
-                    active: { ministries: true },
-                    headContent: `<link rel="stylesheet" type="text/css" href="styles/ministry.css">
+              function prepMinistryPage() {
+                var bloghbsObject = {
+                  blogpost: firstRecord,
+                  request: req.params.id,
+                  events: secondRecord,
+                  header: thirdRecord,
+                  active: { ministries: true },
+                  headContent: `<link rel="stylesheet" type="text/css" href="styles/ministry.css">
               <link rel="stylesheet" type="text/css" href="styles/ministry_responsive.css">`,
-                    title: req.params.id,
-                    youTubeVideos: youTubeRecord,
-                  };
-                  // console.log("hbsObject:  ", bloghbsObject.blogpost);
-                  res.render("ministry", bloghbsObject);
-                }
-              });
-          });
-      });
+                  title: req.params.id,
+                  youTubeVideos: youTubeRecord,
+                };
+                // console.log("hbsObject:  ", bloghbsObject.blogpost);
+                res.render("ministry", bloghbsObject);
+              }
+            });
+        });
+    });
   });
 
   // Page for individual events
