@@ -5,6 +5,7 @@ var moment = require("moment");
 var path = require("path");
 var marked = require("marked");
 let showdown = require("showdown");
+let qs = require("qs");
 // let axios = require(axios)
 // let axios = require("axios");
 
@@ -233,8 +234,33 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
   return entry;
 }
 
+const prepBlogsForGroupPage = (untreatedBlogs) => {
+  var items = [];
+  // SORT ALL ITEMS BY DATE POSTED
+
+  untreatedBlogs.sort(compareItemDatePosted);
+
+  // ELIMINATING OLD ENTRIES FROM PAGE
+  untreatedBlogs.forEach((earlyItem) => {
+    if (
+      moment(earlyItem.fields.expirationDate).isBefore(
+        moment().format("YYYY-MM-DD")
+      )
+    ) {
+    } else {
+      items.push(earlyItem);
+    }
+  });
+
+  // Converting times for template
+  items.forEach((item) => {
+    prepBlogDataForTemplate(item);
+  });
+
+  return items;
+};
+
 function renderSingleBlog(entry, res) {
-  // console.log("ENTRY: ", entry)
   let newMetaDescription;
   entry.fields.metaDescription
     ? (newMetaDescription = entry.fields.metaDescription)
@@ -256,7 +282,6 @@ function renderSingleBlog(entry, res) {
               <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`,
     title: browserTitle,
   };
-  // console.log("hbsObject:  ", bloghbsObject.article);
   res.render("blog_single", bloghbsObject);
 }
 
@@ -349,7 +374,6 @@ module.exports = function (app) {
       }),
       axios.get("https://admin.rbcommunity.org/articles?_sort=datePosted"),
     ]).then(function (resultArray) {
-      var items = [];
       var itemsIncludingExpired = resultArray[0].items;
 
       // FORMATTING STRAPI DATA TO MATCH CONTENTFUL
@@ -359,30 +383,7 @@ module.exports = function (app) {
         itemsIncludingExpired.push(formattedArticle);
       });
 
-      // SORT ALL ITEMS BY DATE POSTED
-
-      itemsIncludingExpired.sort(compareItemDatePosted);
-
-      // itemsIncludingExpired.push(resultArray[1].data)
-
-      // console.log("2nd ARR: ", resultArray[1].data)
-
-      // ELIMINATING OLD ENTRIES FROM PAGE
-      itemsIncludingExpired.forEach((earlyItem) => {
-        if (
-          moment(earlyItem.fields.expirationDate).isBefore(
-            moment().format("YYYY-MM-DD")
-          )
-        ) {
-        } else {
-          items.push(earlyItem);
-        }
-      });
-
-      // Converting times for template
-      items.forEach((item) => {
-        prepBlogDataForTemplate(item);
-      });
+      const items = prepBlogsForGroupPage(itemsIncludingExpired);
 
       var hbsObject = {
         blogpost: items,
@@ -1737,13 +1738,36 @@ module.exports = function (app) {
   app.get("/search:term", async (req, res) => {
     let searchTerm = req.params.term.substring(1);
 
+    const query = qs.stringify({
+      _where: {
+        _or: [
+          [{ author_contains: searchTerm }],
+          [{ title_contains: searchTerm }],
+          [{ body_contains: searchTerm }],
+        ],
+      },
+    });
+
     try {
       const results = await Promise.all([
         client.getEntries({ query: searchTerm }),
+        axios.get(`https://admin.rbcommunity.org/articles?${query}`),
       ]);
+
+      results[1].data.forEach((article) => {
+        let formattedArticle = {
+          sys: { contentType: { sys: { id: "blog" } } },
+        };
+        formattedArticle.fields = article;
+        results[0].items.push(formattedArticle);
+      });
+      
+
+      //
 
       // ITERATE THROUGH CONTENTFUL RESULTS (RESULTS[0])
       results[0].items.forEach((entry) => {
+        console.log("Entry: ", entry);
         // IF IT'S AN EVENT
         if (entry.sys.contentType.sys.id === "events") {
           prepEventDataForTemplate(entry);
