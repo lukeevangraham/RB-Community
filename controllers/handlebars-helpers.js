@@ -38,6 +38,9 @@ module.exports = {
         break;
     }
   },
+  getCloudinaryResize: (url, width) => {
+    return `${url.replace("/upload/", `/upload/ar_2.34,w_${width},c_fill/`)} ${width}w`;
+  },
   // function(name, options) {
   //     if(!this._sections) this._section = {};
   //     this._sections[name] = options.fn(this);

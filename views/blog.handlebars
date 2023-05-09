@@ -58,9 +58,20 @@
                 <div class="news_image"><a
                     href="./blog-{{changeSpacesToDashes this.fields.title}}"
                   ><img
+                      srcset="{{getCloudinaryResize
+                        this.fields.image.url
+                        this.fields.image.width
+                      }}, {{getCloudinaryResize
+                        this.fields.image.url
+                        500
+                      }}, {{getCloudinaryResize
+                        this.fields.image.url
+                        720
+                      }}, {{getCloudinaryResize this.fields.image.url 1200}}"
+                      sizes="(max-width: 600px) 510px, (max-width: 1199px) 450px, 360px"
                       data-src="{{this.fields.image.url}}"
                       class="lazyload"
-                      alt=""
+                      alt="{{this.fields.image.alternativeText}}"
                     /></a></div>
               {{/if}}
               <div class="news_post_content">
@@ -73,7 +84,7 @@
                   <ul>
                     <li><i class="fa fa-user" aria-hidden="true"></i><a
                         href="#"
-                      >{{#each fields.author}}{{this}}{{/each}}</a></li>
+                      >{{this.fields.author}}</a></li>
                     <li><i class="fa fa-calendar-o" aria-hidden="true"></i><a
                         href="#"
                       >{{this.fields.formattedDate}}</a></li>
