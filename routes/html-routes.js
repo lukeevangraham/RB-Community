@@ -1735,6 +1735,10 @@ module.exports = function (app) {
     );
   });
 
+  app.get("/familyemail", async (req, res) => {
+    res.redirect("https://www.shelbygiving.com/App/Form/66e76d8c-967e-4434-a560-2a39ff87a60b")
+  })
+
   app.get("/search:term", async (req, res) => {
     let searchTerm = req.params.term.substring(1);
 
