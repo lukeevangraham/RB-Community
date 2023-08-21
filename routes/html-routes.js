@@ -482,16 +482,16 @@ module.exports = function (app) {
       }),
       client.getEntry("5yMSI9dIzpsdb55JvXkZk"),
       axios.get("https://admin.rbcommunity.org/home"),
-      // axios({
-      //   url: "https://www.googleapis.com/youtube/v3/playlistItems",
-      //   method: "get",
-      //   params: {
-      //     key: process.env.GOOGLE_KEY,
-      //     playlistId: "PLZ13IHPbJRZ7amo_md0SxN_CZgnu9DnxJ",
-      //     part: "snippet,contentDetails",
-      //     maxResults: "10",
-      //   },
-      // }),
+      axios({
+        url: "https://www.googleapis.com/youtube/v3/playlistItems",
+        method: "get",
+        params: {
+          key: process.env.GOOGLE_KEY,
+          playlistId: "PLZ13IHPbJRZ7amo_md0SxN_CZgnu9DnxJ",
+          part: "snippet,contentDetails",
+          maxResults: "10",
+        },
+      }),
     ]).then((resultArray) => {
       let vimeoRecord = resultArray[0].data;
 
@@ -606,77 +606,81 @@ module.exports = function (app) {
       });
       // welcomeRecord = topText;
 
-
       // YOUTUBE STUFF
 
-      // youTubeRecord = resultArray[5].data.items;
+      youTubeRecord = resultArray[5].data.items;
 
-      // // Filter out deleted videos
-      // let trimmedYouTubeRecord = youTubeRecord.filter(
-      //   (record) => record.snippet.title !== "Deleted video"
-      // );
+      // Filter out deleted videos
+      let trimmedYouTubeRecord = youTubeRecord.filter(
+        (record) => record.snippet.title !== "Deleted video"
+      );
 
-      // let mostRecentStream = null;
+      let mostRecentStream = null;
 
-      // // GO THROUGH 10 MOST RECENT LIVESTREAMS
+      // GO THROUGH 10 MOST RECENT LIVESTREAMS
 
-      // trimmedYouTubeRecord.forEach((stream) => {
-      //   // PARSING THE DATE OF THIS LIVESTREAM
-      //   const startToGetDateInfoFromDescription = stream.snippet.description
-      //     .split(/, /g)[0]
-      //     .split(" ");
-      //   if (stream.snippet.description) {
-      //     const yearStarter = stream.snippet.description
-      //       .split(/(\d{4}. )/g)[1]
-      //       .split(". ")[0];
+      trimmedYouTubeRecord.forEach((stream) => {
+        // PARSING THE DATE OF THIS LIVESTREAM
 
-      //     stream.parsedDate = moment(
-      //       `${
-      //         startToGetDateInfoFromDescription[
-      //           startToGetDateInfoFromDescription.length - 2
-      //         ]
-      //       } ${
-      //         startToGetDateInfoFromDescription[
-      //           startToGetDateInfoFromDescription.length - 1
-      //         ]
-      //       }, ${yearStarter}`,
-      //       "MMMM DD, YYYY"
-      //     );
+        // PRIVATE VIDEOS NEED TO BE GIVEN A VERY OLD DATE TO BE IGNORED
+        if (stream.snippet.title !== "Private video") {
+          const startToGetDateInfoFromDescription = stream.snippet.description
+            .split(/, /g)[0]
+            .split(" ");
+          if (stream.snippet.description) {
+            const yearStarter = stream.snippet.description
+              .split(/(\d{4}. )/g)[1]
+              .split(". ")[0];
 
-      //     // console.log("PARSED DATE: ", parsedDate);
+            stream.parsedDate = moment(
+              `${
+                startToGetDateInfoFromDescription[
+                  startToGetDateInfoFromDescription.length - 2
+                ]
+              } ${
+                startToGetDateInfoFromDescription[
+                  startToGetDateInfoFromDescription.length - 1
+                ]
+              }, ${yearStarter}`,
+              "MMMM DD, YYYY"
+            );
 
-      //     // // IS THE STREAM CONNECTED TO TODAY?
-      //     // if (moment(parsedDate).isSame(moment(), 'day')) {
-      //     //   mostRecentStream = stream
-      //     // } else {
-      //     //   console.log("NOT SAME DAY")
-      //     // }
-      //   }
-      // });
+            // console.log("PARSED DATE: ", parsedDate);
 
-      // // SORT YOUTUBE RESULTS TO NEWEST IS FIRST
-      // trimmedYouTubeRecord.sort((left, right) =>
-      //   moment.utc(right.parsedDate).diff(moment.utc(left.parsedDate))
-      // );
+            // // IS THE STREAM CONNECTED TO TODAY?
+            // if (moment(parsedDate).isSame(moment(), 'day')) {
+            //   mostRecentStream = stream
+            // } else {
+            //   console.log("NOT SAME DAY")
+            // }
+          }
+        } else {
+          // PRIVATE VIDEOS NEED TO BE GIVEN A VERY OLD DATE TO BE IGNORED
+          stream.parsedDate = moment().subtract(1, "years");
+        }
+      });
 
-      // trimmedYouTubeRecord.forEach((stream) => {
-      //   // DOES THE STREAM HAPPEN TODAY??
-      //   if (moment(stream.parsedDate).isSame(moment(), "day")) {
-      //     mostRecentStream = stream;
-      //     return;
+      // SORT YOUTUBE RESULTS TO NEWEST IS FIRST
+      trimmedYouTubeRecord.sort((left, right) =>
+        moment.utc(right.parsedDate).diff(moment.utc(left.parsedDate))
+      );
 
-      //     // IF THE STREAM HAPPENS BEFORE TODAY
-      //   }
-      //   if (moment(stream.parsedDate).isBefore(moment(), "day")) {
-      //     if (mostRecentStream) {
-      //       return;
-      //     } else {
-      //       mostRecentStream = stream;
-      //     }
-      //   }
-      // });
+      trimmedYouTubeRecord.forEach((stream) => {
+        // DOES THE STREAM HAPPEN TODAY??
+        if (moment(stream.parsedDate).isSame(moment(), "day")) {
+          mostRecentStream = stream;
+          return;
 
-      // end of youtube
+          // IF THE STREAM HAPPENS BEFORE TODAY
+        }
+        if (moment(stream.parsedDate).isBefore(moment(), "day")) {
+          if (mostRecentStream) {
+            return;
+          } else {
+            mostRecentStream = stream;
+          }
+        }
+      });
 
       // .then(function(body) {
 
@@ -685,7 +689,7 @@ module.exports = function (app) {
         vimeo: vimeoRecord,
         // vimeoAnn: vimeoAnnURL,
         blogpost: blogItems,
-        // youtubeStream: mostRecentStream,
+        youtubeStream: mostRecentStream,
         homeWelcome: topText.fields.renderedHtml,
         metaTitle:
           "Rancho Bernardo Community Presbyterian Church | RBCPC San Diego",
