@@ -360,6 +360,7 @@ $(document).ready(function () {
 });
 
 async function handleContactSubmission(e) {
+
   // e.preventDefault();
   const values = document.querySelector("#contactForm").elements;
 

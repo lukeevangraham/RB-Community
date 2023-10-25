@@ -30,6 +30,39 @@ module.exports = function (app) {
   });
 
   app.post("/api/contact", (req, res) => {
-    main(req.body, "info@rbcpc.org").then(res.json("Message sent"));
+    // main(req.body, "info@rbcpc.org").then(res.json("Message sent"));
+
+    let data = JSON.stringify({
+      recipients: [{ address: "info@rbcpc.org" }],
+      content: {
+        from: {
+          email: "donotreply@mail.grahamwebworks.com",
+          name: "RBCOMMUNITY.ORG",
+        },
+        subject: "An email via RBCOMMUNITY.ORG",
+        text: `${req.body.name}, (${req.body.email}) sent you a message from RBCOMMUNITY.ORG saying: \n\n  ${req.body.message}`, // plain text body
+      },
+    });
+
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://api.sparkpost.com/api/v1/transmissions",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: process.env.SPARKPOST_API_KEY,
+      },
+      data: data,
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+        res.json({ status: 200, message: "Message sent" });
+      })
+      .catch((error) => {
+        console.log("Error: ", error);
+      });
   });
 };
