@@ -330,22 +330,37 @@ const prepBlogDataForTemplate = (blogData) => {
       .toUpperCase(),
   });
 
+  let truncatedString = null;
+
   if (blogData.fields.body) {
-    // CONTENTFUL ITEMS USE THE ".content" value
     if (blogData.fields.body.content) {
-      if (blogData.fields.body.content[0].content[0]) {
-        var truncatedString = JSON.stringify(
-          blogData.fields.body.content[0].content[0].value
-            .replace(/^(.{165}[^\s]*).*/, "$1")
-            .replace(/(\r\n|\n|\r)/gm, "")
+      if (blogData.fields.body?.content?.[0].content?.[0]) {
+        // CONTENTFUL ITEMS USE THE ".content" value
+        let maxLengthOfTruncatedString = 165;
+
+        // trim the tring to maximum length
+        truncatedString = JSON.stringify(
+          blogData.fields.body?.content?.[0]?.content?.[0]?.value.substr(
+            0,
+            maxLengthOfTruncatedString
+          )
         );
-        var truncatedLength = truncatedString.length;
-        truncatedString = truncatedString
-          .substring(1, truncatedLength - 1)
-          .replace(/RBCC/g, "RB Community");
+
+        // retrim if we are in the middle of a word
+        truncatedString
+          ? (truncatedString = truncatedString
+              .substr(
+                0,
+                Math.min(
+                  truncatedString.length,
+                  truncatedString.lastIndexOf(" ")
+                )
+              )
+              .replace(/RBCC/g, "RB Community"))
+          : null;
       }
     } else if (blogData.fields.body) {
-      var truncatedString = blogData.fields.body
+      truncatedString = blogData.fields.body
         .toString()
         .replace(/<br\s*[\/]?>/gi, "\n")
         .replace(/<\/?[^>]+(>|$)/g, "")
