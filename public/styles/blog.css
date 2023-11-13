@@ -752,6 +752,8 @@ section
 .news_image img
 {
 	max-width: 100%;
+	aspect-ratio: 1170/500;
+	object-fit: cover;
 }
 .news_post_title
 {
