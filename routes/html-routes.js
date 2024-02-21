@@ -188,7 +188,7 @@ function compareItemDatePosted(a, b) {
 }
 
 function prepareBlogEntryForSinglePage(entry, requestId) {
-  // console.log("ENTRY: ", entry.fields.body.content)
+  console.log("ENTRY: ", entry.fields.body.content)
 
   Object.assign(entry.fields, {
     shortMonth: moment(entry.fields.datePosted).format("MMM").toUpperCase(),
@@ -508,6 +508,9 @@ module.exports = function (app) {
         },
       }),
     ]).then((resultArray) => {
+
+      
+
       let vimeoRecord = resultArray[0].data;
 
       if (vimeoRecord.data) {
@@ -623,6 +626,8 @@ module.exports = function (app) {
 
       // YOUTUBE STUFF
 
+      // console.log("RES ARR: ", resultArray[5])
+
       youTubeRecord = resultArray[5].data.items;
 
       // Filter out deleted videos
@@ -679,6 +684,7 @@ module.exports = function (app) {
       trimmedYouTubeRecord.sort((left, right) =>
         moment.utc(right.parsedDate).diff(moment.utc(left.parsedDate))
       );
+
 
       trimmedYouTubeRecord.forEach((stream) => {
         // DOES THE STREAM HAPPEN TODAY??
