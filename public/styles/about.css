@@ -272,6 +272,11 @@ section {
   font-weight: 700;
 }
 
+.givingButton {
+  width: unset;
+  padding: 0 1rem;
+}
+
 .li {
   font-size: 17px;
   color: #7c7c7c;

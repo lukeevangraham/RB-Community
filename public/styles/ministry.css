@@ -116,11 +116,9 @@ p a:hover::after {
   opacity: 0.2;
 }
 
-::selection {
-}
+::selection {}
 
-p::selection {
-}
+p::selection {}
 
 h1 {
   font-size: 48px;
@@ -159,8 +157,7 @@ h2::selection,
 h3::selection,
 h4::selection,
 h5::selection,
-h6::selection {
-}
+h6::selection {}
 
 .form-control {
   color: #db5246;
@@ -303,8 +300,7 @@ section {
   width: 100%;
 }
 
-.header.scrolled .top_bar {
-}
+.header.scrolled .top_bar {}
 
 .top_bar_background {
   position: absolute;
@@ -332,13 +328,13 @@ section {
 }
 
 .top_bar_contact_list li i,
-.top_bar_contact_list li > div {
+.top_bar_contact_list li>div {
   display: inline-block;
   font-size: 12px;
   color: #ffffff;
 }
 
-.top_bar_contact_list li > div {
+.top_bar_contact_list li>div {
   margin-left: 5px;
 }
 
@@ -446,8 +442,7 @@ section {
 3.4 Main Nav
 *********************************/
 
-.main_nav_contaner {
-}
+.main_nav_contaner {}
 
 .main_nav,
 .search_button {
@@ -760,14 +755,19 @@ section {
 
 .news_post {
   width: 100%;
+  /* background-color: orangered; */
 }
 
 .news_image {
   width: 100%;
+  aspect-ratio: 1170/500;
+  object-fit: cover;
 }
 
 .news_image img {
   max-width: 100%;
+  aspect-ratio: 1170/500;
+  object-fit: cover;
 }
 
 .news_post_title {
@@ -1282,7 +1282,7 @@ section {
   background: #327091;
 }
 
-.event_date > div {
+.event_date>div {
   width: 70px;
   height: 70px;
 }
