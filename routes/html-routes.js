@@ -1646,15 +1646,15 @@ module.exports = function (app) {
     });
   });
 
-  app.get(["/easter", "/lent"], (req, res) => {
-    res.render("easter", {
-      headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
-      <link rel="stylesheet" type="text/css" href="styles/easter.css"><link rel="preconnect" href="https://fonts.gstatic.com"> 
-      <link href="https://fonts.googleapis.com/css2?family=Cardo&display=swap" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
-      title: `Easter`,
-    });
-  });
+  // app.get(["/easter", "/lent"], (req, res) => {
+  //   res.render("easter", {
+  //     headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+  //     <link rel="stylesheet" type="text/css" href="styles/easter.css"><link rel="preconnect" href="https://fonts.gstatic.com"> 
+  //     <link href="https://fonts.googleapis.com/css2?family=Cardo&display=swap" rel="stylesheet">
+  //       <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
+  //     title: `Easter`,
+  //   });
+  // });
 
   app.get("/christmas", (req, res) => {
     res.render("christmas", {
