@@ -1761,7 +1761,7 @@ module.exports = function (app) {
 
   app.get("/nominate", async (req, res) => {
     res.redirect(
-      "https://res.cloudinary.com/rb-community-church/raw/upload/v1713378502/Nomination_form_68d8aad9f9.docx"
+      "https://res.cloudinary.com/rb-community-church/raw/upload/v1713975397/Updated_nomination_form_54e4b5bf09.docx"
     );
   });
 
