@@ -1576,7 +1576,7 @@ module.exports = function (app) {
 
   app.get("/jobs", function (req, res) {
     request(
-      "https://admin.rbcommunity.org/jobs?_sort=id:DESC",
+      "https://admin.rbcommunity.org/jobs?_sort=Title:ASC",
       function (error, response, body) {
         let parsedJobs = JSON.parse(body);
 
