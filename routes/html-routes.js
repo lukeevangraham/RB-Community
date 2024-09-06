@@ -881,8 +881,6 @@ module.exports = function (app) {
           prepEventDataForTemplate(item);
         });
 
-        console.log("ITEMS: ", item)
-
         // SORT EVENTS BY NEWLY CALCULATED DATE
         items.sort(compare);
 
