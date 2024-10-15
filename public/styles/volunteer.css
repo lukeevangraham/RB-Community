@@ -1,0 +1,25 @@
+.Volunteer {
+  min-height: 50vh;
+
+  .List {
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+
+    .Card {
+      position: relative;
+
+      .VolunteerImage {
+        position: absolute;
+        width: 100%;
+      }
+
+      .Title {
+        font-size: 18px;
+        color: #181818;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+    }
+  }
+}

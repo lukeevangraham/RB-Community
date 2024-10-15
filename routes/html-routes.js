@@ -188,7 +188,7 @@ function compareItemDatePosted(a, b) {
 }
 
 function prepareBlogEntryForSinglePage(entry, requestId) {
-  console.log("ENTRY: ", entry.fields.body.content)
+  console.log("ENTRY: ", entry.fields.body.content);
 
   Object.assign(entry.fields, {
     shortMonth: moment(entry.fields.datePosted).format("MMM").toUpperCase(),
@@ -508,9 +508,6 @@ module.exports = function (app) {
         },
       }),
     ]).then((resultArray) => {
-
-      
-
       let vimeoRecord = resultArray[0].data;
 
       if (vimeoRecord.data) {
@@ -684,7 +681,6 @@ module.exports = function (app) {
       trimmedYouTubeRecord.sort((left, right) =>
         moment.utc(right.parsedDate).diff(moment.utc(left.parsedDate))
       );
-
 
       trimmedYouTubeRecord.forEach((stream) => {
         // DOES THE STREAM HAPPEN TODAY??
@@ -1649,7 +1645,7 @@ module.exports = function (app) {
   // app.get(["/easter", "/lent"], (req, res) => {
   //   res.render("easter", {
   //     headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
-  //     <link rel="stylesheet" type="text/css" href="styles/easter.css"><link rel="preconnect" href="https://fonts.gstatic.com"> 
+  //     <link rel="stylesheet" type="text/css" href="styles/easter.css"><link rel="preconnect" href="https://fonts.gstatic.com">
   //     <link href="https://fonts.googleapis.com/css2?family=Cardo&display=swap" rel="stylesheet">
   //       <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
   //     title: `Easter`,
@@ -1773,6 +1769,23 @@ module.exports = function (app) {
 
   app.get("/frances", async (req, res) => {
     res.redirect("https://www.youtube.com/watch?v=G1_zVoJSflk");
+  });
+
+  app.get("/volunteer", async (req, res) => {
+    Promise.all([
+      axios.get(
+        "https://fpserver.grahamwebworks.com/api/volunteer/published/org/1"
+      ),
+    ]).then((resultArray) => {
+      const hbsObject = {
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
+  <link rel="stylesheet" type="text/css" href="styles/volunteer.css">
+                        <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
+        openings: resultArray[0].data,
+      };
+      res.render("volunteer", hbsObject);
+    });
   });
 
   app.get("/search:term", async (req, res) => {

@@ -1,0 +1,18 @@
+<div class="Card">
+
+  <div class="Title">{{this.position}}</div>
+  <img
+  class="VolunteerImage"
+    src="{{this.Image.url}}"
+    alt="Image of {{this.position}}"
+    {{!-- srcset="{{this.Image.url}} {{this.Image.width}}w" --}}
+    srcset="{{getCloudinaryResize
+      this.Image.url
+      this.Image.width
+    }}, {{getCloudinaryResize this.Image.url 400}}, {{getCloudinaryResize
+      this.Image.url
+      800
+    }}, {{getCloudinaryResize this.Image.url 1200}}"
+    sizes="(max-width: 600px) 545px, (max-width: 1199px) 360px, 360px"
+  />
+</div>
