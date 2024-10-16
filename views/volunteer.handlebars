@@ -28,9 +28,14 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <div class="SingleImage">
-          <img src="{{this.opening.Image.url}}" alt="" srcset="" />
-        </div>
+
+        <img
+          src="{{this.opening.Image.url}}"
+          alt=""
+          srcset=""
+          class="SingleImage"
+        />
+
         <div class="section_title_container text-center">
           <div class="section_title mb-4">
             {{this.opening.position}}
@@ -45,10 +50,21 @@
 
     <div class="row">
       <div class="col">
+        <div class="topInfo">
+
+          <div><span class="label">Sponsoring ministry:
+            </span>{{this.opening.sponsoringMinistry}}</div>
+          <div><span class="label">Primary contact:
+            </span>{{this.opening.primaryContact}}</div>
+          <div><span class="label">Time committment:
+            </span>{{this.opening.frequency}}</div>
+        </div>
 
         {{log this}}
 
-        {{{this.opening.description}}}
+        <div class="description">
+          {{{this.opening.description}}}
+        </div>
 
       </div>
     </div>
