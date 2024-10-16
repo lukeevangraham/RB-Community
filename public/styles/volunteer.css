@@ -4,7 +4,7 @@
   position: relative;
 
   .List {
-    padding: 52px 0;
+    padding: 52px 0 89px 0;
     display: flex;
     gap: 1rem;
     width: 100%;
@@ -48,7 +48,7 @@
 
 .VolunteerSingle {
   /* background-color: orangered; */
-  padding: 52px 0;
+  padding: 89px 0;
 
   .SingleImage {
     width: 100%;
@@ -58,10 +58,11 @@
   }
 
   .topInfo {
-    margin: 1.5rem 0;
+    margin: 1.5rem auto;
     font-size: 16px;
     color: #181818;
     line-height: 2;
+    max-width: 550px;
 
     .label {
       font-weight: 700;
@@ -70,7 +71,12 @@
 
   .description {
     font-size: 16px;
-    max-width: 500px;
+    max-width: 550px;
+    margin: auto;
+    color: #181818;
+    & > * {
+      color: #181818;
+    }
     p {
       margin-bottom: 0;
     }
