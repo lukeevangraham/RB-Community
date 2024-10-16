@@ -1,25 +1,68 @@
 .Volunteer {
-  min-height: 50vh;
+  /* min-height: 100vh; */
+  display: block;
+  position: relative;
 
   .List {
+    padding: 52px 0;
     display: flex;
+    gap: 1rem;
     width: 100%;
     justify-content: space-evenly;
 
-    .Card {
-      position: relative;
+    a {
+      flex: 0 1 31%;
+      .Card {
+        position: relative;
+        /* height: fit-content; */
 
-      .VolunteerImage {
-        position: absolute;
-        width: 100%;
-      }
+        .VolunteerImage {
+          position: relative;
+          width: 100%;
+          /* height: 200px; */
+          aspect-ratio: 16 / 9;
 
-      .Title {
-        font-size: 18px;
-        color: #181818;
-        text-transform: uppercase;
-        font-weight: 700;
+          img {
+            object-fit: cover;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+          }
+        }
+
+        .Title {
+          font-size: 18px;
+          color: #181818;
+          text-transform: uppercase;
+          font-weight: 700;
+          position: absolute;
+          bottom: 8px;
+          left: 8px;
+          background-color: #ffffffb6;
+          padding: 0.05rem 1rem;
+        }
       }
+    }
+  }
+}
+
+.VolunteerSingle {
+  /* background-color: orangered; */
+  padding: 52px 0;
+
+  .SingleImage {
+    width: 100%;
+    /* height: 100px; */
+    position: relative;
+    aspect-ratio: 16 / 6;
+    overflow: hidden;
+    /* object-position: bottom; */
+
+    img {
+      position: absolute;
+
+      object-fit: cover;
+      object-position: bottom;
     }
   }
 }

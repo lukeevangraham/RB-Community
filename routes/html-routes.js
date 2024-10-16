@@ -1784,6 +1784,27 @@ module.exports = function (app) {
                         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
         openings: resultArray[0].data,
       };
+      res.render("volunteers", hbsObject);
+    });
+  });
+
+  app.get("/volunteer:id", (req, res) => {
+    let position = req.params.id.substring(1);
+
+    position = position.replace(/-/g, " ");
+
+    Promise.all([
+      axios.get(
+        `https://fpserver.grahamwebworks.com/api/volunteer/published/position/${position}/1`
+      ),
+    ]).then((resultArray) => {
+      const hbsObject = {
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
+  <link rel="stylesheet" type="text/css" href="styles/volunteer.css">
+                        <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
+        opening: resultArray[0].data,
+      };
       res.render("volunteer", hbsObject);
     });
   });

@@ -23,38 +23,41 @@
   </div>
 </div>
 
-<div class="VolunteerSingle">
-  {{! <div class="bg_selection"> }}
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <div class="SingleImage">
-          <img src="{{this.opening.Image.url}}" alt="" srcset="" />
-        </div>
-        <div class="section_title_container text-center">
-          <div class="section_title mb-4">
-            {{this.opening.position}}
+<div class="Volunteer">
+  {{!-- <div class="bg_selection"> --}}
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div class="section_title_container text-center">
+            <div class="section_title mb-4">
+              Volunteer Opportunities
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    {{! </div> }}
+    {{!-- </div> --}}
   </div>
 
   <div class="container">
 
     <div class="row">
       <div class="col">
+        <div class="List">
 
-        {{log this}}
+          {{#each openings}}
 
-        {{{this.opening.description}}}
+            {{> volunteer/opportunity  }}
 
+          {{/each}}
+        </div>
       </div>
     </div>
   </div>
 
 </div>
+
+
+
 
 <script src="/js/jquery-3.2.1.min.js"></script>
 <script src="js/sermons.js"></script>
