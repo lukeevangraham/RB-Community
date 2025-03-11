@@ -349,14 +349,14 @@ const prepBlogDataForTemplate = (blogData) => {
         // retrim if we are in the middle of a word
         truncatedString
           ? (truncatedString = truncatedString
-              .substr(
-                0,
-                Math.min(
-                  truncatedString.length,
-                  truncatedString.lastIndexOf(" ")
-                )
+            .substr(
+              0,
+              Math.min(
+                truncatedString.length,
+                truncatedString.lastIndexOf(" ")
               )
-              .replace(/RBCC/g, "RB Community"))
+            )
+            .replace(/RBCC/g, "RB Community"))
           : null;
       }
     } else if (blogData.fields.body) {
@@ -452,9 +452,9 @@ module.exports = function (app) {
 
           resultArray[0].items.length
             ? (prepareBlogEntryForSinglePage(
-                resultArray[0].items[0],
-                req.params.id
-              ),
+              resultArray[0].items[0],
+              req.params.id
+            ),
               renderSingleBlog(resultArray[0].items[0], res))
             : (prepareBlogEntryForSinglePage(formattedData, req.params.id),
               renderSingleBlog(formattedData, res));
@@ -509,7 +509,7 @@ module.exports = function (app) {
       }),
     ]).then((resultArray) => {
 
-      
+
 
       let vimeoRecord = resultArray[0].data;
 
@@ -653,14 +653,12 @@ module.exports = function (app) {
               .split(". ")[0];
 
             stream.parsedDate = moment(
-              `${
-                startToGetDateInfoFromDescription[
-                  startToGetDateInfoFromDescription.length - 2
-                ]
-              } ${
-                startToGetDateInfoFromDescription[
-                  startToGetDateInfoFromDescription.length - 1
-                ]
+              `${startToGetDateInfoFromDescription[
+              startToGetDateInfoFromDescription.length - 2
+              ]
+              } ${startToGetDateInfoFromDescription[
+              startToGetDateInfoFromDescription.length - 1
+              ]
               }, ${yearStarter}`,
               "MMMM DD, YYYY"
             );
@@ -1189,7 +1187,7 @@ module.exports = function (app) {
           "fields.endDate[gte]": moment().format(),
           "fields.ministry": req.params.id,
           order: "fields.date",
-          limit: 6,
+          limit: req.params.id === "Youth, Music and Theater" ? 9 : 6,
         })
         .then(function (dbEvent) {
           var items = dbEvent.items;
