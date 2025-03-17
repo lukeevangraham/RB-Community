@@ -1,7 +1,7 @@
 async function handleVolunteerSubmission(e, positionId) {
   const values = document.querySelector("#volunteerForm").elements;
 
-  console.log("VALUES: ", values)
+  console.log("VALUES: ", values);
 
   const response = await fetch(
     `https://fpserver.grahamwebworks.com/api/volunteer/submit/${positionId}`,

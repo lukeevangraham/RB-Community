@@ -188,7 +188,7 @@ function compareItemDatePosted(a, b) {
 }
 
 function prepareBlogEntryForSinglePage(entry, requestId) {
-  console.log("ENTRY: ", entry.fields.body.content);
+  // console.log("ENTRY: ", entry.fields.body.content);
 
   Object.assign(entry.fields, {
     shortMonth: moment(entry.fields.datePosted).format("MMM").toUpperCase(),
@@ -208,7 +208,7 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
       },
       "embedded-asset-block": (node) =>
         node.data.target.fields.file.url.endsWith("pdf")
-          ? `<embed src="${node.data.target.fields.file.url}" width="100%" height="500px"  />`
+          ? `<iframe src=https://docs.google.com/viewerng/viewer?url=https:${node.data.target.fields.file.url}&embedded=true frameBorder="0" width="100%" height="500px" />`
           : `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`,
     },
   };
