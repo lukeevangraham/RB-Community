@@ -188,7 +188,7 @@ function compareItemDatePosted(a, b) {
 }
 
 function prepareBlogEntryForSinglePage(entry, requestId) {
-  console.log("ENTRY: ", entry.fields.body.content)
+  // console.log("ENTRY: ", entry.fields.body.content);
 
   Object.assign(entry.fields, {
     shortMonth: moment(entry.fields.datePosted).format("MMM").toUpperCase(),
@@ -208,7 +208,7 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
       },
       "embedded-asset-block": (node) =>
         node.data.target.fields.file.url.endsWith("pdf")
-          ? `<embed src="${node.data.target.fields.file.url}" width="100%" height="500px"  />`
+          ? `<iframe src=https://docs.google.com/viewerng/viewer?url=https:${node.data.target.fields.file.url}&embedded=true frameBorder="0" width="100%" height="500px" />`
           : `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`,
     },
   };
@@ -349,14 +349,14 @@ const prepBlogDataForTemplate = (blogData) => {
         // retrim if we are in the middle of a word
         truncatedString
           ? (truncatedString = truncatedString
-            .substr(
-              0,
-              Math.min(
-                truncatedString.length,
-                truncatedString.lastIndexOf(" ")
+              .substr(
+                0,
+                Math.min(
+                  truncatedString.length,
+                  truncatedString.lastIndexOf(" ")
+                )
               )
-            )
-            .replace(/RBCC/g, "RB Community"))
+              .replace(/RBCC/g, "RB Community"))
           : null;
       }
     } else if (blogData.fields.body) {
@@ -452,9 +452,9 @@ module.exports = function (app) {
 
           resultArray[0].items.length
             ? (prepareBlogEntryForSinglePage(
-              resultArray[0].items[0],
-              req.params.id
-            ),
+                resultArray[0].items[0],
+                req.params.id
+              ),
               renderSingleBlog(resultArray[0].items[0], res))
             : (prepareBlogEntryForSinglePage(formattedData, req.params.id),
               renderSingleBlog(formattedData, res));
@@ -508,9 +508,6 @@ module.exports = function (app) {
         },
       }),
     ]).then((resultArray) => {
-
-
-
       let vimeoRecord = resultArray[0].data;
 
       if (vimeoRecord.data) {
@@ -653,12 +650,14 @@ module.exports = function (app) {
               .split(". ")[0];
 
             stream.parsedDate = moment(
-              `${startToGetDateInfoFromDescription[
-              startToGetDateInfoFromDescription.length - 2
-              ]
-              } ${startToGetDateInfoFromDescription[
-              startToGetDateInfoFromDescription.length - 1
-              ]
+              `${
+                startToGetDateInfoFromDescription[
+                  startToGetDateInfoFromDescription.length - 2
+                ]
+              } ${
+                startToGetDateInfoFromDescription[
+                  startToGetDateInfoFromDescription.length - 1
+                ]
               }, ${yearStarter}`,
               "MMMM DD, YYYY"
             );
@@ -682,7 +681,6 @@ module.exports = function (app) {
       trimmedYouTubeRecord.sort((left, right) =>
         moment.utc(right.parsedDate).diff(moment.utc(left.parsedDate))
       );
-
 
       trimmedYouTubeRecord.forEach((stream) => {
         // DOES THE STREAM HAPPEN TODAY??
@@ -1647,7 +1645,7 @@ module.exports = function (app) {
   // app.get(["/easter", "/lent"], (req, res) => {
   //   res.render("easter", {
   //     headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
-  //     <link rel="stylesheet" type="text/css" href="styles/easter.css"><link rel="preconnect" href="https://fonts.gstatic.com"> 
+  //     <link rel="stylesheet" type="text/css" href="styles/easter.css"><link rel="preconnect" href="https://fonts.gstatic.com">
   //     <link href="https://fonts.googleapis.com/css2?family=Cardo&display=swap" rel="stylesheet">
   //       <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
   //     title: `Easter`,
@@ -1657,7 +1655,7 @@ module.exports = function (app) {
   // app.get("/christmas", (req, res) => {
   //   res.render("christmas", {
   //     headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
-  //     <link rel="stylesheet" type="text/css" href="styles/christmas.css"><link rel="preconnect" href="https://fonts.gstatic.com"> 
+  //     <link rel="stylesheet" type="text/css" href="styles/christmas.css"><link rel="preconnect" href="https://fonts.gstatic.com">
   //     <link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&display=swap" rel="stylesheet">
   //       <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
   //   });
@@ -1771,6 +1769,44 @@ module.exports = function (app) {
 
   app.get("/frances", async (req, res) => {
     res.redirect("https://www.youtube.com/watch?v=G1_zVoJSflk");
+  });
+
+  app.get("/volunteer", async (req, res) => {
+    Promise.all([
+      axios.get(
+        "https://fpserver.grahamwebworks.com/api/volunteer/published/org/1"
+      ),
+    ]).then((resultArray) => {
+      const hbsObject = {
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
+  <link rel="stylesheet" type="text/css" href="styles/volunteer.css">
+                        <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
+        openings: resultArray[0].data,
+      };
+      res.render("volunteers", hbsObject);
+    });
+  });
+
+  app.get("/volunteer:id", (req, res) => {
+    let position = req.params.id.substring(1);
+
+    position = position.replace(/-/g, " ");
+
+    Promise.all([
+      axios.get(
+        `https://fpserver.grahamwebworks.com/api/volunteer/published/position/${position}/1`
+      ),
+    ]).then((resultArray) => {
+      const hbsObject = {
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
+  <link rel="stylesheet" type="text/css" href="styles/volunteer.css">
+                        <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
+        opening: resultArray[0].data,
+      };
+      res.render("volunteer", hbsObject);
+    });
   });
 
   app.get("/search:term", async (req, res) => {

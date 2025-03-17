@@ -1,0 +1,63 @@
+<div class="home">
+  <div
+    class="home_background"
+    style="background-image:url(images/events.jpg)"
+  ></div>
+  <div class="home_content">
+    <div class="container">
+      <div class="row">
+        <div
+          class="col d-flex flex-row align-items-center justify-content-start"
+        >
+          <div class="home_title">Ministries</div>
+          <div class="breadcrumbs ml-auto">
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li>Ministries</li>
+              <li>Volunteer Opportunities</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="Volunteer">
+  {{!-- <div class="bg_selection"> --}}
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div class="section_title_container text-center">
+            <div class="section_title mb-4">
+              Volunteer Opportunities
+            </div>
+          </div>
+        </div>
+      </div>
+    {{!-- </div> --}}
+  </div>
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col">
+        <div class="List">
+
+          {{#each openings}}
+
+            {{> volunteer/opportunity  }}
+
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+<script src="/js/jquery-3.2.1.min.js"></script>
+<script src="js/sermons.js"></script>

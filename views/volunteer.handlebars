@@ -1,0 +1,109 @@
+<div class="home">
+  <div
+    class="home_background"
+    style="background-image:url(images/events.jpg)"
+  ></div>
+  <div class="home_content">
+    <div class="container">
+      <div class="row">
+        <div
+          class="col d-flex flex-row align-items-center justify-content-start"
+        >
+          <div class="home_title">Ministries</div>
+          <div class="breadcrumbs ml-auto">
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li>Ministries</li>
+              <li>Volunteer Opportunities</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="VolunteerSingle">
+  {{! <div class="bg_selection"> }}
+  <div class="container">
+    <div class="row">
+      <div class="col">
+
+        <img
+          src="{{this.opening.Image.url}}"
+          alt=""
+          srcset=""
+          class="SingleImage"
+        />
+
+        <div class="section_title_container text-center">
+          <div class="section_title mb-4">
+            {{this.opening.position}}
+          </div>
+        </div>
+      </div>
+    </div>
+    {{! </div> }}
+  </div>
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col">
+        <div class="topInfo">
+
+          <div><span class="label">Sponsoring ministry:
+            </span>{{this.opening.sponsoringMinistry}}</div>
+          <div><span class="label">Primary contact:
+            </span>{{this.opening.primaryContact}}</div>
+          <div><span class="label">Time committment:
+            </span>{{this.opening.frequency}}</div>
+        </div>
+
+        <div class="description">
+          {{{this.opening.description}}}
+        </div>
+
+        <div class="form">
+          <h2>Start volunteering now</h2>
+          <div>Fill out the form below to get started volunteering</div>
+          <form
+            action="javascript:handleVolunteerSubmission(this, {{this.opening.id}})"
+            id="volunteerForm"
+          >
+            <div class="formGroup">
+              <input type="text" placeholder="Full Name" required id="name" />
+              <label for="name">Full Name</label>
+            </div>
+            <div class="formGroup">
+              <input
+                type="email"
+                placeholder="Email address"
+                require
+                id="email"
+              />
+              <label for="email">Email address</label>
+            </div>
+            <div class="formGroup">
+              <label for="message">Please let us know if you have any additional
+                questions or information we should know.</label>
+              <textarea
+                name="message"
+                id="message"
+                rows="10"
+                placeholder="Message (optional)"
+              ></textarea>
+            </div>
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="/js/jquery-3.2.1.min.js"></script>
+<script src="js/sermons.js"></script>
+<script src="/js/volunteer.js"></script>
