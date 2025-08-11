@@ -776,6 +776,10 @@ section {
   margin-top: 31px;
 }
 
+.about_text p:nth-last-child(-n + 4) {
+  margin-bottom: 0;
+}
+
 /*********************************
 8. Sermons
 *********************************/

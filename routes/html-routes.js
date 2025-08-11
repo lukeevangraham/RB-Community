@@ -495,7 +495,8 @@ module.exports = function (app) {
         order: "-fields.datePosted",
         limit: 3,
       }),
-      client.getEntry("5yMSI9dIzpsdb55JvXkZk"),
+      // client.getEntry("5yMSI9dIzpsdb55JvXkZk"),
+      axios.get("https://fpserver.grahamwebworks.com/api/single/home/1"),
       axios.get("https://admin.rbcommunity.org/home"),
       axios({
         url: "https://www.googleapis.com/youtube/v3/playlistItems",
@@ -612,13 +613,17 @@ module.exports = function (app) {
 
       // HANDLE TOP TEXT
 
-      let topText = resultArray[3];
+      let topText = resultArray[3].data.topText;
 
-      const rawRichTextField = topText.fields.body;
+      // let topText = resultArray[3];
 
-      Object.assign(topText.fields, {
-        renderedHtml: documentToHtmlString(rawRichTextField),
-      });
+      // const rawRichTextField = topText.data.topText;
+
+      // console.log("RAW RICH TEXT FIELD: ", rawRichTextField);
+
+      // Object.assign(topText.fields, {
+      //   renderedHtml: rawRichTextField,
+      // });
       // welcomeRecord = topText;
 
       // YOUTUBE STUFF
@@ -707,7 +712,7 @@ module.exports = function (app) {
         // vimeoAnn: vimeoAnnURL,
         blogpost: blogItems,
         youtubeStream: mostRecentStream,
-        homeWelcome: topText.fields.renderedHtml,
+        homeWelcome: topText,
         metaTitle:
           "Rancho Bernardo Community Presbyterian Church | RBCPC San Diego",
         headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
