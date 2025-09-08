@@ -497,7 +497,7 @@ module.exports = function (app) {
       }),
       // client.getEntry("5yMSI9dIzpsdb55JvXkZk"),
       axios.get("https://fpserver.grahamwebworks.com/api/single/home/1"),
-      axios.get("https://admin.rbcommunity.org/home"),
+      // axios.get("https://admin.rbcommunity.org/home"),
       axios({
         url: "https://www.googleapis.com/youtube/v3/playlistItems",
         method: "get",
@@ -558,16 +558,16 @@ module.exports = function (app) {
       // HANDLE BLOG
       var blogItems = [];
       var itemsIncludingExpired = resultArray[2].items;
-      let homeData = resultArray[4].data;
+      // let homeData = resultArray[4].data;
 
       // MAKE HOMEDATA MATCH CONTENTFUL OUTPUT
 
       // const newHomeData = {};
 
-      homeData.featuredArticles.forEach((article) => {
-        // console.log("Article: ", article)
-        itemsIncludingExpired.push({ fields: article, strapi: true });
-      });
+      // homeData.featuredArticles.forEach((article) => {
+      //   // console.log("Article: ", article)
+      //   itemsIncludingExpired.push({ fields: article, strapi: true });
+      // });
 
       // ELIMINATING OLD ENTRIES FROM PAGE
       itemsIncludingExpired.forEach((earlyItem) => {
@@ -630,7 +630,7 @@ module.exports = function (app) {
 
       // console.log("RES ARR: ", resultArray[5])
 
-      youTubeRecord = resultArray[5].data.items;
+      youTubeRecord = resultArray[4].data.items;
 
       // Filter out deleted videos
       let trimmedYouTubeRecord = youTubeRecord.filter(
