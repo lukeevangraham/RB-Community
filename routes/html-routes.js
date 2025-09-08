@@ -1325,6 +1325,7 @@ module.exports = function (app) {
 
   // Page for individual events
   app.get("/event:id", function (req, res) {
+    console.log("Event issue id", req.params.id);
     renderSingleEvent = (oldDbEvent) => {
       let dbEvent = oldDbEvent.items[0];
 
