@@ -155,8 +155,8 @@ function doReq(url, what) {
 
 // sort event dates by date field
 function compare(a, b) {
-  const dateA = moment(a.fields.date).format("YYYY-MM-DD");
-  const dateB = moment(b.fields.date).format("YYYY-MM-DD");
+  const dateA = moment(a.fields.date, "YYYY-MM-DD").format("YYYY-MM-DD");
+  const dateB = moment(b.fields.date, "YYYY-MM-DD").format("YYYY-MM-DD");
   const timeA = moment(`${dateA} ${a.fields.time}`);
   const timeB = moment(`${dateB} ${b.fields.time}`);
 
@@ -1846,7 +1846,7 @@ module.exports = function (app) {
 
       // ITERATE THROUGH CONTENTFUL RESULTS (RESULTS[0])
       results[0].items.forEach((entry) => {
-        console.log("Entry: ", entry);
+        // console.log("Entry: ", entry);
         // IF IT'S AN EVENT
         if (entry.sys.contentType.sys.id === "events") {
           prepEventDataForTemplate(entry);
