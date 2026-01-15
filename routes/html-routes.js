@@ -462,7 +462,10 @@ module.exports = function (app) {
   });
 
   app.get(["/", "/index.html", "/home"], function (req, res) {
+    const useFlexipress = req.query.source === "flexi";
+
     Promise.all([
+      // Vimeo
       axios({
         url: "https://api.vimeo.com/users/14320074/videos",
         method: "GET",
@@ -480,14 +483,22 @@ module.exports = function (app) {
           Authorization: "Bearer " + vimeoPass,
         },
       }),
-      client.getEntries({
-        content_type: "events",
-        // "fields.featuredOnHome": true,
-        "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
-        "fields.homePagePassword": "Psalm 46:1",
-        order: "fields.date",
-        // limit: 3
-      }),
+
+      // [1] DUAL-SOURCE EVENT FETCH
+      useFlexipress
+        ? axios.get(
+            `https://fpserver.grahamwebworks.com/api/events/org/1?published=true&featured=true`
+          )
+        : client.getEntries({
+            content_type: "events",
+            // "fields.featuredOnHome": true,
+            "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
+            "fields.homePagePassword": "Psalm 46:1",
+            order: "fields.date",
+            // limit: 3
+          }),
+
+      // [2] Contentful Blog (Next on the migration list)
       client.getEntries({
         content_type: "blog",
         "fields.featureOnHomePage": true,
@@ -495,9 +506,11 @@ module.exports = function (app) {
         order: "-fields.datePosted",
         limit: 3,
       }),
-      // client.getEntry("5yMSI9dIzpsdb55JvXkZk"),
+
+      // [3] Home Top Text (Flexipress)
       axios.get("https://fpserver.grahamwebworks.com/api/single/home/1"),
-      // axios.get("https://admin.rbcommunity.org/home"),
+
+      // [4] YouTube
       axios({
         url: "https://www.googleapis.com/youtube/v3/playlistItems",
         method: "get",
@@ -509,6 +522,7 @@ module.exports = function (app) {
         },
       }),
     ]).then((resultArray) => {
+      // 1. VIMEO LOGIC (Unchanged)
       let vimeoRecord = resultArray[0].data;
 
       if (vimeoRecord.data) {
@@ -519,41 +533,131 @@ module.exports = function (app) {
         });
       }
 
-      // HANDLING EVENTS
-      let dbEvent = resultArray[1];
-      // var items = dbEvent.items;
+      // 2. EVENT HANDLING (FLEXIPRESS vs CONTENTFUL)
 
-      // Converting times for template
-      dbEvent.items.forEach((item) => {
-        Object.assign(item.fields, {
-          shortMonth: moment(item.fields.date).format("MMM"),
-        });
-        Object.assign(item.fields, {
-          shortDay: moment(item.fields.date).format("DD"),
-        });
-        // if (item.fields.featured) {
-        Object.assign(item.fields, {
-          dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
-        });
-        // }
-        // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
-        if (item.fields.repeatsEveryDays > 0) {
-          if (moment(item.fields.date).isSameOrBefore(moment())) {
-            let start = moment(item.fields.date);
-            let end = moment().format("YYYY-MM-DD");
+      let formattedEvents = [];
 
-            while (start.isBefore(end)) {
-              start.add(item.fields.repeatsEveryDays, "day");
+      if (useFlexipress) {
+        // HANDLE SQL DATA
+        const homeData = resultArray[3].data; // SingleHome record
+        const sqlEvents = resultArray[1].data; // List of featured spotlight events
+
+        let headlineMapped = null;
+
+        // A. MAP THE HEADLINE EVENT (The Hero)
+        if (homeData && homeData.HeadlineEvent) {
+          const headline = homeData.HeadlineEvent;
+          let hDate = moment(headline.startDate);
+
+          // Apply recurring logic to Headline
+          if (
+            headline.repeatsEveryXDays > 0 &&
+            hDate.isSameOrBefore(moment())
+          ) {
+            while (hDate.isBefore(moment().format("YYYY-MM-DD"))) {
+              hDate.add(headline.repeatsEveryXDays, "day");
             }
-            item.fields.date = start.format("YYYY-MM-DD");
-            item.fields.shortMonth = start.format("MMM");
-            item.fields.shortDay = start.format("DD");
           }
+
+          headlineMapped = {
+            fields: {
+              title: headline.name,
+              name: headline.name,
+              slug: headline.slug,
+              featured: true, // This triggers the {{#if this.fields.featured}} in HBS
+              featuredOnHome: true,
+              date: hDate.format("YYYY-MM-DD"),
+              shortMonth: hDate.format("MMM"),
+              shortDay: hDate.format("DD"),
+              time: headline.time || "9:30 AM",
+              dateToCountTo: hDate.format("MMMM D, YYYY"),
+              location: headline.location,
+              eventImage: headline.Image
+                ? { fields: { file: { url: headline.Image.url } } }
+                : null,
+            },
+          };
+        }
+
+        // B. MAP THE SPOTLIGHT EVENTS (The Grid)
+        const spotlightMapped = sqlEvents
+          .filter((e) => e.id !== homeData.HeadlineEventId) // Prevent Duplication
+          .map((event) => {
+            let eventDate = moment(event.startDate);
+
+            if (
+              event.repeatsEveryXDays > 0 &&
+              eventDate.isSameOrBefore(moment())
+            ) {
+              while (eventDate.isBefore(moment().format("YYYY-MM-DD"))) {
+                eventDate.add(event.repeatsEveryXDays, "day");
+              }
+            }
+
+            return {
+              fields: {
+                title: event.name,
+                name: event.name,
+                slug: event.slug,
+                featured: false, // Ensure grid items don't trigger the headline div
+                featuredOnHome: true,
+                date: eventDate.format("YYYY-MM-DD"),
+                shortMonth: eventDate.format("MMM"),
+                shortDay: eventDate.format("DD"),
+                time: event.time || "See details",
+                dateToCountTo: eventDate.format("MMMM D, YYYY"),
+                location: event.location,
+                eventImage: event.Image
+                  ? { fields: { file: { url: event.Image.url } } }
+                  : null,
+              },
+            };
+          });
+
+        // C. MERGE THEM: Headline first, then spotlight
+        if (headlineMapped) {
+          formattedEvents = [headlineMapped, ...spotlightMapped];
+        } else {
+          formattedEvents = spotlightMapped;
+        }
+      } else {
+        // HANDLE LEGACY CONTENTFUL DATA
+
+        let dbEvent = resultArray[1];
+
+        // Converting times for template
+        dbEvent.items.forEach((item) => {
+          Object.assign(item.fields, {
+            shortMonth: moment(item.fields.date).format("MMM"),
+          });
+          Object.assign(item.fields, {
+            shortDay: moment(item.fields.date).format("DD"),
+          });
+          // if (item.fields.featured) {
           Object.assign(item.fields, {
             dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
           });
-        }
-      });
+          // }
+          // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
+          if (item.fields.repeatsEveryDays > 0) {
+            if (moment(item.fields.date).isSameOrBefore(moment())) {
+              let start = moment(item.fields.date);
+              let end = moment().format("YYYY-MM-DD");
+
+              while (start.isBefore(end)) {
+                start.add(item.fields.repeatsEveryDays, "day");
+              }
+              item.fields.date = start.format("YYYY-MM-DD");
+              item.fields.shortMonth = start.format("MMM");
+              item.fields.shortDay = start.format("DD");
+            }
+            Object.assign(item.fields, {
+              dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
+            });
+          }
+          formattedEvents.push(item);
+        });
+      }
 
       // HANDLE BLOG
       var blogItems = [];
@@ -707,7 +811,7 @@ module.exports = function (app) {
       // .then(function(body) {
 
       var hbsObject = {
-        events: dbEvent.items,
+        events: useFlexipress ? formattedEvents : resultArray[1].items,
         vimeo: vimeoRecord,
         // vimeoAnn: vimeoAnnURL,
         blogpost: blogItems,
@@ -1325,7 +1429,6 @@ module.exports = function (app) {
 
   // Page for individual events
   app.get("/event:id", function (req, res) {
-    console.log("Event issue id", req.params.id);
     renderSingleEvent = (oldDbEvent) => {
       let dbEvent = oldDbEvent.items[0];
 
