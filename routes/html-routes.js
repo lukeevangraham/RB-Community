@@ -323,7 +323,7 @@ const prepEventDataForTemplate = (eventData) => {
   }
 };
 
-function mapSqlEventToContentful(event) {
+function mapSqlEventToContentful(event, forceHeadline = false) {
   let eventDate = moment(event.startDate);
 
   // 1. Centralized Recurring Logic
@@ -339,7 +339,8 @@ function mapSqlEventToContentful(event) {
       title: event.name,
       name: event.name,
       slug: event.slug,
-      featured: event.isFeaturedOnHome || false,
+      featured: forceHeadline,
+      // featured: event.isFeaturedOnHome || false,
       date: eventDate.format("YYYY-MM-DD"),
       shortMonth: eventDate.format("MMM"),
       shortDay: eventDate.format("DD"),
