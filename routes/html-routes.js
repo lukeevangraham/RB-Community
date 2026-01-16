@@ -323,6 +323,37 @@ const prepEventDataForTemplate = (eventData) => {
   }
 };
 
+function mapSqlEventToContentful(event) {
+  let eventDate = moment(event.startDate);
+
+  // 1. Centralized Recurring Logic
+  if (event.repeatsEveryXDays > 0 && eventDate.isSameOrBefore(moment())) {
+    while (eventDate.isBefore(moment().format("YYYY-MM-DD"))) {
+      eventDate.add(event.repeatsEveryXDays, "day");
+    }
+  }
+
+  // 2. Standardized Object Structure
+  return {
+    fields: {
+      title: event.name,
+      name: event.name,
+      slug: event.slug,
+      featured: event.isFeaturedOnHome || false,
+      date: eventDate.format("YYYY-MM-DD"),
+      shortMonth: eventDate.format("MMM"),
+      shortDay: eventDate.format("DD"),
+      time: event.time || "See details",
+      location: event.location,
+      description: event.description,
+      dateToCountTo: eventDate.format("MMMM D, YYYY"),
+      eventImage: event.Image
+        ? { fields: { file: { url: event.Image.url } } }
+        : null,
+    },
+  };
+}
+
 const prepBlogDataForTemplate = (blogData) => {
   Object.assign(blogData.fields, {
     formattedDate: moment(blogData.fields.datePosted)
@@ -542,84 +573,21 @@ module.exports = function (app) {
         const homeData = resultArray[3].data; // SingleHome record
         const sqlEvents = resultArray[1].data; // List of featured spotlight events
 
-        let headlineMapped = null;
-
         // A. MAP THE HEADLINE EVENT (The Hero)
-        if (homeData && homeData.HeadlineEvent) {
-          const headline = homeData.HeadlineEvent;
-          let hDate = moment(headline.startDate);
-
-          // Apply recurring logic to Headline
-          if (
-            headline.repeatsEveryXDays > 0 &&
-            hDate.isSameOrBefore(moment())
-          ) {
-            while (hDate.isBefore(moment().format("YYYY-MM-DD"))) {
-              hDate.add(headline.repeatsEveryXDays, "day");
-            }
-          }
-
-          headlineMapped = {
-            fields: {
-              title: headline.name,
-              name: headline.name,
-              slug: headline.slug,
-              featured: true, // This triggers the {{#if this.fields.featured}} in HBS
-              featuredOnHome: true,
-              date: hDate.format("YYYY-MM-DD"),
-              shortMonth: hDate.format("MMM"),
-              shortDay: hDate.format("DD"),
-              time: headline.time || "9:30 AM",
-              dateToCountTo: hDate.format("MMMM D, YYYY"),
-              location: headline.location,
-              eventImage: headline.Image
-                ? { fields: { file: { url: headline.Image.url } } }
-                : null,
-            },
-          };
-        }
+        let headlineMapped = mapSqlEventToContentful(
+          homeData.HeadlineEvent,
+          true
+        );
 
         // B. MAP THE SPOTLIGHT EVENTS (The Grid)
         const spotlightMapped = sqlEvents
           .filter((e) => e.id !== homeData.HeadlineEventId) // Prevent Duplication
-          .map((event) => {
-            let eventDate = moment(event.startDate);
+          .map((event) => mapSqlEventToContentful(event, false));
 
-            if (
-              event.repeatsEveryXDays > 0 &&
-              eventDate.isSameOrBefore(moment())
-            ) {
-              while (eventDate.isBefore(moment().format("YYYY-MM-DD"))) {
-                eventDate.add(event.repeatsEveryXDays, "day");
-              }
-            }
-
-            return {
-              fields: {
-                title: event.name,
-                name: event.name,
-                slug: event.slug,
-                featured: false, // Ensure grid items don't trigger the headline div
-                featuredOnHome: true,
-                date: eventDate.format("YYYY-MM-DD"),
-                shortMonth: eventDate.format("MMM"),
-                shortDay: eventDate.format("DD"),
-                time: event.time || "See details",
-                dateToCountTo: eventDate.format("MMMM D, YYYY"),
-                location: event.location,
-                eventImage: event.Image
-                  ? { fields: { file: { url: event.Image.url } } }
-                  : null,
-              },
-            };
-          });
-
-        // C. MERGE THEM: Headline first, then spotlight
-        if (headlineMapped) {
-          formattedEvents = [headlineMapped, ...spotlightMapped];
-        } else {
-          formattedEvents = spotlightMapped;
-        }
+        // C. MERGE THEM
+        formattedEvents = headlineMapped
+          ? [headlineMapped, ...spotlightMapped]
+          : spotlightMapped;
       } else {
         // HANDLE LEGACY CONTENTFUL DATA
 
@@ -665,13 +633,6 @@ module.exports = function (app) {
       // let homeData = resultArray[4].data;
 
       // MAKE HOMEDATA MATCH CONTENTFUL OUTPUT
-
-      // const newHomeData = {};
-
-      // homeData.featuredArticles.forEach((article) => {
-      //   // console.log("Article: ", article)
-      //   itemsIncludingExpired.push({ fields: article, strapi: true });
-      // });
 
       // ELIMINATING OLD ENTRIES FROM PAGE
       itemsIncludingExpired.forEach((earlyItem) => {
@@ -719,21 +680,6 @@ module.exports = function (app) {
 
       let topText = resultArray[3].data.topText;
 
-      // let topText = resultArray[3];
-
-      // const rawRichTextField = topText.data.topText;
-
-      // console.log("RAW RICH TEXT FIELD: ", rawRichTextField);
-
-      // Object.assign(topText.fields, {
-      //   renderedHtml: rawRichTextField,
-      // });
-      // welcomeRecord = topText;
-
-      // YOUTUBE STUFF
-
-      // console.log("RES ARR: ", resultArray[5])
-
       youTubeRecord = resultArray[4].data.items;
 
       // Filter out deleted videos
@@ -770,15 +716,6 @@ module.exports = function (app) {
               }, ${yearStarter}`,
               "MMMM DD, YYYY"
             );
-
-            // console.log("PARSED DATE: ", parsedDate);
-
-            // // IS THE STREAM CONNECTED TO TODAY?
-            // if (moment(parsedDate).isSame(moment(), 'day')) {
-            //   mostRecentStream = stream
-            // } else {
-            //   console.log("NOT SAME DAY")
-            // }
           }
         } else {
           // PRIVATE VIDEOS NEED TO BE GIVEN A VERY OLD DATE TO BE IGNORED
@@ -827,131 +764,7 @@ module.exports = function (app) {
       res.render("home", hbsObject);
     });
 
-    // var vimeoRecord = null;
-    // let secondRecord = null;
-    // let thirdRecord = null;
-    // let vimeoAnnRecord = null;
-    // let vimeoAnnURL = null;
-    // let welcomeRecord = null;
     let youTubeRecord = null;
-
-    // request(vimeoOptionsHome, function (error, response, body) {
-    // if (error) throw new Error(error);
-
-    // vimeoRecord = JSON.parse(body);
-    // console.log(`Vimeo Record ${vimeoRecord.data}`);
-
-    // request(vimeoOptionsAnnHome, function (error, response, body) {
-    // if (error) throw new Error(error);
-
-    // vimeoAnnRecord = JSON.parse(body);
-
-    // // a = vimeoAnnRecord.data[0].link;
-    // var items = vimeoAnnRecord.data;
-    // if (items.length > 0) {
-    //   // console.log("ITEMS: ", items)
-    //   let trimmedURL = getIdFromVimeoURL(items[0].link);
-
-    //   let editedEmbed = items[0].embed.html;
-    //   // console.log("TRIMMED URL: ", trimmedURL)
-    //   editedEmbed = editedEmbed.replace(
-    //     `" `,
-    //     `" data-aos="fade-right" class="about_image" `
-    //   );
-    //   // a = a.replace(`https://`,`//`)
-    //   // console.log("HERE: ", a)
-    //   // console.log(vimeoAnnRecord)
-
-    //   // vimeoAnnURL = getIdFromVimeoURL(a);
-    //   // vimeoAnnURL = trimmedURL;
-    //   // vimeoAnnURL = items[0].embed.html;
-    //   vimeoAnnURL = editedEmbed;
-    //   // console.log("LINK: ", getIdFromVimeoURL(vimeoAnnURL))
-    // }
-
-    // client
-    //   .getEntries({
-    //     content_type: "events",
-    //     // "fields.featuredOnHome": true,
-    //     "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
-    //     "fields.homePagePassword": "Psalm 46:1",
-    //     order: "fields.date",
-    //     // limit: 3
-    //   })
-    // .then(function (dbEvent) {
-    // console.log("EVENT: ", dbEvent)
-    // console.log("LOOK HERE: ", dbEvent.items[0].fields);
-
-    // client
-    //   .getEntries({
-    //     content_type: "blog",
-    //     "fields.featureOnHomePage": true,
-    //     "fields.homePagePassword": "Psalm 46:1",
-    //     order: "-fields.datePosted",
-    //     limit: 3,
-    //   })
-    // .then(function (dbBlog) {
-    // var items = [];
-    // var itemsIncludingExpired = dbBlog.items;
-
-    // // ELIMINATING OLD ENTRIES FROM PAGE
-    // itemsIncludingExpired.forEach((earlyItem) => {
-    //   if (
-    //     moment(earlyItem.fields.expirationDate).isBefore(
-    //       moment().format("YYYY-MM-DD")
-    //     )
-    //   ) {
-    //   } else {
-    //     items.push(earlyItem);
-    //   }
-    // });
-
-    // // Converting times for template
-    // items.forEach((item) => {
-    //   Object.assign(item.fields, {
-    //     formattedDate: moment(item.fields.datePosted)
-    //       .format("DD MMM, YYYY")
-    //       .toUpperCase(),
-    //   });
-
-    //   if (item.fields.body) {
-    //     var truncatedString = JSON.stringify(
-    //       item.fields.body.content[0].content[0].value.replace(
-    //         /^(.{165}[^\s]*).*/,
-    //         "$1"
-    //       )
-    //     );
-    //     var truncatedLength = truncatedString.length;
-    //     truncatedString = truncatedString.substring(1, truncatedLength - 1);
-
-    //     Object.assign(item.fields, {
-    //       excerpt: truncatedString,
-    //     });
-    //   }
-    // });
-
-    // thirdRecord = items;
-
-    // client.getEntry("5yMSI9dIzpsdb55JvXkZk").then(function (entry) {
-    // // console.log("LOOK HERE: ", entry);
-    // const rawRichTextField = entry.fields.body;
-
-    // Object.assign(entry.fields, {
-    //   renderedHtml: documentToHtmlString(rawRichTextField),
-    // });
-    // welcomeRecord = entry;
-    // // console.log("LOOK HERE: ", welcomeRecord)
-
-    // request(streamYouTubeOptions(), function (error, response, body) {
-    // youTubeRecord = JSON.parse(body).items;
-
-    // });
-    // });
-    // });
-    // });
-    // });
-    // });
-    // });
   });
 
   app.get("/cms", function (req, res) {
