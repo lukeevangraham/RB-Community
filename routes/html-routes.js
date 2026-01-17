@@ -1463,7 +1463,10 @@ module.exports = function (app) {
 
       // 6. Render
       res.render("ministry", {
-        blogpost: { articles: legacyBlogRes.items }, // Restores the News section
+        blogpost: {
+          articles: legacyBlogRes.items,
+          multipleEntries: legacyBlogRes.items.length > 0, // This triggers the header/container
+        },
         request: ministryName,
         events: formattedEvents,
         header: sqlHeader, // Restores the Info/Header section
