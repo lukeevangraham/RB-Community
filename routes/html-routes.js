@@ -1326,35 +1326,31 @@ module.exports = function (app) {
     const useFlexipress =
       req.query.source === "flexi" || req.app.locals.useFlexipress;
 
-    // 1. Get the raw param (e.g., "-Children's-Choir" or "-Concert-Series:-Quarteto-Nuevo")
     let rawSlug = req.params.id;
     if (rawSlug.startsWith("-")) rawSlug = rawSlug.substring(1);
 
-    // 2. Decode the URL characters (converts %27 to ' and %3A to :)
-    // Then trim any accidental whitespace
-    const cleanSlug = decodeURIComponent(rawSlug).trim();
+    // 1. Decode special characters
+    // 2. Make it lowercase (to match 'childrens-choir')
+    // 3. Remove apostrophes (to match 'childrens-choir' vs "children's-choir")
+    const cleanSlug = decodeURIComponent(rawSlug)
+      .toLowerCase()
+      .replace(/'/g, "");
 
     if (useFlexipress) {
-      // 3. LOG this to your terminal.
-      // If the terminal shows "Children's-Choir" but your DB has "childrens-choir", this is the problem.
       console.log("FLEXIPRESS LOOKUP SLUG:", cleanSlug);
 
       axios
         .get(
-          `https://fpserver.grahamwebworks.com/api/events/org/1/slug/${encodeURIComponent(
-            cleanSlug
-          )}`
+          `https://fpserver.grahamwebworks.com/api/events/org/1/slug/${cleanSlug}`
         )
         .then((response) => {
           const sqlEvent = response.data;
 
           if (!sqlEvent || Object.keys(sqlEvent).length === 0) {
-            console.log("❌ EVENT NOT FOUND IN SQL FOR:", cleanSlug);
+            console.log("❌ NOT FOUND. Terminal looking for:", cleanSlug);
             return res
               .status(404)
-              .send(
-                "Event not found in Flexipress. Check the slug in the database."
-              );
+              .send("Event not found. Checked slug: " + cleanSlug);
           }
 
           const formattedEvent = mapSqlEventToContentful(sqlEvent, false);
