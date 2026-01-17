@@ -323,12 +323,12 @@ const prepEventDataForTemplate = (eventData) => {
   }
 };
 
-function mapSqlEventToContentful(event) {
-  // Use 'name' from your DB to fill 'title'
+function mapSqlEventToContentful(event, isHeadline = false) {
+  // 1. Use 'name' from your DB to fill 'title'
   const name = event.name || "Untitled Event";
   let eventDate = moment(event.startDate);
 
-  // Handle Recurring Logic (e.g., Children's Choir every 7 days)
+  // 2. Handle Recurring Logic
   if (event.repeatsEveryXDays > 0) {
     while (eventDate.isBefore(moment())) {
       eventDate.add(event.repeatsEveryXDays, "days");
@@ -337,7 +337,13 @@ function mapSqlEventToContentful(event) {
 
   return {
     fields: {
-      title: name, // Matches {{events.fields.title}}
+      title: name,
+      // TEMPLATE FLAGS:
+      // 'featured' controls the Hero section (top of home page)
+      featured: isHeadline,
+      // 'featuredOnHome' controls the grid section (bottom of home page)
+      featuredOnHome: event.isFeaturedOnHome,
+
       description: event.description || "",
       location: event.location || "",
       time: eventDate.format("h:mm a"),
@@ -345,10 +351,10 @@ function mapSqlEventToContentful(event) {
       shortDay: eventDate.format("DD"),
       dayOfWeek: eventDate.format("ddd"),
 
-      // Fixed countdown string
+      // Countdown and Sorting string
       dateToCountTo: eventDate.format("MMMM D, YYYY HH:mm:ss"),
 
-      // The structure that fixed your images
+      // Image structure for Handlebars
       eventImage: {
         fields: {
           file: {
@@ -360,7 +366,7 @@ function mapSqlEventToContentful(event) {
         },
       },
 
-      // Handles the MinistryForms embed
+      // Registration Form embed
       embedItem:
         event.embedCode && event.embedCode !== "undefined"
           ? event.embedCode
@@ -584,35 +590,10 @@ module.exports = function (app) {
       let formattedEvents = [];
 
       if (useFlexipress) {
-        // HANDLE SQL DATA
         const homeData = resultArray[3].data; // SingleHome record
-        const sqlEvents = resultArray[1].data; // Raw list of featured events from API
+        const sqlEvents = resultArray[1].data; // List of featured events
 
-        console.log("SQL EVENTS HOMEPAGE: ", sqlEvents);
-        console.log("HOMEDATA: ", homeData);
-
-        // 1. Map all Spotlight Events and Filter/Sort them
-        const now = moment();
-        let spotlightMapped = sqlEvents
-          .map((event) => mapSqlEventToContentful(event, false))
-          .filter((event) => {
-            // Filter out past events based on calculated recurring dates
-            const eventDate = moment(
-              event.fields.dateToCountTo,
-              "MMMM D, YYYY HH:mm:ss"
-            );
-            return eventDate.isAfter(now);
-          });
-
-        // 2. Sort Spotlight events by date
-        spotlightMapped.sort((a, b) => {
-          const dateA = moment(a.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss");
-          const dateB = moment(b.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss");
-          return dateA - dateB;
-        });
-
-        // 3. Handle the Headline Event (Hero)
-        // We fetch it from the API results to ensure it's the latest data
+        // 1. Map the Headline Event (FORCE headline = true)
         const headlineEventRaw = sqlEvents.find(
           (e) => e.id === homeData.HeadlineEventId
         );
@@ -620,14 +601,26 @@ module.exports = function (app) {
           ? mapSqlEventToContentful(headlineEventRaw, true)
           : null;
 
-        // 4. Prevent the Headline from appearing twice (Hero vs Grid)
+        // 2. Map the Spotlight Events (FORCE headline = false)
+        const now = moment();
+        let spotlightMapped = sqlEvents
+          .map((event) => mapSqlEventToContentful(event, false))
+          .filter((event) => {
+            const eventDate = moment(
+              event.fields.dateToCountTo,
+              "MMMM D, YYYY HH:mm:ss"
+            );
+            return eventDate.isAfter(now);
+          });
+
+        // 3. Remove the headline from the spotlight list so it doesn't double-show in the grid
         if (headlineMapped) {
           spotlightMapped = spotlightMapped.filter(
             (e) => e.fields.title !== headlineMapped.fields.title
           );
         }
 
-        // 5. MERGE THEM for the template
+        // 4. Combine them into one array for the {{#each events}} loop
         formattedEvents = headlineMapped
           ? [headlineMapped, ...spotlightMapped]
           : spotlightMapped;
