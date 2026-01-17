@@ -324,9 +324,11 @@ const prepEventDataForTemplate = (eventData) => {
 };
 
 function mapSqlEventToContentful(event) {
+  // Use 'name' from your DB to fill 'title'
+  const name = event.name || "Untitled Event";
   let eventDate = moment(event.startDate);
 
-  // Handle Recurring Logic
+  // Handle Recurring Logic (e.g., Children's Choir every 7 days)
   if (event.repeatsEveryXDays > 0) {
     while (eventDate.isBefore(moment())) {
       eventDate.add(event.repeatsEveryXDays, "days");
@@ -335,20 +337,21 @@ function mapSqlEventToContentful(event) {
 
   return {
     fields: {
-      title: event.name,
+      title: name, // Matches {{events.fields.title}}
       description: event.description || "",
       location: event.location || "",
       time: eventDate.format("h:mm a"),
       shortMonth: eventDate.format("MMM"),
       shortDay: eventDate.format("DD"),
       dayOfWeek: eventDate.format("ddd"),
+
+      // Fixed countdown string
       dateToCountTo: eventDate.format("MMMM D, YYYY HH:mm:ss"),
 
-      // FIX: Nesting the URL to match the template path
+      // The structure that fixed your images
       eventImage: {
         fields: {
           file: {
-            // Use the URL from the Sequelize Image include, or a fallback
             url:
               event.Image && event.Image.url
                 ? event.Image.url
@@ -357,6 +360,7 @@ function mapSqlEventToContentful(event) {
         },
       },
 
+      // Handles the MinistryForms embed
       embedItem:
         event.embedCode && event.embedCode !== "undefined"
           ? event.embedCode
