@@ -1378,19 +1378,18 @@ module.exports = function (app) {
 
     // FLEXIPRESS LOGIC
     try {
-      // 1. Get the Ministry from FP to get its ID
+      // 1. Get the Ministry from FP
       const minRes = await axios.get(
         `https://fpserver.grahamwebworks.com/api/ministries/org/1/name/${ministryName}`
       );
       const ministry = minRes.data;
 
-      // Handle missing ministry record safely
       if (!ministry) {
         console.warn(`Ministry not found in SQL: ${ministryName}`);
-        return res.redirect("/ministries"); // Or render 404
+        return res.redirect("/ministries");
       }
 
-      // 2. Setup YouTube Playlist ID based on legacy logic
+      // 2. Setup YouTube Playlist ID
       let playlistId = null;
       if (ministryName === "Children" || ministryName === "Family Ministries") {
         playlistId = "PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ";
@@ -1400,10 +1399,17 @@ module.exports = function (app) {
         playlistId = "PLZ13IHPbJRZ6B3OcxF4pXk6uKwrEKTz-t";
       }
 
-      // 3. Parallel fetch: Events and YouTube (if applicable)
+      // 3. Parallel fetch: FP Events, YouTube, and LEGACY Blog
       const promises = [
         axios.get(`https://fpserver.grahamwebworks.com/api/events/org/1`, {
           params: { published: true, ministryId: ministry.id },
+        }),
+        client.getEntries({
+          // Fetching legacy blog so News isn't empty
+          content_type: "blog",
+          "fields.ministry": ministryName,
+          order: "-fields.datePosted",
+          limit: 6,
         }),
       ];
 
@@ -1420,9 +1426,13 @@ module.exports = function (app) {
         );
       }
 
-      const [eventsRes, youtubeRes] = await Promise.all(promises);
+      // Note: Order depends on if playlistId exists. Let's use descriptive names.
+      const results = await Promise.all(promises);
+      const eventsRes = results[0];
+      const legacyBlogRes = results[1];
+      const youtubeRes = playlistId ? results[2] : null;
 
-      // 4. Map SQL events using your proven mapper
+      // 4. Map SQL events
       const now = moment();
       const formattedEvents = eventsRes.data
         .map((event) => mapSqlEventToContentful(event, false))
@@ -1440,17 +1450,28 @@ module.exports = function (app) {
           );
         });
 
-      // 5. Render
+      // 5. Create a "Header" from SQL data to satisfy {{> ministry/info }}
+      // We mimic the Contentful structure so the partial doesn't break
+      const sqlHeader = {
+        fields: {
+          title: ministry.name,
+          body: ministry.description, // Ensure your partial uses fields.body
+          contactName: ministry.primaryContact,
+          contactEmail: ministry.primaryContactEmail,
+        },
+      };
+
+      // 6. Render
       res.render("ministry", {
-        blogpost: { articles: [] },
+        blogpost: { articles: legacyBlogRes.items }, // Restores the News section
         request: ministryName,
         events: formattedEvents,
-        header: null,
+        header: sqlHeader, // Restores the Info/Header section
         active: { ministries: true },
-        title: ministry.name, // Ensure this matches what isHighOrMiddleSchool expects
-        youTubeVideos: youtubeRes ? youtubeRes.data : null, // Matches {{#each youTubeVideos.items}}
+        title: ministry.name,
+        youTubeVideos: youtubeRes ? youtubeRes.data : null,
         headContent: `<link rel="stylesheet" type="text/css" href="/styles/ministry.css">
-                <link rel="stylesheet" type="text/css" href="/styles/ministry_responsive.css">`,
+                  <link rel="stylesheet" type="text/css" href="/styles/ministry_responsive.css">`,
       });
     } catch (error) {
       console.error("Flexipress Ministry Page Error:", error);
