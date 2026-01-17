@@ -341,6 +341,7 @@ function mapSqlEventToContentful(event, forceHeadline = false) {
       slug: event.slug,
       featured: forceHeadline,
       // featured: event.isFeaturedOnHome || false,
+      featuredOnHome: true,
       date: eventDate.format("YYYY-MM-DD"),
       shortMonth: eventDate.format("MMM"),
       shortDay: eventDate.format("DD"),
