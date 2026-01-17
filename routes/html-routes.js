@@ -1347,7 +1347,7 @@ module.exports = function (app) {
 
       axios
         .get(
-          `https://fpserver.grahamwebworks.com/api/events/org/1/slug/${cleanSlug}`
+          `https://fpserver.grahamwebworks.com/api/event/org/1/slug/${cleanSlug}`
         )
         .then((response) => {
           console.log("Flexipress Event Response:", response.data);
