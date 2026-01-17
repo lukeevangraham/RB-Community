@@ -828,14 +828,25 @@ module.exports = function (app) {
           const homeSettings = resultArray[1].data;
           const headlineId = homeSettings.HeadlineEventId;
 
-          // A. Map all events first (This handles the recurring date math)
-          const mappedList = sqlEvents.map((event) => {
+          // A. Map all events first
+          // This runs the recurrence logic to find the "next" date for each event
+          let mappedList = sqlEvents.map((event) => {
             return mapSqlEventToContentful(event, false);
           });
 
-          // B. SORT the list based on the calculated future dates
+          // B. NEW: Filter out events that have already passed
+          const now = moment();
+          mappedList = mappedList.filter((event) => {
+            const eventDate = moment(
+              event.fields.dateToCountTo,
+              "MMMM D, YYYY HH:mm:ss"
+            );
+            // Only keep events if their calculated date is in the future
+            return eventDate.isAfter(now);
+          });
+
+          // C. SORT the list based on the calculated future dates
           mappedList.sort((a, b) => {
-            // We parse the 'dateToCountTo' string we created in the mapper
             const dateA = moment(
               a.fields.dateToCountTo,
               "MMMM D, YYYY HH:mm:ss"
@@ -844,11 +855,11 @@ module.exports = function (app) {
               b.fields.dateToCountTo,
               "MMMM D, YYYY HH:mm:ss"
             );
-            return dateA - dateB; // Ascending: Soonest events first
+            return dateA - dateB; // Ascending (soonest first)
           });
 
-          // C. Identify the Headline Event from the ALREADY mapped/sorted list
-          // We look for the one that matches the ID from homeSettings
+          // D. Identify the Headline Event
+          // We search the raw SQL results for the headline ID
           const headlineEvent = sqlEvents.find((e) => e.id == headlineId);
           const mappedHeadline = headlineEvent
             ? mapSqlEventToContentful(headlineEvent, true)
@@ -859,7 +870,7 @@ module.exports = function (app) {
             topEvent: mappedHeadline ? [mappedHeadline] : [],
             active: { events: true },
             headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
-                        <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
             title: `Events`,
           };
 
