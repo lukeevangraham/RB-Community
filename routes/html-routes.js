@@ -1326,29 +1326,37 @@ module.exports = function (app) {
     const useFlexipress =
       req.query.source === "flexi" || req.app.locals.useFlexipress;
 
-    // 1. Get the raw slug from the URL
+    // 1. Get the raw param (e.g., "-Children's-Choir" or "-Concert-Series:-Quarteto-Nuevo")
     let rawSlug = req.params.id;
     if (rawSlug.startsWith("-")) rawSlug = rawSlug.substring(1);
 
-    // 2. DECODE it to handle ":" and other characters
-    // 2. Standardize the slug (Lowercase and remove the colon if necessary)
-    // Try this if your terminal says "No event found"
-    const cleanSlug = decodeURIComponent(rawSlug).toLowerCase();
+    // 2. Decode the URL characters (converts %27 to ' and %3A to :)
+    // Then trim any accidental whitespace
+    const cleanSlug = decodeURIComponent(rawSlug).trim();
 
     if (useFlexipress) {
+      // 3. LOG this to your terminal.
+      // If the terminal shows "Children's-Choir" but your DB has "childrens-choir", this is the problem.
+      console.log("FLEXIPRESS LOOKUP SLUG:", cleanSlug);
+
       axios
         .get(
-          `https://fpserver.grahamwebworks.com/api/events/org/1/slug/${cleanSlug}`
+          `https://fpserver.grahamwebworks.com/api/events/org/1/slug/${encodeURIComponent(
+            cleanSlug
+          )}`
         )
         .then((response) => {
           const sqlEvent = response.data;
 
-          if (!sqlEvent) {
-            console.log("No event found for slug:", cleanSlug);
-            return res.status(404).send("Event not found");
+          if (!sqlEvent || Object.keys(sqlEvent).length === 0) {
+            console.log("❌ EVENT NOT FOUND IN SQL FOR:", cleanSlug);
+            return res
+              .status(404)
+              .send(
+                "Event not found in Flexipress. Check the slug in the database."
+              );
           }
 
-          // Map the SQL data to Contentful format using our helper
           const formattedEvent = mapSqlEventToContentful(sqlEvent, false);
 
           // Apply specific business logic (Replace RBCC)
