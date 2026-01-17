@@ -1326,24 +1326,27 @@ module.exports = function (app) {
     const useFlexipress =
       req.query.source === "flexi" || req.app.locals.useFlexipress;
 
-    // 1. Identify the 'slug' from the URL
-    // If the URL is /event-sunday-service, req.params.id will be "-sunday-service"
-    let slug = req.params.id;
-    if (slug.startsWith("-")) {
-      slug = slug.substring(1); // Remove the leading dash
-    }
+    // 1. Get the raw slug from the URL
+    let rawSlug = req.params.id;
+    if (rawSlug.startsWith("-")) rawSlug = rawSlug.substring(1);
+
+    // 2. DECODE it to handle ":" and other characters
+    const cleanSlug = decodeURIComponent(rawSlug);
 
     if (useFlexipress) {
-      // --- FLEXIPRESS LOGIC ---
+      // 3. LOG this to your terminal to see exactly what you're sending to SQL
+      console.log("Looking for Flexi Slug:", cleanSlug);
+
       axios
         .get(
-          `https://fpserver.grahamwebworks.com/api/events/org/1/slug/${slug}`
+          `https://fpserver.grahamwebworks.com/api/events/org/1/slug/${cleanSlug}`
         )
         .then((response) => {
           const sqlEvent = response.data;
 
           if (!sqlEvent) {
-            return res.status(404).send("Event not found in Flexipress");
+            console.log("No event found for slug:", cleanSlug);
+            return res.status(404).send("Event not found");
           }
 
           // Map the SQL data to Contentful format using our helper
