@@ -323,46 +323,45 @@ const prepEventDataForTemplate = (eventData) => {
   }
 };
 
-function mapSqlEventToContentful(event, forceHeadline = false) {
+function mapSqlEventToContentful(event) {
+  // 1. Handle the Date & Recurring Logic
   let eventDate = moment(event.startDate);
-
-  // 1. Centralized Recurring Logic (Unchanged)
-  if (event.repeatsEveryXDays > 0 && eventDate.isSameOrBefore(moment())) {
-    while (eventDate.isBefore(moment().format("YYYY-MM-DD"))) {
-      eventDate.add(event.repeatsEveryXDays, "day");
+  if (event.repeatsEveryXDays > 0) {
+    while (eventDate.isBefore(moment())) {
+      eventDate.add(event.repeatsEveryXDays, "days");
     }
   }
 
-  // 2. Standardized Object Structure
+  // 2. Build the object to match the template's expectations
   return {
     fields: {
       title: event.name,
-      name: event.name,
-      slug: event.slug,
-      featured: forceHeadline,
-      featuredOnHome: event.isFeaturedOnHome || forceHeadline,
-      date: eventDate.format("YYYY-MM-DD"),
+      description: event.description,
+      location: event.location,
+      time: eventDate.format("h:mm a"),
       shortMonth: eventDate.format("MMM"),
       shortDay: eventDate.format("DD"),
       dayOfWeek: eventDate.format("ddd"),
 
-      // FIX: Extract time from the eventDate we just calculated
-      // .format("h:mm a") will give you "9:30 am"
-      time: eventDate.format("h:mm a"),
-
-      location: event.location,
-      description: event.description,
+      // CRITICAL: Matches <div id="dateToCountTo">
       dateToCountTo: eventDate.format("MMMM D, YYYY HH:mm:ss"),
+
+      // CRITICAL: Matches {{events.fields.eventImage.fields.file.url}}
       eventImage: {
         fields: {
           file: {
             url: event.ImageId
               ? `https://fpserver.grahamwebworks.com/api/images/raw/${event.ImageId}`
-              : "images/events.jpg", // fallback
+              : "images/events.jpg",
           },
         },
       },
-      embedItem: event.embedCode !== "undefined" ? event.embedCode : "",
+
+      // CRITICAL: Matches {{{events.fields.embedItem}}}
+      embedItem:
+        event.embedCode && event.embedCode !== "undefined"
+          ? event.embedCode
+          : "",
     },
   };
 }
@@ -1360,7 +1359,7 @@ module.exports = function (app) {
               .send("Event not found. Checked slug: " + cleanSlug);
           }
 
-          const formattedEvent = mapSqlEventToContentful(sqlEvent, false);
+          const formattedEvent = mapSqlEventToContentful(sqlEvent);
 
           // Apply specific business logic (Replace RBCC)
           if (formattedEvent.fields.description) {
