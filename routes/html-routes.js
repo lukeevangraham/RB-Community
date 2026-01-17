@@ -750,13 +750,29 @@ module.exports = function (app) {
       let finalTopEvent = [];
 
       if (useFlexipress) {
-        finalTopEvent = formattedEvents.filter((e) => e.fields.featured);
-        finalEventsListing = formattedEvents.filter((e) => !e.fields.featured);
+        // Explicitly pull the headline and the grid items
+        // Filter out the headline from the grid using loose inequality
+        finalEventsListing = formattedEvents.filter(
+          (e) => e.fields.featured === false
+        );
+
+        // Find the single headline object
+        const headline = formattedEvents.find(
+          (e) => e.fields.featured === true
+        );
+
+        // Handlebars templates usually loop over 'topEvent', so keep it as an array
+        finalTopEvent = headline ? [headline] : [];
       } else {
-        // Contentful logic: filter the existing formattedEvents array
+        // Contentful logic: filter based on the 'featured' flag from Contentful
         finalTopEvent = formattedEvents.filter((e) => e.fields.featured);
-        finalEventsListing = formattedEvents; // Legacy template often keeps all in 'events'
+        finalEventsListing = formattedEvents;
       }
+
+      // ADD THIS LOG TO YOUR TERMINAL TO SEE WHAT'S HAPPENING
+      console.log(
+        `Flexi: ${useFlexipress} | Top: ${finalTopEvent.length} | Grid: ${finalEventsListing.length}`
+      );
 
       var hbsObject = {
         events: finalEventsListing,
