@@ -803,6 +803,8 @@ module.exports = function (app) {
         finalEventsForHbs = formattedEvents;
       }
 
+      console.log("FINAL EVENTS FOR HBS: ", finalEventsForHbs);
+
       // 2. RENDER
       var hbsObject = {
         events: finalEventsForHbs, // The template loops through this twice
