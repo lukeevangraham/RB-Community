@@ -341,7 +341,10 @@ function mapSqlEventToContentful(event, forceHeadline = false) {
       slug: event.slug,
       featured: forceHeadline,
       // featured: event.isFeaturedOnHome || false,
-      featuredOnHome: true,
+      // Use the ACTUAL database value for the Home Page flag
+      // If the DB field is null, we fallback to forceHeadline
+      // (because the headline is obviously on the home page)
+      featuredOnHome: event.isFeaturedOnHome || forceHeadline,
       date: eventDate.format("YYYY-MM-DD"),
       shortMonth: eventDate.format("MMM"),
       shortDay: eventDate.format("DD"),
