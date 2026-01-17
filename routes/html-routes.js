@@ -326,7 +326,7 @@ const prepEventDataForTemplate = (eventData) => {
 function mapSqlEventToContentful(event, forceHeadline = false) {
   let eventDate = moment(event.startDate);
 
-  // 1. Centralized Recurring Logic
+  // 1. Centralized Recurring Logic (Unchanged)
   if (event.repeatsEveryXDays > 0 && eventDate.isSameOrBefore(moment())) {
     while (eventDate.isBefore(moment().format("YYYY-MM-DD"))) {
       eventDate.add(event.repeatsEveryXDays, "day");
@@ -340,16 +340,16 @@ function mapSqlEventToContentful(event, forceHeadline = false) {
       name: event.name,
       slug: event.slug,
       featured: forceHeadline,
-      // featured: event.isFeaturedOnHome || false,
-      // Use the ACTUAL database value for the Home Page flag
-      // If the DB field is null, we fallback to forceHeadline
-      // (because the headline is obviously on the home page)
       featuredOnHome: event.isFeaturedOnHome || forceHeadline,
       date: eventDate.format("YYYY-MM-DD"),
       shortMonth: eventDate.format("MMM"),
       shortDay: eventDate.format("DD"),
       dayOfWeek: eventDate.format("ddd"),
-      time: event.time || event.startTime || event.eventTime || "See details",
+
+      // FIX: Extract time from the eventDate we just calculated
+      // .format("h:mm a") will give you "9:30 am"
+      time: eventDate.format("h:mm a"),
+
       location: event.location,
       description: event.description,
       dateToCountTo: eventDate.format("MMMM D, YYYY"),
