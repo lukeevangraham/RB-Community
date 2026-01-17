@@ -801,41 +801,92 @@ module.exports = function (app) {
   // })
 
   app.get("/events", function (req, res) {
-    client
-      .getEntries({
-        content_type: "events",
-        "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
-        order: "fields.date",
-      })
-      .then(function (dbEvent) {
-        var items = dbEvent.items;
-        var topItem = [];
+    const useFlexipress =
+      req.query.source === "flexi" || req.app.locals.useFlexipress;
 
-        // Converting times for template
-        items.forEach((item) => {
-          if (item.fields.featured) {
-            topItem.push(item);
-          }
+    if (useFlexipress) {
+      // 1. Fetch ALL published events for this Org
+      axios
+        .get(
+          `https://fpserver.grahamwebworks.com/api/events/org/1?published=true`
+        )
+        .then((response) => {
+          const sqlEvents = response.data;
 
-          prepEventDataForTemplate(item);
+          // 2. Map through every event (forceHeadline is FALSE for the list view)
+          const formattedEvents = sqlEvents.map((event) =>
+            mapSqlEventToContentful(event, false)
+          );
+
+          // 3. Replicate your legacy 'topItem' logic
+          // Some event listing templates use a 'featured' top section
+          const topItem = formattedEvents.filter(
+            (e) => e.fields.featuredOnHome
+          );
+
+          // 4. Sort by the calculated date (using your existing compare function)
+          formattedEvents.sort(compare);
+
+          var hbsObject = {
+            events: formattedEvents,
+            topEvent: topItem,
+            active: { events: true },
+            headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
+                        <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+            title: `Events`,
+          };
+
+          res.render("events", hbsObject);
+        })
+        .catch((err) => {
+          console.error("Flexipress /events Error:", err);
+          res.status(500).send("Error loading events listing");
         });
+    } else {
+      // [Legacy Contentful Code - Keep exactly as you had it]
+      client
+        .getEntries({
+          content_type: "events",
+          "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
+          order: "fields.date",
+        })
+        .then(function (dbEvent) {
+          // client
+          //   .getEntries({
+          //     content_type: "events",
+          //     "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
+          //     order: "fields.date",
+          //   })
+          //   .then(function (dbEvent) {
+          var items = dbEvent.items;
+          var topItem = [];
 
-        // SORT EVENTS BY NEWLY CALCULATED DATE
-        items.sort(compare);
+          // Converting times for template
+          items.forEach((item) => {
+            if (item.fields.featured) {
+              topItem.push(item);
+            }
 
-        // console.log("LOOK HERE: ", topItem)
+            prepEventDataForTemplate(item);
+          });
 
-        var hbsObject = {
-          events: dbEvent.items,
-          topEvent: topItem,
-          active: { events: true },
-          headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
+          // SORT EVENTS BY NEWLY CALCULATED DATE
+          items.sort(compare);
+
+          // console.log("LOOK HERE: ", topItem)
+
+          var hbsObject = {
+            events: dbEvent.items,
+            topEvent: topItem,
+            active: { events: true },
+            headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
                     <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-          title: `Events`,
-        };
+            title: `Events`,
+          };
 
-        return res.render("events", hbsObject);
-      });
+          return res.render("events", hbsObject);
+        });
+    }
   });
 
   app.get("/about", async function (req, res) {
