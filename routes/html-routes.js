@@ -352,10 +352,17 @@ function mapSqlEventToContentful(event, forceHeadline = false) {
 
       location: event.location,
       description: event.description,
-      dateToCountTo: eventDate.format("MMMM D, YYYY"),
-      eventImage: event.Image
-        ? { fields: { file: { url: event.Image.url } } }
-        : null,
+      dateToCountTo: eventDate.format("MMMM D, YYYY HH:mm:ss"),
+      eventImage: {
+        fields: {
+          file: {
+            url: event.ImageId
+              ? `https://fpserver.grahamwebworks.com/api/images/raw/${event.ImageId}`
+              : "images/events.jpg", // fallback
+          },
+        },
+      },
+      embedItem: event.embedCode !== "undefined" ? event.embedCode : "",
     },
   };
 }
