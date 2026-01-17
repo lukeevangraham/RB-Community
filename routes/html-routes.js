@@ -745,38 +745,28 @@ module.exports = function (app) {
         }
       });
 
-      // 2. PREP DATA FOR HBS OBJECT
-      let finalEventsListing = [];
-      let finalTopEvent = [];
+      // 1. RE-MERGE INTO ONE ARRAY
+      // We want the headline first, then the spotlights
+      let finalEventsForHbs = [];
 
       if (useFlexipress) {
-        // Explicitly pull the headline and the grid items
-        // Filter out the headline from the grid using loose inequality
-        finalEventsListing = formattedEvents.filter(
-          (e) => e.fields.featured === false
-        );
-
-        // Find the single headline object
         const headline = formattedEvents.find(
           (e) => e.fields.featured === true
         );
+        const spotlights = formattedEvents.filter(
+          (e) => e.fields.featured === false
+        );
 
-        // Handlebars templates usually loop over 'topEvent', so keep it as an array
-        finalTopEvent = headline ? [headline] : [];
+        if (headline) finalEventsForHbs.push(headline);
+        finalEventsForHbs = finalEventsForHbs.concat(spotlights);
       } else {
-        // Contentful logic: filter based on the 'featured' flag from Contentful
-        finalTopEvent = formattedEvents.filter((e) => e.fields.featured);
-        finalEventsListing = formattedEvents;
+        // Legacy Contentful path
+        finalEventsForHbs = formattedEvents;
       }
 
-      // ADD THIS LOG TO YOUR TERMINAL TO SEE WHAT'S HAPPENING
-      console.log(
-        `Flexi: ${useFlexipress} | Top: ${finalTopEvent.length} | Grid: ${finalEventsListing.length}`
-      );
-
+      // 2. RENDER
       var hbsObject = {
-        events: finalEventsListing,
-        topEvent: finalTopEvent,
+        events: finalEventsForHbs, // The template loops through this twice
         vimeo: vimeoRecord,
         blogpost: blogItems,
         youtubeStream: mostRecentStream,
