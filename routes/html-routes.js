@@ -1350,14 +1350,20 @@ module.exports = function (app) {
           `https://fpserver.grahamwebworks.com/api/events/org/1/slug/${cleanSlug}`
         )
         .then((response) => {
-          const sqlEvent = response.data;
+          console.log("Flexipress Event Response:", response.data);
+          // If the API returns an array, take the first item.
+          // If it's just an object, use it directly.
+          const sqlEvent = Array.isArray(response.data)
+            ? response.data[0]
+            : response.data;
 
           if (!sqlEvent || Object.keys(sqlEvent).length === 0) {
             console.log("❌ NOT FOUND. Terminal looking for:", cleanSlug);
-            return res
-              .status(404)
-              .send("Event not found. Checked slug: " + cleanSlug);
+            return res.status(404).send("Event not found.");
           }
+
+          // Log this to see what the RAW database column names actually are
+          console.log("RAW SQL EVENT DATA:", sqlEvent);
 
           const formattedEvent = mapSqlEventToContentful(sqlEvent);
 
@@ -1371,10 +1377,10 @@ module.exports = function (app) {
           }
 
           const hbsObject = {
-            events: formattedEvent, // Note: Template expects the key 'events'
+            events: formattedEvent,
             active: { events: true },
             headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
-                        <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
             title: formattedEvent.fields.title,
           };
 
