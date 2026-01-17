@@ -324,44 +324,37 @@ const prepEventDataForTemplate = (eventData) => {
 };
 
 function mapSqlEventToContentful(event) {
-  // 1. Handle the Date & Recurring Logic
+  // Use properties from your SQL model
+  const name = event.name || "Untitled Event";
   let eventDate = moment(event.startDate);
+
+  // Recurring logic
   if (event.repeatsEveryXDays > 0) {
     while (eventDate.isBefore(moment())) {
       eventDate.add(event.repeatsEveryXDays, "days");
     }
   }
 
-  // 2. Build the object to match the template's expectations
   return {
     fields: {
-      title: event.name,
-      description: event.description,
-      location: event.location,
+      title: name,
+      description: event.description || "",
+      location: event.location || "RB Community",
       time: eventDate.format("h:mm a"),
       shortMonth: eventDate.format("MMM"),
       shortDay: eventDate.format("DD"),
       dayOfWeek: eventDate.format("ddd"),
-
-      // CRITICAL: Matches <div id="dateToCountTo">
       dateToCountTo: eventDate.format("MMMM D, YYYY HH:mm:ss"),
 
-      // CRITICAL: Matches {{events.fields.eventImage.fields.file.url}}
+      // Sequelize includes the Image model as an object: event.Image
       eventImage: {
         fields: {
           file: {
-            url: event.ImageId
-              ? `https://fpserver.grahamwebworks.com/api/images/raw/${event.ImageId}`
-              : "images/events.jpg",
+            url: event.Image ? event.Image.url : "images/events.jpg",
           },
         },
       },
-
-      // CRITICAL: Matches {{{events.fields.embedItem}}}
-      embedItem:
-        event.embedCode && event.embedCode !== "undefined"
-          ? event.embedCode
-          : "",
+      embedItem: event.embedCode || "",
     },
   };
 }
