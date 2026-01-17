@@ -1323,114 +1323,134 @@ module.exports = function (app) {
 
   // Page for individual events
   app.get("/event:id", function (req, res) {
-    renderSingleEvent = (oldDbEvent) => {
-      let dbEvent = oldDbEvent.items[0];
+    const useFlexipress =
+      req.query.source === "flexi" || req.app.locals.useFlexipress;
 
-      // Converting times for template
-      Object.assign(dbEvent.fields, {
-        shortMonth: moment(dbEvent.fields.date).format("MMM"),
-        dayOfWeek: moment(dbEvent.fields.date).format("ddd"),
-      });
-      Object.assign(dbEvent.fields, {
-        shortDay: moment(dbEvent.fields.date).format("DD"),
-      });
+    // 1. Identify the 'slug' from the URL
+    // If the URL is /event-sunday-service, req.params.id will be "-sunday-service"
+    let slug = req.params.id;
+    if (slug.startsWith("-")) {
+      slug = slug.substring(1); // Remove the leading dash
+    }
 
-      // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
-      if (dbEvent.fields.repeatsEveryDays > 0) {
-        if (
-          moment(dbEvent.fields.date).isBefore(moment().format("YYYY-MM-DD"))
-        ) {
-          let start = moment(dbEvent.fields.date);
-          let end = moment().format("YYYY-MM-DD");
-
-          // console.log("START: ", start);
-          // console.log("END: ", end);
-
-          while (start.isBefore(end)) {
-            start.add(dbEvent.fields.repeatsEveryDays, "day");
-            // dbEvent.add(dbEvent.fields.repeatsEveryDays, "day");
-          }
-          // console.log(start.format("MM DD YYYY"));
-          dbEvent.fields.date = start.format("YYYY-MM-DD");
-          dbEvent.fields.shortMonth = start.format("MMM");
-          dbEvent.fields.shortDay = start.format("DD");
-        }
-      }
-      if (
-        moment(dbEvent.fields.date, "YYYY-MM-DD").isAfter(
-          moment().format("YYYY-MM-DD")
+    if (useFlexipress) {
+      // --- FLEXIPRESS LOGIC ---
+      axios
+        .get(
+          `https://fpserver.grahamwebworks.com/api/events/org/1/slug/${slug}`
         )
-      ) {
-        Object.assign(dbEvent.fields, {
-          dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY"),
+        .then((response) => {
+          const sqlEvent = response.data;
+
+          if (!sqlEvent) {
+            return res.status(404).send("Event not found in Flexipress");
+          }
+
+          // Map the SQL data to Contentful format using our helper
+          const formattedEvent = mapSqlEventToContentful(sqlEvent, false);
+
+          // Apply specific business logic (Replace RBCC)
+          if (formattedEvent.fields.description) {
+            formattedEvent.fields.description =
+              formattedEvent.fields.description.replace(
+                /RBCC/g,
+                "RB Community"
+              );
+          }
+
+          const hbsObject = {
+            events: formattedEvent, // Note: Template expects the key 'events'
+            active: { events: true },
+            headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
+                        <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+            title: formattedEvent.fields.title,
+          };
+
+          res.render("event", hbsObject);
+        })
+        .catch((err) => {
+          console.error("Flexipress Single Event Error:", err);
+          res.status(500).send("Error loading event details");
         });
-      }
+    } else {
+      // --- LEGACY CONTENTFUL LOGIC ---
+      // (We keep your original renderSingleEvent logic inside this block)
+      const renderSingleEvent = (oldDbEvent) => {
+        let dbEvent = oldDbEvent.items[0];
+        if (!dbEvent)
+          return res.status(404).send("Event not found in Contentful");
 
-      // CONVERT MARKDOWN TO HTML
-      if (dbEvent.fields.description) {
-        dbEvent.fields.description = marked(dbEvent.fields.description).replace(
-          /RBCC/g,
-          "RB Community"
-        );
-      }
+        Object.assign(dbEvent.fields, {
+          shortMonth: moment(dbEvent.fields.date).format("MMM"),
+          dayOfWeek: moment(dbEvent.fields.date).format("ddd"),
+          shortDay: moment(dbEvent.fields.date).format("DD"),
+        });
 
-      // RENDER HTML FOR DESCRIPTION
-      //  const rawRichTextField = dbEvent.fields.description;
-      // let renderedHtml = documentToHtmlString(rawRichTextField);
-      //  Object.assign(dbEvent.fields, {
-      //    renderedHtml: documentToHtmlString(rawRichTextField)
-      //   });
-      // console.log(dbEvent.fields.renderedHtml)
-
-      // SETUP SHELBY GIVING FORM EMBED
-      if (dbEvent.fields.embedItem) {
-        if (
-          dbEvent.fields.embedItem.substring(0, 31) ===
-          '<script src="/embed.aspx?formId'
-        ) {
-          dbEvent.fields.embedItem =
-            dbEvent.fields.embedItem.slice(0, 13) +
-            "https://forms.ministryforms.net" +
-            dbEvent.fields.embedItem.slice(13);
+        if (dbEvent.fields.repeatsEveryDays > 0) {
+          if (
+            moment(dbEvent.fields.date).isBefore(moment().format("YYYY-MM-DD"))
+          ) {
+            let start = moment(dbEvent.fields.date);
+            let end = moment().format("YYYY-MM-DD");
+            while (start.isBefore(end)) {
+              start.add(dbEvent.fields.repeatsEveryDays, "day");
+            }
+            dbEvent.fields.date = start.format("YYYY-MM-DD");
+            dbEvent.fields.shortMonth = start.format("MMM");
+            dbEvent.fields.shortDay = start.format("DD");
+          }
         }
-      }
 
-      var hbsObject = {
-        events: dbEvent,
-        active: { events: true },
-        headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
+        if (
+          moment(dbEvent.fields.date, "YYYY-MM-DD").isAfter(
+            moment().format("YYYY-MM-DD")
+          )
+        ) {
+          Object.assign(dbEvent.fields, {
+            dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY"),
+          });
+        }
+
+        if (dbEvent.fields.description) {
+          dbEvent.fields.description = marked(
+            dbEvent.fields.description
+          ).replace(/RBCC/g, "RB Community");
+        }
+
+        const hbsObject = {
+          events: dbEvent,
+          active: { events: true },
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
                     <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-        title: dbEvent.fields.title,
+          title: dbEvent.fields.title,
+        };
+        return res.render("event", hbsObject);
       };
 
-      // console.log(dbEvent);
-      return res.render("event", hbsObject);
-    };
-
-    if (req.params.id[0] === ":") {
-      client
-        .getEntries({
-          content_type: "events",
-          "sys.id[match]": req.params.id.substring(1),
-        })
-        .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
-    } else {
-      str = decodeURI(
-        req.originalUrl
-          .substring(7)
-          .replace(/-/g, " ")
-          .replace(/\s\s\s/g, "-")
-      );
-      str = str.replace(/\s\s\s/g, " - ");
-      // req.params.id = req.params.id.substring(1);
-      // client.getEntry(req.params.id).then(function (dbEvent) {
-      str.indexOf("?") > 0 ? (str = str.substring(0, str.indexOf("?"))) : "";
-      client
-        .getEntries({
-          content_type: "events",
-          "fields.title": str,
-        })
-        .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
+      // Original Contentful ID/Title logic
+      if (req.params.id[0] === ":") {
+        client
+          .getEntries({
+            content_type: "events",
+            "sys.id[match]": req.params.id.substring(1),
+          })
+          .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
+      } else {
+        let str = decodeURI(
+          req.originalUrl
+            .substring(7)
+            .replace(/-/g, " ")
+            .replace(/\s\s\s/g, "-")
+        );
+        str = str.replace(/\s\s\s/g, " - ");
+        str.indexOf("?") > 0 ? (str = str.substring(0, str.indexOf("?"))) : "";
+        client
+          .getEntries({
+            content_type: "events",
+            "fields.title": str,
+          })
+          .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
+      }
     }
   });
 
