@@ -805,34 +805,42 @@ module.exports = function (app) {
       req.query.source === "flexi" || req.app.locals.useFlexipress;
 
     if (useFlexipress) {
-      // 1. Fetch ALL published events for this Org
-      axios
-        .get(
+      Promise.all([
+        // [0] Fetch ALL published events
+        axios.get(
           `https://fpserver.grahamwebworks.com/api/events/org/1?published=true`
-        )
-        .then((response) => {
-          const sqlEvents = response.data;
+        ),
+        // [1] Fetch SingleHome to identify the ONE Headline event
+        axios.get(`https://fpserver.grahamwebworks.com/api/single/home/1`),
+      ])
+        .then((resultArray) => {
+          const sqlEvents = resultArray[0].data;
+          const homeSettings = resultArray[1].data;
+          const headlineId = homeSettings.HeadlineEventId;
 
-          // 2. Map through every event (forceHeadline is FALSE for the list view)
-          const formattedEvents = sqlEvents.map((event) =>
-            mapSqlEventToContentful(event, false)
-          );
+          // A. Map the specific Headline Event
+          const headlineEvent = sqlEvents.find((e) => e.id == headlineId);
+          const mappedHeadline = headlineEvent
+            ? mapSqlEventToContentful(headlineEvent, true)
+            : null;
 
-          // 3. Replicate your legacy 'topItem' logic
-          // Some event listing templates use a 'featured' top section
-          const topItem = formattedEvents.filter(
-            (e) => e.fields.featuredOnHome
-          );
+          // B. Map all other events (set forceHeadline to false)
+          // We do NOT filter them out here because you want them in the regular list too
+          const mappedList = sqlEvents.map((event) => {
+            // If it's the headline, we still map it with forceHeadline=false
+            // so it shows up in the 'unless featured' list below.
+            return mapSqlEventToContentful(event, false);
+          });
 
-          // 4. Sort by the calculated date (using your existing compare function)
-          formattedEvents.sort(compare);
+          // C. Sort the list
+          mappedList.sort(compare);
 
           var hbsObject = {
-            events: formattedEvents,
-            topEvent: topItem,
+            events: mappedList, // This will show ALL events (including the one that is headline)
+            topEvent: mappedHeadline ? [mappedHeadline] : [], // Only the ONE headline
             active: { events: true },
             headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
-                        <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
             title: `Events`,
           };
 
