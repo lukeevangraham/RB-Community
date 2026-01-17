@@ -348,8 +348,8 @@ function mapSqlEventToContentful(event, forceHeadline = false) {
       date: eventDate.format("YYYY-MM-DD"),
       shortMonth: eventDate.format("MMM"),
       shortDay: eventDate.format("DD"),
-      dayOfWeek: eventDate.format("dddd"), // This gives you "Sunday", "Monday", etc.
-      time: event.time || "See details",
+      dayOfWeek: eventDate.format("ddd"),
+      time: event.time || event.startTime || event.eventTime || "See details",
       location: event.location,
       description: event.description,
       dateToCountTo: eventDate.format("MMMM D, YYYY"),
