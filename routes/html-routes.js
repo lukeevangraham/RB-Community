@@ -828,29 +828,38 @@ module.exports = function (app) {
           const homeSettings = resultArray[1].data;
           const headlineId = homeSettings.HeadlineEventId;
 
-          // A. Map the specific Headline Event
+          // A. Map all events first (This handles the recurring date math)
+          const mappedList = sqlEvents.map((event) => {
+            return mapSqlEventToContentful(event, false);
+          });
+
+          // B. SORT the list based on the calculated future dates
+          mappedList.sort((a, b) => {
+            // We parse the 'dateToCountTo' string we created in the mapper
+            const dateA = moment(
+              a.fields.dateToCountTo,
+              "MMMM D, YYYY HH:mm:ss"
+            );
+            const dateB = moment(
+              b.fields.dateToCountTo,
+              "MMMM D, YYYY HH:mm:ss"
+            );
+            return dateA - dateB; // Ascending: Soonest events first
+          });
+
+          // C. Identify the Headline Event from the ALREADY mapped/sorted list
+          // We look for the one that matches the ID from homeSettings
           const headlineEvent = sqlEvents.find((e) => e.id == headlineId);
           const mappedHeadline = headlineEvent
             ? mapSqlEventToContentful(headlineEvent, true)
             : null;
 
-          // B. Map all other events (set forceHeadline to false)
-          // We do NOT filter them out here because you want them in the regular list too
-          const mappedList = sqlEvents.map((event) => {
-            // If it's the headline, we still map it with forceHeadline=false
-            // so it shows up in the 'unless featured' list below.
-            return mapSqlEventToContentful(event, false);
-          });
-
-          // C. Sort the list
-          mappedList.sort(compare);
-
           var hbsObject = {
-            events: mappedList, // This will show ALL events (including the one that is headline)
-            topEvent: mappedHeadline ? [mappedHeadline] : [], // Only the ONE headline
+            events: mappedList,
+            topEvent: mappedHeadline ? [mappedHeadline] : [],
             active: { events: true },
             headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
-                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+                        <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
             title: `Events`,
           };
 
