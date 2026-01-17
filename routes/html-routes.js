@@ -588,6 +588,9 @@ module.exports = function (app) {
         const homeData = resultArray[3].data; // SingleHome record
         const sqlEvents = resultArray[1].data; // Raw list of featured events from API
 
+        console.log("SQL EVENTS HOMEPAGE: ", sqlEvents);
+        console.log("HOMEDATA: ", homeData);
+
         // 1. Map all Spotlight Events and Filter/Sort them
         const now = moment();
         let spotlightMapped = sqlEvents
