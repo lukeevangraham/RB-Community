@@ -1376,9 +1376,9 @@ module.exports = function (app) {
       return;
     }
 
-    // FLEXIPRESS LOGIC
+    // FLEXIPRESS LOGIC (Hybrid Mode)
     try {
-      // 1. Get the Ministry from FP
+      // 1. Get Ministry from SQL
       const minRes = await axios.get(
         `https://fpserver.grahamwebworks.com/api/ministries/org/1/name/${ministryName}`
       );
@@ -1399,13 +1399,20 @@ module.exports = function (app) {
         playlistId = "PLZ13IHPbJRZ6B3OcxF4pXk6uKwrEKTz-t";
       }
 
-      // 3. Parallel fetch: FP Events, YouTube, and LEGACY Blog
+      // 3. Parallel fetch: FP Events, Legacy Header, Legacy News, and YouTube
       const promises = [
         axios.get(`https://fpserver.grahamwebworks.com/api/events/org/1`, {
           params: { published: true, ministryId: ministry.id },
         }),
+        // Fetch the Legacy "Header" Article
         client.getEntries({
-          // Fetching legacy blog so News isn't empty
+          content_type: "blog",
+          "fields.ministry": ministryName,
+          "fields.featureOnMinistryPage": true,
+          limit: 1,
+        }),
+        // Fetch Legacy News
+        client.getEntries({
           content_type: "blog",
           "fields.ministry": ministryName,
           order: "-fields.datePosted",
@@ -1418,7 +1425,7 @@ module.exports = function (app) {
           axios.get(`https://www.googleapis.com/youtube/v3/playlistItems`, {
             params: {
               key: process.env.GOOGLE_KEY,
-              playlistId: playlistId,
+              playlistId,
               part: "snippet,contentDetails",
               maxResults: "10",
             },
@@ -1426,59 +1433,52 @@ module.exports = function (app) {
         );
       }
 
-      // Note: Order depends on if playlistId exists. Let's use descriptive names.
-      const results = await Promise.all(promises);
-      const eventsRes = results[0];
-      const legacyBlogRes = results[1];
-      const youtubeRes = playlistId ? results[2] : null;
+      const [eventsRes, headerRes, blogRes, youtubeRes] = await Promise.all(
+        promises
+      );
 
       // 4. Map SQL events
       const now = moment();
       const formattedEvents = eventsRes.data
         .map((event) => mapSqlEventToContentful(event, false))
-        .filter((event) => {
-          const eventDate = moment(
-            event.fields.dateToCountTo,
-            "MMMM D, YYYY HH:mm:ss"
-          );
-          return eventDate.isAfter(now);
-        })
-        .sort((a, b) => {
-          return (
+        .filter((event) =>
+          moment(event.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss").isAfter(
+            now
+          )
+        )
+        .sort(
+          (a, b) =>
             moment(a.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss") -
             moment(b.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss")
-          );
-        });
+        );
 
-      // 5. Create a "Header" from SQL data to satisfy {{> ministry/info }}
-      // We mimic the Contentful structure so the partial doesn't break
-      const sqlHeader = {
-        fields: {
-          title: ministry.name,
-          body: ministry.description, // Ensure your partial uses fields.body
-          contactName: ministry.primaryContact,
-          contactEmail: ministry.primaryContactEmail,
-        },
-      };
+      // 5. Handle the Header (Rich Text)
+      const headerItem = headerRes.items[0];
+      if (headerItem) {
+        // Render Contentful Rich Text to HTML so the template can display it
+        headerItem.fields.renderedHtml = documentToHtmlString(
+          headerItem.fields.body
+        );
+      }
 
       // 6. Render
       res.render("ministry", {
         blogpost: {
-          articles: legacyBlogRes.items,
-          multipleEntries: legacyBlogRes.items.length > 0, // This triggers the header/container
+          articles: blogRes.items,
+          multipleEntries: blogRes.items.length > 0,
         },
         request: ministryName,
         events: formattedEvents,
-        header: sqlHeader, // Restores the Info/Header section
+        header: headerItem || null, // Fallback to null if no legacy header found
         active: { ministries: true },
         title: ministry.name,
         youTubeVideos: youtubeRes ? youtubeRes.data : null,
         headContent: `<link rel="stylesheet" type="text/css" href="/styles/ministry.css">
-                  <link rel="stylesheet" type="text/css" href="/styles/ministry_responsive.css">`,
+                      <link rel="stylesheet" type="text/css" href="/styles/ministry_responsive.css">`,
       });
     } catch (error) {
-      console.error("Flexipress Ministry Page Error:", error);
-      res.status(500).send("Could not load ministry data.");
+      console.error("Flexipress Hybrid Ministry Error:", error);
+      res.status(500).send("Error loading ministry data.");
     }
   });
 
