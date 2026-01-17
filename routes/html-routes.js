@@ -593,15 +593,17 @@ module.exports = function (app) {
         const homeData = resultArray[3].data; // SingleHome record
         const sqlEvents = resultArray[1].data; // List of featured events
 
-        // 1. Map the Headline Event (FORCE headline = true)
-        const headlineEventRaw = sqlEvents.find(
-          (e) => e.id === homeData.HeadlineEventId
-        );
+        // 1. Map the Headline Event (Hero)
+        // Look in sqlEvents first, then fall back to the nested HeadlineEvent inside homeData
+        const headlineEventRaw =
+          sqlEvents.find((e) => e.id === homeData.HeadlineEventId) ||
+          homeData.HeadlineEvent;
+
         let headlineMapped = headlineEventRaw
-          ? mapSqlEventToContentful(headlineEventRaw, true)
+          ? mapSqlEventToContentful(headlineEventRaw, true) // Force headline = true
           : null;
 
-        // 2. Map the Spotlight Events (FORCE headline = false)
+        // 2. Map the Spotlight Events (Grid)
         const now = moment();
         let spotlightMapped = sqlEvents
           .map((event) => mapSqlEventToContentful(event, false))
@@ -613,14 +615,14 @@ module.exports = function (app) {
             return eventDate.isAfter(now);
           });
 
-        // 3. Remove the headline from the spotlight list so it doesn't double-show in the grid
+        // 3. Remove the headline from the grid list if it happens to be in both
         if (headlineMapped) {
           spotlightMapped = spotlightMapped.filter(
             (e) => e.fields.title !== headlineMapped.fields.title
           );
         }
 
-        // 4. Combine them into one array for the {{#each events}} loop
+        // 4. Combine them
         formattedEvents = headlineMapped
           ? [headlineMapped, ...spotlightMapped]
           : spotlightMapped;
