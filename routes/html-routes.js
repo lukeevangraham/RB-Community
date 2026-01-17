@@ -324,11 +324,9 @@ const prepEventDataForTemplate = (eventData) => {
 };
 
 function mapSqlEventToContentful(event) {
-  // Use properties from your SQL model
-  const name = event.name || "Untitled Event";
   let eventDate = moment(event.startDate);
 
-  // Recurring logic
+  // Handle Recurring Logic
   if (event.repeatsEveryXDays > 0) {
     while (eventDate.isBefore(moment())) {
       eventDate.add(event.repeatsEveryXDays, "days");
@@ -337,24 +335,32 @@ function mapSqlEventToContentful(event) {
 
   return {
     fields: {
-      title: name,
+      title: event.name,
       description: event.description || "",
-      location: event.location || "RB Community",
+      location: event.location || "",
       time: eventDate.format("h:mm a"),
       shortMonth: eventDate.format("MMM"),
       shortDay: eventDate.format("DD"),
       dayOfWeek: eventDate.format("ddd"),
       dateToCountTo: eventDate.format("MMMM D, YYYY HH:mm:ss"),
 
-      // Sequelize includes the Image model as an object: event.Image
+      // FIX: Nesting the URL to match the template path
       eventImage: {
         fields: {
           file: {
-            url: event.Image ? event.Image.url : "images/events.jpg",
+            // Use the URL from the Sequelize Image include, or a fallback
+            url:
+              event.Image && event.Image.url
+                ? event.Image.url
+                : "images/events.jpg",
           },
         },
       },
-      embedItem: event.embedCode || "",
+
+      embedItem:
+        event.embedCode && event.embedCode !== "undefined"
+          ? event.embedCode
+          : "",
     },
   };
 }
