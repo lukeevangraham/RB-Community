@@ -631,7 +631,6 @@ module.exports = function (app) {
       // HANDLE BLOG
       var blogItems = [];
       var itemsIncludingExpired = resultArray[2].items;
-      // let homeData = resultArray[4].data;
 
       // MAKE HOMEDATA MATCH CONTENTFUL OUTPUT
 
@@ -746,19 +745,30 @@ module.exports = function (app) {
         }
       });
 
-      // .then(function(body) {
+      // 2. PREP DATA FOR HBS OBJECT
+      let finalEventsListing = [];
+      let finalTopEvent = [];
+
+      if (useFlexipress) {
+        finalTopEvent = formattedEvents.filter((e) => e.fields.featured);
+        finalEventsListing = formattedEvents.filter((e) => !e.fields.featured);
+      } else {
+        // Contentful logic: filter the existing formattedEvents array
+        finalTopEvent = formattedEvents.filter((e) => e.fields.featured);
+        finalEventsListing = formattedEvents; // Legacy template often keeps all in 'events'
+      }
 
       var hbsObject = {
-        events: useFlexipress ? formattedEvents : resultArray[1].items,
+        events: finalEventsListing,
+        topEvent: finalTopEvent,
         vimeo: vimeoRecord,
-        // vimeoAnn: vimeoAnnURL,
         blogpost: blogItems,
         youtubeStream: mostRecentStream,
         homeWelcome: topText,
         metaTitle:
           "Rancho Bernardo Community Presbyterian Church | RBCPC San Diego",
         headContent: `<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
-              <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
+                      <link rel="stylesheet" type="text/css" href="styles/responsive.css">`,
         title: `Rancho Bernardo Community Presbyterian Church | RBCPC San Diego`,
       };
 
