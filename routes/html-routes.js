@@ -788,19 +788,12 @@ module.exports = function (app) {
       });
 
       // 1. RE-MERGE INTO ONE ARRAY
-      // We want the headline first, then the spotlights
       let finalEventsForHbs = [];
 
       if (useFlexipress) {
-        const headline = formattedEvents.find(
-          (e) => e.fields.featured === true
-        );
-        const spotlights = formattedEvents.filter(
-          (e) => e.fields.featured === false
-        );
-
-        if (headline) finalEventsForHbs.push(headline);
-        finalEventsForHbs = finalEventsForHbs.concat(spotlights);
+        // DON'T re-filter here.
+        // We already built 'formattedEvents' correctly above.
+        finalEventsForHbs = formattedEvents;
       } else {
         // Legacy Contentful path
         finalEventsForHbs = formattedEvents;
