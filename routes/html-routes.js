@@ -586,20 +586,45 @@ module.exports = function (app) {
       if (useFlexipress) {
         // HANDLE SQL DATA
         const homeData = resultArray[3].data; // SingleHome record
-        const sqlEvents = resultArray[1].data; // List of featured spotlight events
+        const sqlEvents = resultArray[1].data; // Raw list of featured events from API
 
-        // A. MAP THE HEADLINE EVENT (The Hero)
-        let headlineMapped = mapSqlEventToContentful(
-          homeData.HeadlineEvent,
-          true
+        // 1. Map all Spotlight Events and Filter/Sort them
+        const now = moment();
+        let spotlightMapped = sqlEvents
+          .map((event) => mapSqlEventToContentful(event, false))
+          .filter((event) => {
+            // Filter out past events based on calculated recurring dates
+            const eventDate = moment(
+              event.fields.dateToCountTo,
+              "MMMM D, YYYY HH:mm:ss"
+            );
+            return eventDate.isAfter(now);
+          });
+
+        // 2. Sort Spotlight events by date
+        spotlightMapped.sort((a, b) => {
+          const dateA = moment(a.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss");
+          const dateB = moment(b.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss");
+          return dateA - dateB;
+        });
+
+        // 3. Handle the Headline Event (Hero)
+        // We fetch it from the API results to ensure it's the latest data
+        const headlineEventRaw = sqlEvents.find(
+          (e) => e.id === homeData.HeadlineEventId
         );
+        let headlineMapped = headlineEventRaw
+          ? mapSqlEventToContentful(headlineEventRaw, true)
+          : null;
 
-        // B. MAP THE SPOTLIGHT EVENTS (The Grid)
-        const spotlightMapped = sqlEvents
-          .filter((e) => e.id !== homeData.HeadlineEventId) // Prevent Duplication
-          .map((event) => mapSqlEventToContentful(event, false));
+        // 4. Prevent the Headline from appearing twice (Hero vs Grid)
+        if (headlineMapped) {
+          spotlightMapped = spotlightMapped.filter(
+            (e) => e.fields.title !== headlineMapped.fields.title
+          );
+        }
 
-        // C. MERGE THEM
+        // 5. MERGE THEM for the template
         formattedEvents = headlineMapped
           ? [headlineMapped, ...spotlightMapped]
           : spotlightMapped;
