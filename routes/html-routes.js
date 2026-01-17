@@ -1331,12 +1331,11 @@ module.exports = function (app) {
     if (rawSlug.startsWith("-")) rawSlug = rawSlug.substring(1);
 
     // 2. DECODE it to handle ":" and other characters
-    const cleanSlug = decodeURIComponent(rawSlug);
+    // 2. Standardize the slug (Lowercase and remove the colon if necessary)
+    // Try this if your terminal says "No event found"
+    const cleanSlug = decodeURIComponent(rawSlug).toLowerCase();
 
     if (useFlexipress) {
-      // 3. LOG this to your terminal to see exactly what you're sending to SQL
-      console.log("Looking for Flexi Slug:", cleanSlug);
-
       axios
         .get(
           `https://fpserver.grahamwebworks.com/api/events/org/1/slug/${cleanSlug}`
