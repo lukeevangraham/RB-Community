@@ -350,6 +350,7 @@ function mapSqlEventToContentful(event, isHeadline = false) {
       shortDay: eventDate.format("DD"),
       dayOfWeek: eventDate.format("ddd"),
       dateToCountTo: eventDate.format("MMMM D, YYYY HH:mm:ss"),
+      endDate: endDate.format("YYYY-MM-DD"),
 
       eventImage: {
         fields: {
@@ -2001,6 +2002,7 @@ module.exports = function (app) {
 
   app.get("/search:term", async (req, res) => {
     let searchTerm = req.params.term.substring(1);
+    const useFlexipress = req.query.source === "flexi"; // Toggle flag
 
     const query = qs.stringify({
       _where: {
@@ -2013,50 +2015,62 @@ module.exports = function (app) {
     });
 
     try {
-      const results = await Promise.all([
+      // 1. Fetch from Contentful, Strapi, and Flexipress in parallel
+      const [contentfulRes, strapiRes, flexiRes] = await Promise.all([
         client.getEntries({ query: searchTerm }),
         axios.get(`https://admin.rbcommunity.org/articles?${query}`),
+        axios.get(
+          `https://fpserver.grahamwebworks.com/api/search/1/${searchTerm}`
+        ),
       ]);
 
-      results[1].data.forEach((article) => {
+      // 2. STRANGLER LOGIC: If using Flexipress, strip out old Contentful events
+      if (useFlexipress) {
+        contentfulRes.items = contentfulRes.items.filter(
+          (item) => item.sys.contentType.sys.id !== "events"
+        );
+
+        // 3. Map SQL events and push them into the Contentful items array
+        flexiRes.data.forEach((sqlEvent) => {
+          const mapped = mapSqlEventToContentful(sqlEvent, false);
+          // Manually add the sys block the template expects
+          mapped.sys = { contentType: { sys: { id: "events" } } };
+          contentfulRes.items.push(mapped);
+        });
+      }
+
+      // 4. Handle Strapi Articles (Legacy Blog) - remains unchanged
+      strapiRes.data.forEach((article) => {
         let formattedArticle = {
           sys: { contentType: { sys: { id: "blog" } } },
         };
         formattedArticle.fields = article;
-        results[0].items.push(formattedArticle);
+        contentfulRes.items.push(formattedArticle);
       });
 
-      //
-
-      // ITERATE THROUGH CONTENTFUL RESULTS (RESULTS[0])
-      results[0].items.forEach((entry) => {
-        // console.log("Entry: ", entry);
-        // IF IT'S AN EVENT
+      // 5. Run prep functions (this formats dates and excerpts)
+      contentfulRes.items.forEach((entry) => {
         if (entry.sys.contentType.sys.id === "events") {
           prepEventDataForTemplate(entry);
         }
-        // IF IT'S A BLOG
         if (entry.sys.contentType.sys.id === "blog") {
           prepBlogDataForTemplate(entry);
         }
       });
 
-      // BLOG
-
-      // EVENTS
-
-      // SERMONS
-
+      // 6. Wrap in the array structure your HBS expects (results.0.items)
       let hbsObject = {
         headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
-<link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
+                      <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
         title: `Search`,
         term: searchTerm,
-        results: results,
+        results: [contentfulRes],
       };
+
       res.render("search", hbsObject);
     } catch (error) {
       console.log("ERROR: ", error);
+      res.status(500).send("Search Error");
     }
   });
 
