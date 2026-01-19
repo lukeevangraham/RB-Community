@@ -788,7 +788,7 @@ module.exports = function (app) {
         finalEventsForHbs = formattedEvents;
       }
 
-      console.log("FINAL EVENTS FOR HBS: ", finalEventsForHbs);
+      // console.log("FINAL EVENTS FOR HBS: ", finalEventsForHbs);
 
       // 2. RENDER
       var hbsObject = {
@@ -2001,9 +2001,8 @@ module.exports = function (app) {
 
   app.get("/search:term", async (req, res) => {
     let searchTerm = req.params.term.substring(1);
-    const useFlexipress = req.query.source === "flexi"; // Check for the flag
 
-    const strapiQuery = qs.stringify({
+    const query = qs.stringify({
       _where: {
         _or: [
           [{ author_contains: searchTerm }],
@@ -2014,60 +2013,50 @@ module.exports = function (app) {
     });
 
     try {
-      const [contentfulRes, strapiRes, flexiRes] = await Promise.all([
+      const results = await Promise.all([
         client.getEntries({ query: searchTerm }),
-        axios.get(`https://admin.rbcommunity.org/articles?${strapiQuery}`),
-        // Always fetch from Flexipress to ensure it's working
-        axios.get(
-          `https://fpserver.grahamwebworks.com/api/search/1/${searchTerm}`
-        ),
+        axios.get(`https://admin.rbcommunity.org/articles?${query}`),
       ]);
 
-      // 1. Process Contentful Items with Conditional Filtering
-      const filteredResults = contentfulRes.items.filter((entry) => {
-        // If useFlexipress is TRUE, discard any Contentful results of type 'events'
-        if (useFlexipress && entry.sys.contentType.sys.id === "events") {
-          return false;
-        }
-        return true;
-      });
-
-      // 2. Add Strapi Blog Results
-      strapiRes.data.forEach((article) => {
-        filteredResults.push({
+      results[1].data.forEach((article) => {
+        let formattedArticle = {
           sys: { contentType: { sys: { id: "blog" } } },
-          fields: article,
-        });
+        };
+        formattedArticle.fields = article;
+        results[0].items.push(formattedArticle);
       });
 
-      // 3. Add Flexipress Results (Only if flag is active, or always if ready)
-      if (useFlexipress) {
-        flexiRes.data.forEach((sqlEvent) => {
-          const mappedEvent = mapSqlEventToContentful(sqlEvent, false);
-          mappedEvent.sys = { contentType: { sys: { id: "events" } } };
-          filteredResults.push(mappedEvent);
-        });
-      }
+      //
 
-      // 4. Run Legacy Prep Functions
-      filteredResults.forEach((entry) => {
+      // ITERATE THROUGH CONTENTFUL RESULTS (RESULTS[0])
+      results[0].items.forEach((entry) => {
+        // console.log("Entry: ", entry);
+        // IF IT'S AN EVENT
         if (entry.sys.contentType.sys.id === "events") {
           prepEventDataForTemplate(entry);
         }
+        // IF IT'S A BLOG
         if (entry.sys.contentType.sys.id === "blog") {
           prepBlogDataForTemplate(entry);
         }
       });
 
-      res.render("search", {
-        headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">`,
+      // BLOG
+
+      // EVENTS
+
+      // SERMONS
+
+      let hbsObject = {
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+<link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
         title: `Search`,
         term: searchTerm,
-        results: filteredResults,
-      });
+        results: results,
+      };
+      res.render("search", hbsObject);
     } catch (error) {
-      console.log("SEARCH ERROR: ", error);
-      res.status(500).send("Search error.");
+      console.log("ERROR: ", error);
     }
   });
 
