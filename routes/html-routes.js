@@ -324,7 +324,7 @@ const prepEventDataForTemplate = (eventData) => {
 };
 
 function mapSqlEventToContentful(event, isHeadline = false) {
-  console.log("Event: ", event);
+  // console.log("Event: ", event);
   const name = event.name || "Untitled Event";
   let eventDate = moment(event.startDate);
 
@@ -351,7 +351,7 @@ function mapSqlEventToContentful(event, isHeadline = false) {
       shortDay: eventDate.format("DD"),
       dayOfWeek: eventDate.format("ddd"),
       dateToCountTo: eventDate.format("MMMM D, YYYY HH:mm:ss"),
-      endDate: endDate.format("YYYY-MM-DD"),
+      endDate: moment(event.endDate).format("YYYY-MM-DD"),
 
       eventImage: {
         fields: {
@@ -2060,31 +2060,27 @@ module.exports = function (app) {
       // 6. Prep Data for Template
       contentfulRes.items.forEach((entry) => {
         if (entry.sys.contentType.sys.id === "events") {
-          try {
-            // Check if this is one of our "Flexi" (SQL) events
-            if (entry.sys.id.startsWith("sql-")) {
-              // Manually do what the legacy function usually does
-              // We'll set the common fields templates expect
-              entry.displayDate = entry.fields.endDate;
-              entry.formattedDate = entry.fields.endDate;
+          // 1. Give the function every chance to find the data on the object
+          entry.endDate = entry.fields.endDate;
+          entry.startDate = entry.fields.startDate;
 
-              // If you need more "prepped" fields, add them here
-              console.log(`Manually prepped SQL event: ${entry.fields.title}`);
-            } else {
-              // It's a real Contentful event, use the legacy function
-              prepEventDataForTemplate(entry);
-            }
+          try {
+            // 2. Try the legacy function
+            prepEventDataForTemplate(entry);
           } catch (e) {
+            // 3. If it crashes (ReferenceError), we do the work manually
             console.warn(
-              "Legacy prep failed for this item, skipping prep function."
+              "Legacy prep failed for SQL event, applying manual format..."
             );
-            // Fallback: Ensure at least the title/date are on the top level
+
+            // Standard formatting that search templates usually expect:
+            entry.formattedDate = entry.fields.endDate; // or use moment(entry.fields.endDate).format('LL') if moment is available
+            entry.displayDate = entry.fields.endDate;
             entry.title = entry.fields.title;
-            entry.endDate = entry.fields.endDate;
+            entry.description = entry.fields.description;
           }
         }
 
-        // Keep blog prep as is
         if (entry.sys.contentType.sys.id === "blog") {
           prepBlogDataForTemplate(entry);
         }
