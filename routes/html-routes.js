@@ -2059,11 +2059,14 @@ module.exports = function (app) {
       // 6. Prep Data for Template
       contentfulRes.items.forEach((entry) => {
         if (entry.sys.contentType.sys.id === "events") {
-          // We "leak" the variable into this scope so prepEventDataForTemplate can find it
-          var endDate = entry.fields.endDate;
+          // 1. Assign to the global object so the legacy function can "see" it
+          global.endDate = entry.fields.endDate;
 
-          // Now call the legacy function
+          // 2. Call the legacy function
           prepEventDataForTemplate(entry);
+
+          // 3. Clean up (optional but good practice)
+          delete global.endDate;
         }
 
         if (entry.sys.contentType.sys.id === "blog") {
