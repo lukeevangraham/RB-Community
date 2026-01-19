@@ -2004,14 +2004,25 @@ module.exports = function (app) {
     let searchTerm = req.params.term.substring(1);
     const useFlexipress = req.query.source === "flexi";
 
+    // 1. Restore the original Strapi filter logic
+    const strapiQuery = qs.stringify({
+      _where: {
+        _or: [
+          [{ author_contains: searchTerm }],
+          [{ title_contains: searchTerm }],
+          [{ body_contains: searchTerm }],
+        ],
+      },
+    });
+
     try {
-      // 1. Fetch Contentful and Strapi first (The essentials)
+      // 2. Parallel fetch for the "Known Goods"
       const [contentfulRes, strapiRes] = await Promise.all([
         client.getEntries({ query: searchTerm }),
-        axios.get(`https://admin.rbcommunity.org/articles?query=${searchTerm}`),
+        axios.get(`https://admin.rbcommunity.org/articles?${strapiQuery}`),
       ]);
 
-      // 2. Try to get Flexipress data, but don't let it crash the page if it fails
+      // 3. Optional Flexipress Fetch
       let flexiData = [];
       if (useFlexipress) {
         try {
@@ -2020,11 +2031,11 @@ module.exports = function (app) {
           );
           flexiData = flexiRes.data;
         } catch (fError) {
-          console.error("Flexipress API not responding, skipping SQL results.");
+          console.error("Flexipress API Search Failed:", fError.message);
         }
       }
 
-      // 3. Strangler Filter
+      // 4. Strangler Logic: Swap Contentful Events for SQL Events
       if (useFlexipress) {
         contentfulRes.items = contentfulRes.items.filter(
           (item) => item.sys.contentType.sys.id !== "events"
@@ -2037,7 +2048,7 @@ module.exports = function (app) {
         });
       }
 
-      // 4. Strapi Logic
+      // 5. Add Strapi Articles (Legacy Blog)
       strapiRes.data.forEach((article) => {
         contentfulRes.items.push({
           sys: { contentType: { sys: { id: "blog" } } },
@@ -2045,7 +2056,7 @@ module.exports = function (app) {
         });
       });
 
-      // 5. Prep (Formats dates/images)
+      // 6. Prep Data for Template
       contentfulRes.items.forEach((entry) => {
         if (entry.sys.contentType.sys.id === "events")
           prepEventDataForTemplate(entry);
@@ -2053,14 +2064,16 @@ module.exports = function (app) {
           prepBlogDataForTemplate(entry);
       });
 
+      // 7. Render with the Array Wrapper for results.0.items
       res.render("search", {
-        headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">`,
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
+                      <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
         title: `Search`,
         term: searchTerm,
-        results: [contentfulRes], // Wrapped for results.0.items
+        results: [contentfulRes],
       });
     } catch (error) {
-      console.error("CRITICAL SEARCH ERROR: ", error);
+      console.error("CRITICAL SEARCH ERROR: ", error.message);
       res.status(500).send("Search Error: Check Server Logs");
     }
   });
