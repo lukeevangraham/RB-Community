@@ -324,6 +324,7 @@ const prepEventDataForTemplate = (eventData) => {
 };
 
 function mapSqlEventToContentful(event, isHeadline = false) {
+  console.log("Event: ", event);
   const name = event.name || "Untitled Event";
   let eventDate = moment(event.startDate);
 
