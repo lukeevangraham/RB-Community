@@ -2058,10 +2058,16 @@ module.exports = function (app) {
 
       // 6. Prep Data for Template
       contentfulRes.items.forEach((entry) => {
-        if (entry.sys.contentType.sys.id === "events")
+        if (entry.sys.contentType.sys.id === "events") {
+          // Explicitly define endDate for the legacy prep function
+          // pulling it from the fields we just mapped
+          const endDate = entry.fields.endDate;
+
           prepEventDataForTemplate(entry);
-        if (entry.sys.contentType.sys.id === "blog")
+        }
+        if (entry.sys.contentType.sys.id === "blog") {
           prepBlogDataForTemplate(entry);
+        }
       });
 
       // 7. Render with the Array Wrapper for results.0.items
