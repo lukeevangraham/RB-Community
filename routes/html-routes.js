@@ -324,11 +324,9 @@ const prepEventDataForTemplate = (eventData) => {
 };
 
 function mapSqlEventToContentful(event, isHeadline = false) {
-  // 1. Use 'name' from your DB to fill 'title'
   const name = event.name || "Untitled Event";
   let eventDate = moment(event.startDate);
 
-  // 2. Handle Recurring Logic
   if (event.repeatsEveryXDays > 0) {
     while (eventDate.isBefore(moment())) {
       eventDate.add(event.repeatsEveryXDays, "days");
@@ -338,23 +336,21 @@ function mapSqlEventToContentful(event, isHeadline = false) {
   return {
     fields: {
       title: name,
-      // TEMPLATE FLAGS:
-      // 'featured' controls the Hero section (top of home page)
-      featured: isHeadline,
-      // 'featuredOnHome' controls the grid section (bottom of home page)
-      featuredOnHome: event.isFeaturedOnHome,
+      // ADDED FOR SEARCH & LINKS:
+      // Ensure the template has a slug or ID to link to
+      slug: event.slug || event.id,
+      id: event.id,
 
+      featured: isHeadline,
+      featuredOnHome: event.isFeaturedOnHome,
       description: event.description || "",
       location: event.location || "",
       time: eventDate.format("h:mm a"),
       shortMonth: eventDate.format("MMM"),
       shortDay: eventDate.format("DD"),
       dayOfWeek: eventDate.format("ddd"),
-
-      // Countdown and Sorting string
       dateToCountTo: eventDate.format("MMMM D, YYYY HH:mm:ss"),
 
-      // Image structure for Handlebars
       eventImage: {
         fields: {
           file: {
@@ -365,8 +361,6 @@ function mapSqlEventToContentful(event, isHeadline = false) {
           },
         },
       },
-
-      // Registration Form embed
       embedItem:
         event.embedCode && event.embedCode !== "undefined"
           ? event.embedCode
