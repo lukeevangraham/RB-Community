@@ -2060,23 +2060,31 @@ module.exports = function (app) {
       // 6. Prep Data for Template
       contentfulRes.items.forEach((entry) => {
         if (entry.sys.contentType.sys.id === "events") {
-          // 1. Force the value onto the entry object itself
-          // Many legacy functions use 'entry.endDate' instead of 'entry.fields.endDate'
-          entry.endDate = entry.fields.endDate;
-
-          // 2. Just in case it's looking for a variable in the same scope
-          let endDate = entry.fields.endDate;
-
-          // 3. Call the legacy function
           try {
-            prepEventDataForTemplate(entry);
+            // Check if this is one of our "Flexi" (SQL) events
+            if (entry.sys.id.startsWith("sql-")) {
+              // Manually do what the legacy function usually does
+              // We'll set the common fields templates expect
+              entry.displayDate = entry.fields.endDate;
+              entry.formattedDate = entry.fields.endDate;
+
+              // If you need more "prepped" fields, add them here
+              console.log(`Manually prepped SQL event: ${entry.fields.title}`);
+            } else {
+              // It's a real Contentful event, use the legacy function
+              prepEventDataForTemplate(entry);
+            }
           } catch (e) {
-            console.log("Prep function failed, trying manual fix...");
-            // Manual backup if the function is totally broken
-            entry.formattedDate = entry.fields.endDate;
+            console.warn(
+              "Legacy prep failed for this item, skipping prep function."
+            );
+            // Fallback: Ensure at least the title/date are on the top level
+            entry.title = entry.fields.title;
+            entry.endDate = entry.fields.endDate;
           }
         }
 
+        // Keep blog prep as is
         if (entry.sys.contentType.sys.id === "blog") {
           prepBlogDataForTemplate(entry);
         }
