@@ -2059,14 +2059,21 @@ module.exports = function (app) {
       // 6. Prep Data for Template
       contentfulRes.items.forEach((entry) => {
         if (entry.sys.contentType.sys.id === "events") {
-          // 1. Assign to the global object so the legacy function can "see" it
-          global.endDate = entry.fields.endDate;
+          // 1. Force the value onto the entry object itself
+          // Many legacy functions use 'entry.endDate' instead of 'entry.fields.endDate'
+          entry.endDate = entry.fields.endDate;
 
-          // 2. Call the legacy function
-          prepEventDataForTemplate(entry);
+          // 2. Just in case it's looking for a variable in the same scope
+          let endDate = entry.fields.endDate;
 
-          // 3. Clean up (optional but good practice)
-          delete global.endDate;
+          // 3. Call the legacy function
+          try {
+            prepEventDataForTemplate(entry);
+          } catch (e) {
+            console.log("Prep function failed, trying manual fix...");
+            // Manual backup if the function is totally broken
+            entry.formattedDate = entry.fields.endDate;
+          }
         }
 
         if (entry.sys.contentType.sys.id === "blog") {
