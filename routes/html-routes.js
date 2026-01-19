@@ -2059,12 +2059,13 @@ module.exports = function (app) {
       // 6. Prep Data for Template
       contentfulRes.items.forEach((entry) => {
         if (entry.sys.contentType.sys.id === "events") {
-          // Explicitly define endDate for the legacy prep function
-          // pulling it from the fields we just mapped
-          const endDate = entry.fields.endDate;
+          // We "leak" the variable into this scope so prepEventDataForTemplate can find it
+          var endDate = entry.fields.endDate;
 
+          // Now call the legacy function
           prepEventDataForTemplate(entry);
         }
+
         if (entry.sys.contentType.sys.id === "blog") {
           prepBlogDataForTemplate(entry);
         }
