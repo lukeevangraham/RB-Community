@@ -2002,75 +2002,66 @@ module.exports = function (app) {
 
   app.get("/search:term", async (req, res) => {
     let searchTerm = req.params.term.substring(1);
-    const useFlexipress = req.query.source === "flexi"; // Toggle flag
-
-    const query = qs.stringify({
-      _where: {
-        _or: [
-          [{ author_contains: searchTerm }],
-          [{ title_contains: searchTerm }],
-          [{ body_contains: searchTerm }],
-        ],
-      },
-    });
+    const useFlexipress = req.query.source === "flexi";
 
     try {
-      // 1. Fetch from Contentful, Strapi, and Flexipress in parallel
-      const [contentfulRes, strapiRes, flexiRes] = await Promise.all([
+      // 1. Fetch Contentful and Strapi first (The essentials)
+      const [contentfulRes, strapiRes] = await Promise.all([
         client.getEntries({ query: searchTerm }),
-        axios.get(`https://admin.rbcommunity.org/articles?${query}`),
-        axios.get(
-          `https://fpserver.grahamwebworks.com/api/search/1/${searchTerm}`
-        ),
+        axios.get(`https://admin.rbcommunity.org/articles?query=${searchTerm}`),
       ]);
 
-      // 2. STRANGLER LOGIC: If using Flexipress, strip out old Contentful events
+      // 2. Try to get Flexipress data, but don't let it crash the page if it fails
+      let flexiData = [];
+      if (useFlexipress) {
+        try {
+          const flexiRes = await axios.get(
+            `https://fpserver.grahamwebworks.com/api/search/1/${searchTerm}`
+          );
+          flexiData = flexiRes.data;
+        } catch (fError) {
+          console.error("Flexipress API not responding, skipping SQL results.");
+        }
+      }
+
+      // 3. Strangler Filter
       if (useFlexipress) {
         contentfulRes.items = contentfulRes.items.filter(
           (item) => item.sys.contentType.sys.id !== "events"
         );
 
-        // 3. Map SQL events and push them into the Contentful items array
-        flexiRes.data.forEach((sqlEvent) => {
+        flexiData.forEach((sqlEvent) => {
           const mapped = mapSqlEventToContentful(sqlEvent, false);
-          // Manually add the sys block the template expects
           mapped.sys = { contentType: { sys: { id: "events" } } };
           contentfulRes.items.push(mapped);
         });
       }
 
-      // 4. Handle Strapi Articles (Legacy Blog) - remains unchanged
+      // 4. Strapi Logic
       strapiRes.data.forEach((article) => {
-        let formattedArticle = {
+        contentfulRes.items.push({
           sys: { contentType: { sys: { id: "blog" } } },
-        };
-        formattedArticle.fields = article;
-        contentfulRes.items.push(formattedArticle);
+          fields: article,
+        });
       });
 
-      // 5. Run prep functions (this formats dates and excerpts)
+      // 5. Prep (Formats dates/images)
       contentfulRes.items.forEach((entry) => {
-        if (entry.sys.contentType.sys.id === "events") {
+        if (entry.sys.contentType.sys.id === "events")
           prepEventDataForTemplate(entry);
-        }
-        if (entry.sys.contentType.sys.id === "blog") {
+        if (entry.sys.contentType.sys.id === "blog")
           prepBlogDataForTemplate(entry);
-        }
       });
 
-      // 6. Wrap in the array structure your HBS expects (results.0.items)
-      let hbsObject = {
-        headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
-                      <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
+      res.render("search", {
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">`,
         title: `Search`,
         term: searchTerm,
-        results: [contentfulRes],
-      };
-
-      res.render("search", hbsObject);
+        results: [contentfulRes], // Wrapped for results.0.items
+      });
     } catch (error) {
-      console.log("ERROR: ", error);
-      res.status(500).send("Search Error");
+      console.error("CRITICAL SEARCH ERROR: ", error);
+      res.status(500).send("Search Error: Check Server Logs");
     }
   });
 
