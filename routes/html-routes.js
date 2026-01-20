@@ -2055,7 +2055,6 @@ module.exports = function (app) {
 
       // 4. Strangler Logic: Swap Contentful Events for SQL Events
       if (useFlexipress) {
-        console.log("FP: ", flexiData);
         contentfulRes.items = contentfulRes.items.filter(
           (item) => item.sys.contentType.sys.id !== "events"
         );
@@ -2065,6 +2064,8 @@ module.exports = function (app) {
           mapped.sys = { contentType: { sys: { id: "events" } } };
           contentfulRes.items.push(mapped);
         });
+
+        console.log("contentfulRes", contentfulRes.items);
       }
 
       // 5. Add Strapi Articles (Legacy Blog)
