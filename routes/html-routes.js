@@ -2071,11 +2071,15 @@ module.exports = function (app) {
 
         flexiData.forEach((sqlEvent) => {
           const mapped = mapSqlEventToContentful(sqlEvent, false);
-          mapped.sys = { contentType: { sys: { id: "events" } } };
-          contentfulRes.items.push(mapped);
-        });
 
-        console.log("contentfulRes", contentfulRes.items);
+          // FIX: Only process and push if the event isn't null (expired)
+          if (mapped) {
+            mapped.sys = { contentType: { sys: { id: "events" } } };
+            contentfulRes.items.push(mapped);
+          } else {
+            console.log(`Skipping expired SQL event: ${sqlEvent.name}`);
+          }
+        });
       }
 
       // 5. Add Strapi Articles (Legacy Blog)
