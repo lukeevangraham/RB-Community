@@ -2055,6 +2055,7 @@ module.exports = function (app) {
 
       // 4. Strangler Logic: Swap Contentful Events for SQL Events
       if (useFlexipress) {
+        console.log("FP: ", flexiRes);
         contentfulRes.items = contentfulRes.items.filter(
           (item) => item.sys.contentType.sys.id !== "events"
         );
