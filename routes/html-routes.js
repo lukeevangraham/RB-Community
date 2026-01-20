@@ -286,13 +286,20 @@ function renderSingleBlog(entry, res) {
 }
 
 const prepEventDataForTemplate = (eventData) => {
-  // 1. NORMALIZE: Ensure we have a date field to work with
-  // Contentful uses .date, SQL uses .startDate
-  const rawDate = eventData.fields.date || eventData.fields.startDate;
+  // 1. NORMALIZE: Look for every possible date field name
+  // SQL uses startDate, Contentful usually uses date
+  const rawDate =
+    eventData.fields.date ||
+    eventData.fields.startDate ||
+    eventData.fields.eventDate;
 
   if (!rawDate) {
-    console.warn("No date found for event:", eventData.fields.title);
-    return; // Exit early if no date exists to prevent crashes
+    // Log the fields so you can see exactly what Contentful IS sending
+    console.warn(
+      `No date found for: ${eventData.fields.title}. Available fields:`,
+      Object.keys(eventData.fields)
+    );
+    return;
   }
 
   // 2. SET DISPLAY FIELDS
