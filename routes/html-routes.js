@@ -286,40 +286,47 @@ function renderSingleBlog(entry, res) {
 }
 
 const prepEventDataForTemplate = (eventData) => {
-  Object.assign(eventData.fields, {
-    shortMonth: moment(eventData.fields.date).format("MMM"),
-  });
-  Object.assign(eventData.fields, {
-    shortDay: moment(eventData.fields.date).format("DD"),
-    dayOfWeek: moment(eventData.fields.date).format("ddd"),
-  });
-  // if (eventData.fields.featured) {
-  Object.assign(eventData.fields, {
-    dateToCountTo: moment(eventData.fields.date).format("MMMM D, YYYY"),
-  });
-  // CONVERT MARKDOWN TO HTML
-  if (eventData.fields.description) {
-    eventData.fields.description = marked(eventData.fields.description);
+  // 1. NORMALIZE: Ensure we have a date field to work with
+  // Contentful uses .date, SQL uses .startDate
+  const rawDate = eventData.fields.date || eventData.fields.startDate;
+
+  if (!rawDate) {
+    console.warn("No date found for event:", eventData.fields.title);
+    return; // Exit early if no date exists to prevent crashes
   }
-  // }
 
-  // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
-  if (eventData.fields.repeatsEveryDays > 0) {
-    if (moment(eventData.fields.date).isBefore(moment().format("YYYY-MM-DD"))) {
-      let start = moment(eventData.fields.date);
-      let end = moment().format("YYYY-MM-DD");
+  // 2. SET DISPLAY FIELDS
+  const mDate = moment(rawDate);
+  eventData.fields.shortMonth = mDate.format("MMM");
+  eventData.fields.shortDay = mDate.format("DD");
+  eventData.fields.dayOfWeek = mDate.format("ddd");
+  eventData.fields.dateToCountTo = mDate.format("MMMM D, YYYY");
 
-      while (start.isBefore(end)) {
-        start.add(eventData.fields.repeatsEveryDays, "day");
-      }
-      // console.log(start.format("MM DD YYYY"));
-      eventData.fields.date = start.format("YYYY-MM-DD");
-      eventData.fields.shortMonth = start.format("MMM");
-      eventData.fields.shortDay = start.format("DD");
+  // 3. CONVERT MARKDOWN (Only if it's not already HTML from Flexipress)
+  if (eventData.fields.description) {
+    // If it starts with '<p>', it's already HTML from our SQL rich text editor
+    if (!eventData.fields.description.trim().startsWith("<")) {
+      eventData.fields.description = marked(eventData.fields.description);
     }
-    Object.assign(eventData.fields, {
-      dateToCountTo: moment(eventData.fields.date).format("MMMM D, YYYY"),
-    });
+  }
+
+  // 4. RECURRING LOGIC (Contentful uses repeatsEveryDays, SQL uses repeatsEveryXDays)
+  const repeatInterval =
+    eventData.fields.repeatsEveryDays || eventData.fields.repeatsEveryXDays;
+
+  if (repeatInterval > 0) {
+    let start = moment(rawDate);
+    const today = moment().startOf("day");
+
+    while (start.isBefore(today)) {
+      start.add(repeatInterval, "day");
+    }
+
+    // Update the object with the new "current" occurrence
+    eventData.fields.currentDate = start.format("YYYY-MM-DD");
+    eventData.fields.shortMonth = start.format("MMM");
+    eventData.fields.shortDay = start.format("DD");
+    eventData.fields.dateToCountTo = start.format("MMMM D, YYYY");
   }
 };
 
@@ -2005,7 +2012,8 @@ module.exports = function (app) {
 
   app.get("/search:term", async (req, res) => {
     let searchTerm = req.params.term.substring(1);
-    const useFlexipress = req.query.source === "flexi";
+    // const useFlexipress = req.query.source === "flexi";
+    const useFlexipress = true; // Always include Flexipress
 
     // 1. Restore the original Strapi filter logic
     const strapiQuery = qs.stringify({
