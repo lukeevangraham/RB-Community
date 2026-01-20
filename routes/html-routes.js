@@ -2076,29 +2076,28 @@ module.exports = function (app) {
 
       // 6. Prep Data for Template
       contentfulRes.items.forEach((entry) => {
-        if (entry.sys.contentType.sys.id === "events") {
-          // 1. Give the function every chance to find the data on the object
-          entry.endDate = entry.fields.endDate;
-          entry.startDate = entry.fields.startDate;
+        const isSqlEvent = entry.sys.contentType.sys.id === "events";
+        const isBlog = entry.sys.contentType.sys.id === "blog";
 
-          try {
-            // 2. Try the legacy function
-            prepEventDataForTemplate(entry);
-          } catch (e) {
-            // 3. If it crashes (ReferenceError), we do the work manually
-            console.warn(
-              "Legacy prep failed for SQL event, applying manual format..."
-            );
-
-            // Standard formatting that search templates usually expect:
-            entry.formattedDate = entry.fields.endDate; // or use moment(entry.fields.endDate).format('LL') if moment is available
-            entry.displayDate = entry.fields.endDate;
+        if (isSqlEvent) {
+          // 1. Check if it's already been mapped by Flexipress
+          // If we have 'shortMonth' and 'shortDay', the SQL mapper already ran!
+          if (entry.fields.shortMonth && entry.fields.shortDay) {
+            // Just ensure top-level properties are set for the template and EXIT
             entry.title = entry.fields.title;
             entry.description = entry.fields.description;
+            return; // Skip prepEventDataForTemplate for SQL events
+          }
+
+          // 2. Fallback for legacy Contentful events (if any remain)
+          try {
+            prepEventDataForTemplate(entry);
+          } catch (e) {
+            console.warn("Legacy prep failed:", e.message);
           }
         }
 
-        if (entry.sys.contentType.sys.id === "blog") {
+        if (isBlog) {
           prepBlogDataForTemplate(entry);
         }
       });
