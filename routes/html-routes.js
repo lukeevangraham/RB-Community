@@ -2048,6 +2048,7 @@ module.exports = function (app) {
             `https://fpserver.grahamwebworks.com/api/search/1/${searchTerm}`
           );
           flexiData = flexiRes.data;
+          console.log("fp data", flexiRes);
         } catch (fError) {
           console.error("Flexipress API Search Failed:", fError.message);
         }
@@ -2055,7 +2056,6 @@ module.exports = function (app) {
 
       // 4. Strangler Logic: Swap Contentful Events for SQL Events
       if (useFlexipress) {
-        console.log("FP: ", flexiData);
         contentfulRes.items = contentfulRes.items.filter(
           (item) => item.sys.contentType.sys.id !== "events"
         );
