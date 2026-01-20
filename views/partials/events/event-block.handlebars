@@ -1,29 +1,54 @@
-
-
-<!-- Event -->
 <div class="events_item">
-				<div class="events_item_image"><a href="/event-{{changeSpacesToDashes this.fields.title}}"><img
-							data-src="{{this.fields.eventImage.fields.file.url}}" class="lazyload" alt=""></a></div>
-				<div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
-					<div class="event_date">
-						<div class="d-flex flex-column align-items-center justify-content-center">
-							<div class="event_month">{{this.fields.shortMonth}}</div>
-							<div class="event_day">{{this.fields.shortDay}}</div>
-							<div class="event_day_of_week">{{this.fields.dayOfWeek}}</div>
-						</div>
-					</div>
-					<div class="event_content">
-						<div class="event_title"><a href="/event-{{changeSpacesToDashes this.fields.title}}">{{this.fields.title}}</a></div>
-						<ul class="event_row">
-							<li>
-								<div class="event_icon"><img src="images/calendar.png" alt=""></div>
-								<span>{{this.fields.time}}</span>
-							</li>
-							<li>
-								<div class="event_icon"><img src="images/location.png" alt=""></div>
-								<span>{{this.fields.location}}</span>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
+  <div class="events_item_image">
+    {{#if this.fields.slug}}
+      {{! SQL / New Contentful Events }}
+      <a href="/event-{{this.fields.slug}}">
+        <img
+          src="{{this.fields.eventImage.fields.file.url}}"
+          alt="{{this.fields.title}}"
+        />
+      </a>
+    {{else}}
+      {{! Legacy Contentful Events fallback }}
+      <a href="/event-{{changeSpacesToDashes this.fields.title}}">
+        <img
+          src="{{this.fields.eventImage.fields.file.url}}"
+          alt="{{this.fields.title}}"
+        />
+      </a>
+    {{/if}}
+  </div>
+
+  <div
+    class="events_item_content d-flex flex-row align-items-start justfy-content-start"
+  >
+    <div class="event_date">
+      <div class="d-flex flex-column align-items-center justify-content-center">
+        <div class="event_month">{{this.fields.shortMonth}}</div>
+        <div class="event_day">{{this.fields.shortDay}}</div>
+        <div class="event_day_of_week">{{this.fields.dayOfWeek}}</div>
+      </div>
+    </div>
+    <div class="event_content">
+      <div class="event_title">
+        {{#if this.fields.slug}}
+          <a href="/event-{{this.fields.slug}}">{{this.fields.title}}</a>
+        {{else}}
+          <a
+            href="/event-{{changeSpacesToDashes this.fields.title}}"
+          >{{this.fields.title}}</a>
+        {{/if}}
+      </div>
+      <ul class="event_row">
+        <li>
+          <div class="event_icon"><img src="images/calendar.png" alt="" /></div>
+          <span>{{this.fields.time}}</span>
+        </li>
+        <li>
+          <div class="event_icon"><img src="images/location.png" alt="" /></div>
+          <span>{{this.fields.location}}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
