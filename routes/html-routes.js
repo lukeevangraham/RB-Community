@@ -155,25 +155,17 @@ function doReq(url, what) {
 
 // sort event dates by date field
 function compare(a, b) {
-  const dateA = moment(a.fields.date, "YYYY-MM-DD").format("YYYY-MM-DD");
-  const dateB = moment(b.fields.date, "YYYY-MM-DD").format("YYYY-MM-DD");
-  const timeA = moment(`${dateA} ${a.fields.time}`);
-  const timeB = moment(`${dateB} ${b.fields.time}`);
+  // Extract just the date part (e.g., "2025-09-07") from strings like "2025-09-07 11:00am"
+  const cleanDate = (val) => {
+    if (!val) return moment(0); // Fallback for missing dates
+    const dateOnly = val.split(" ")[0];
+    return moment(dateOnly);
+  };
 
-  let comparison = 0;
-  if (dateA > dateB) {
-    comparison = 1;
-  } else if (dateA < dateB) {
-    comparison = -1;
-  } else if (dateA === dateB) {
-    // console.log("we have a tie!", a.fields.title, timeA)
-    if (timeA > timeB) {
-      comparison = 1;
-    } else if (timeA < timeB) {
-      comparison = -1;
-    }
-  }
-  return comparison;
+  const dateA = cleanDate(a.fields.date);
+  const dateB = cleanDate(b.fields.date);
+
+  return dateA - dateB;
 }
 
 // SORT ALL ITEMS BY DATE POSTED
