@@ -324,7 +324,6 @@ const prepEventDataForTemplate = (eventData) => {
 };
 
 function mapSqlEventToContentful(event, isHeadline = false) {
-  // console.log("Event: ", event);
   const name = event.name || "Untitled Event";
   let eventDate = moment(event.startDate);
 
@@ -337,9 +336,8 @@ function mapSqlEventToContentful(event, isHeadline = false) {
   return {
     fields: {
       title: name,
-      // ADDED FOR SEARCH & LINKS:
-      // Ensure the template has a slug or ID to link to
-      slug: event.slug || event.id,
+      // Fallback to ID string ensures links never break if slug is empty
+      slug: event.slug || event.id.toString(),
       id: event.id,
 
       featured: isHeadline,
@@ -351,7 +349,11 @@ function mapSqlEventToContentful(event, isHeadline = false) {
       shortDay: eventDate.format("DD"),
       dayOfWeek: eventDate.format("ddd"),
       dateToCountTo: eventDate.format("MMMM D, YYYY HH:mm:ss"),
-      endDate: moment(event.endDate).format("YYYY-MM-DD"),
+
+      // Safety check: Don't format null dates
+      endDate: event.endDate
+        ? moment(event.endDate).format("YYYY-MM-DD")
+        : null,
 
       eventImage: {
         fields: {
@@ -359,7 +361,7 @@ function mapSqlEventToContentful(event, isHeadline = false) {
             url:
               event.Image && event.Image.url
                 ? event.Image.url
-                : "images/events.jpg",
+                : "/images/events.jpg", // Added leading slash for route safety
           },
         },
       },
