@@ -1504,96 +1504,148 @@ module.exports = function (app) {
     }
   });
 
-  app.get("/event:id", async (req, res) => {
+  // Page for individual events
+  app.get("/event:id", function (req, res) {
+    const useFlexipress =
+      req.query.source === "flexi" || req.app.locals.useFlexipress;
+
     let rawSlug = req.params.id;
     if (rawSlug.startsWith("-")) rawSlug = rawSlug.substring(1);
-    if (rawSlug.startsWith(":")) rawSlug = rawSlug.substring(1);
 
-    // Clean the slug for SQL lookup
+    // 1. Decode special characters
+    // 2. Make it lowercase (to match 'childrens-choir')
+    // 3. Remove apostrophes (to match 'childrens-choir' vs "children's-choir")
     const cleanSlug = decodeURIComponent(rawSlug)
       .toLowerCase()
       .replace(/'/g, "");
 
-    try {
-      // --- STEP 1: TRY FLEXIPRESS (SQL) ---
-      const flexiRes = await axios
+    if (useFlexipress) {
+      console.log("FLEXIPRESS LOOKUP SLUG:", cleanSlug);
+
+      axios
         .get(
           `https://fpserver.grahamwebworks.com/api/event/org/1/slug/${cleanSlug}`
         )
-        .catch(() => ({ data: null })); // Catch 404s/Errors gracefully
+        .then((response) => {
+          console.log("Flexipress Event Response:", response.data);
+          // If the API returns an array, take the first item.
+          // If it's just an object, use it directly.
+          const sqlEvent = Array.isArray(response.data)
+            ? response.data[0]
+            : response.data;
 
-      const sqlEvent = Array.isArray(flexiRes.data)
-        ? flexiRes.data[0]
-        : flexiRes.data;
+          if (!sqlEvent || Object.keys(sqlEvent).length === 0) {
+            console.log("❌ NOT FOUND. Terminal looking for:", cleanSlug);
+            return res.status(404).send("Event not found.");
+          }
 
-      if (sqlEvent && Object.keys(sqlEvent).length > 0) {
-        const formattedEvent = mapSqlEventToContentful(sqlEvent);
+          // Log this to see what the RAW database column names actually are
+          console.log("RAW SQL EVENT DATA:", sqlEvent);
 
-        if (formattedEvent.fields.description) {
-          formattedEvent.fields.description =
-            formattedEvent.fields.description.replace(/RBCC/g, "RB Community");
-        }
+          const formattedEvent = mapSqlEventToContentful(sqlEvent);
 
-        return res.render("event", {
-          events: formattedEvent,
-          active: { events: true },
-          headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css"><link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-          title: formattedEvent.fields.title,
+          // Apply specific business logic (Replace RBCC)
+          if (formattedEvent.fields.description) {
+            formattedEvent.fields.description =
+              formattedEvent.fields.description.replace(
+                /RBCC/g,
+                "RB Community"
+              );
+          }
+
+          const hbsObject = {
+            events: formattedEvent,
+            active: { events: true },
+            headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
+                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+            title: formattedEvent.fields.title,
+          };
+
+          res.render("event", hbsObject);
+        })
+        .catch((err) => {
+          console.error("Flexipress Single Event Error:", err);
+          res.status(500).send("Error loading event details");
         });
-      }
+    } else {
+      // --- LEGACY CONTENTFUL LOGIC ---
+      // (We keep your original renderSingleEvent logic inside this block)
+      const renderSingleEvent = (oldDbEvent) => {
+        let dbEvent = oldDbEvent.items[0];
+        if (!dbEvent)
+          return res.status(404).send("Event not found in Contentful");
 
-      // --- STEP 2: FALLBACK TO CONTENTFUL ---
-      // If we are here, SQL didn't find anything. We use your legacy title logic.
-      let contentfulTitle = decodeURI(
-        req.originalUrl
-          .substring(7)
-          .replace(/-/g, " ")
-          .replace(/\s\s\s/g, " - ")
-      );
-
-      // Remove query params if they exist
-      if (contentfulTitle.indexOf("?") > 0) {
-        contentfulTitle = contentfulTitle.substring(
-          0,
-          contentfulTitle.indexOf("?")
-        );
-      }
-
-      const contentfulRes = await client.getEntries({
-        content_type: "events",
-        "fields.title": contentfulTitle,
-      });
-
-      if (contentfulRes.items.length > 0) {
-        let dbEvent = contentfulRes.items[0];
-
-        // Apply Legacy Formatting
         Object.assign(dbEvent.fields, {
           shortMonth: moment(dbEvent.fields.date).format("MMM"),
           dayOfWeek: moment(dbEvent.fields.date).format("ddd"),
           shortDay: moment(dbEvent.fields.date).format("DD"),
         });
 
-        // (Include your recurring logic and description replacement here as per your original code)
+        if (dbEvent.fields.repeatsEveryDays > 0) {
+          if (
+            moment(dbEvent.fields.date).isBefore(moment().format("YYYY-MM-DD"))
+          ) {
+            let start = moment(dbEvent.fields.date);
+            let end = moment().format("YYYY-MM-DD");
+            while (start.isBefore(end)) {
+              start.add(dbEvent.fields.repeatsEveryDays, "day");
+            }
+            dbEvent.fields.date = start.format("YYYY-MM-DD");
+            dbEvent.fields.shortMonth = start.format("MMM");
+            dbEvent.fields.shortDay = start.format("DD");
+          }
+        }
+
+        if (
+          moment(dbEvent.fields.date, "YYYY-MM-DD").isAfter(
+            moment().format("YYYY-MM-DD")
+          )
+        ) {
+          Object.assign(dbEvent.fields, {
+            dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY"),
+          });
+        }
+
         if (dbEvent.fields.description) {
           dbEvent.fields.description = marked(
             dbEvent.fields.description
           ).replace(/RBCC/g, "RB Community");
         }
 
-        return res.render("event", {
+        const hbsObject = {
           events: dbEvent,
           active: { events: true },
-          headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css"><link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
+                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
           title: dbEvent.fields.title,
-        });
-      }
+        };
+        return res.render("event", hbsObject);
+      };
 
-      // --- STEP 3: NOT FOUND ANYWHERE ---
-      res.status(404).send("Event not found in SQL or Contentful.");
-    } catch (err) {
-      console.error("CRITICAL EVENT ROUTE ERROR:", err);
-      res.status(500).send("Error loading event details");
+      // Original Contentful ID/Title logic
+      if (req.params.id[0] === ":") {
+        client
+          .getEntries({
+            content_type: "events",
+            "sys.id[match]": req.params.id.substring(1),
+          })
+          .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
+      } else {
+        let str = decodeURI(
+          req.originalUrl
+            .substring(7)
+            .replace(/-/g, " ")
+            .replace(/\s\s\s/g, "-")
+        );
+        str = str.replace(/\s\s\s/g, " - ");
+        str.indexOf("?") > 0 ? (str = str.substring(0, str.indexOf("?"))) : "";
+        client
+          .getEntries({
+            content_type: "events",
+            "fields.title": str,
+          })
+          .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
+      }
     }
   });
 
@@ -1977,10 +2029,8 @@ module.exports = function (app) {
 
   app.get("/search:term", async (req, res) => {
     let searchTerm = req.params.term.substring(1);
-    // const useFlexipress = req.query.source === "flexi";
-    const useFlexipress = true; // Always include Flexipress
+    const useFlexipress = true;
 
-    // 1. Restore the original Strapi filter logic
     const strapiQuery = qs.stringify({
       _where: {
         _or: [
@@ -1992,13 +2042,11 @@ module.exports = function (app) {
     });
 
     try {
-      // 2. Parallel fetch for the "Known Goods"
       const [contentfulRes, strapiRes] = await Promise.all([
         client.getEntries({ query: searchTerm }),
         axios.get(`https://admin.rbcommunity.org/articles?${strapiQuery}`),
       ]);
 
-      // 3. Optional Flexipress Fetch
       let flexiData = [];
       if (useFlexipress) {
         try {
@@ -2011,8 +2059,8 @@ module.exports = function (app) {
         }
       }
 
-      // 4. Strangler Logic: Swap Contentful Events for SQL Events
       if (useFlexipress) {
+        // Remove Contentful events to avoid duplicates
         contentfulRes.items = contentfulRes.items.filter(
           (item) => item.sys.contentType.sys.id !== "events"
         );
@@ -2020,17 +2068,14 @@ module.exports = function (app) {
         flexiData.forEach((sqlEvent) => {
           const mapped = mapSqlEventToContentful(sqlEvent, false);
 
-          // FIX: Only process and push if the event isn't null (expired)
+          // --- CRITICAL FIX: Only process if the event isn't null (expired) ---
           if (mapped) {
             mapped.sys = { contentType: { sys: { id: "events" } } };
             contentfulRes.items.push(mapped);
-          } else {
-            console.log(`Skipping expired SQL event: ${sqlEvent.name}`);
           }
         });
       }
 
-      // 5. Add Strapi Articles (Legacy Blog)
       strapiRes.data.forEach((article) => {
         contentfulRes.items.push({
           sys: { contentType: { sys: { id: "blog" } } },
@@ -2038,26 +2083,23 @@ module.exports = function (app) {
         });
       });
 
-      // 6. Prep Data for Template
       contentfulRes.items.forEach((entry) => {
         const isSqlEvent = entry.sys.contentType.sys.id === "events";
         const isBlog = entry.sys.contentType.sys.id === "blog";
 
         if (isSqlEvent) {
-          // 1. Check if it's already been mapped by Flexipress
-          // If we have 'shortMonth' and 'shortDay', the SQL mapper already ran!
+          // If it's a Flexipress event, it's already mapped.
+          // We just need to ensure the top-level properties are there for the template.
           if (entry.fields.shortMonth && entry.fields.shortDay) {
-            // Just ensure top-level properties are set for the template and EXIT
             entry.title = entry.fields.title;
             entry.description = entry.fields.description;
-            return; // Skip prepEventDataForTemplate for SQL events
-          }
-
-          // 2. Fallback for legacy Contentful events (if any remain)
-          try {
-            prepEventDataForTemplate(entry);
-          } catch (e) {
-            console.warn("Legacy prep failed:", e.message);
+          } else {
+            // Only run legacy prep if it's a real Contentful entry
+            try {
+              prepEventDataForTemplate(entry);
+            } catch (e) {
+              console.warn("Legacy prep failed:", e.message);
+            }
           }
         }
 
@@ -2066,7 +2108,6 @@ module.exports = function (app) {
         }
       });
 
-      // 7. Render with the Array Wrapper for results.0.items
       res.render("search", {
         headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
                       <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,

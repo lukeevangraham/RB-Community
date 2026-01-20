@@ -126,43 +126,49 @@
 
 
 
+{{#each events}}
+{{#unless this.fields.featured}}
 
+<div class="events_item">
+  <div class="events_item_image">
+    {{! LINK FIX: Use slug if available, otherwise use helper }}
+    <a href="/event-{{#if this.fields.slug}}{{this.fields.slug}}{{else}}{{changeSpacesToDashes this.fields.title}}{{/if}}">
+      {{! IMAGE FIX: Swap data-src to src if lazyloading is failing on this page }}
+      <img src="{{this.fields.eventImage.fields.file.url}}" alt="{{this.fields.title}}">
+    </a>
+  </div>
 
+  <div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
+    <div class="event_date">
+      <div class="d-flex flex-column align-items-center justify-content-center">
+        <div class="event_month">{{this.fields.shortMonth}}</div>
+        <div class="event_day">{{this.fields.shortDay}}</div>
+        <div class="event_day_of_week">{{this.fields.dayOfWeek}}</div>
+      </div>
+    </div>
+    <div class="event_content">
+      <div class="event_title">
+        {{! LINK FIX: Same logic for the title link }}
+        <a href="/event-{{#if this.fields.slug}}{{this.fields.slug}}{{else}}{{changeSpacesToDashes this.fields.title}}{{/if}}">
+          {{this.fields.title}}
+        </a>
+      </div>
+      <ul class="event_row">
+        <li>
+          <div class="event_icon"><img src="images/calendar.png" alt=""></div>
+          <span>{{this.fields.time}}</span>
+        </li>
+        <li>
+          <div class="event_icon"><img src="images/location.png" alt=""></div>
+          <span>{{this.fields.location}}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
 
-			{{#each events}}
-			{{#unless this.fields.featured}}
-
-			<!-- Event -->
-
-			<div class="events_item">
-				<div class="events_item_image"><a href="/event-{{changeSpacesToDashes this.fields.title}}"><img
-							data-src="{{this.fields.eventImage.fields.file.url}}" class="lazyload" alt=""></a></div>
-				<div class="events_item_content d-flex flex-row align-items-start justfy-content-start">
-					<div class="event_date">
-						<div class="d-flex flex-column align-items-center justify-content-center">
-							<div class="event_month">{{this.fields.shortMonth}}</div>
-							<div class="event_day">{{this.fields.shortDay}}</div>
-							<div class="event_day_of_week">{{this.fields.dayOfWeek}}</div>
-						</div>
-					</div>
-					<div class="event_content">
-						<div class="event_title"><a href="/event-{{changeSpacesToDashes this.fields.title}}">{{this.fields.title}}</a></div>
-						<ul class="event_row">
-							<li>
-								<div class="event_icon"><img src="images/calendar.png" alt=""></div>
-								<span>{{this.fields.time}}</span>
-							</li>
-							<li>
-								<div class="event_icon"><img src="images/location.png" alt=""></div>
-								<span>{{this.fields.location}}</span>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-
-			{{/unless}}
-			{{/each}}
+{{/unless}}
+{{/each}}
 
 
 			<!-- Page Nav -->
