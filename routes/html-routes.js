@@ -340,11 +340,24 @@ const prepEventDataForTemplate = (eventData) => {
 function mapSqlEventToContentful(event, isHeadline = false) {
   const name = event.name || "Untitled Event";
   let eventDate = moment(event.startDate);
+  const finalExpiry = event.endDate ? moment(event.endDate) : null;
+  const today = moment().startOf("day");
 
+  // 1. Check if the entire series is already over
+  if (finalExpiry && finalExpiry.isBefore(today)) {
+    return null; // This event is officially dead
+  }
+
+  // 2. Handle Recurring Logic (only if series isn't over)
   if (event.repeatsEveryXDays > 0) {
-    while (eventDate.isBefore(moment())) {
+    while (eventDate.isBefore(today)) {
       eventDate.add(event.repeatsEveryXDays, "days");
     }
+  }
+
+  // 3. Final safety: If the next occurrence is AFTER the final expiry, kill it
+  if (finalExpiry && eventDate.isAfter(finalExpiry)) {
+    return null;
   }
 
   return {
