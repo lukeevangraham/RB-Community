@@ -1505,105 +1505,89 @@ module.exports = function (app) {
   });
 
   // Page for individual events
-  app.get("/event:id", function (req, res) {
-    const useFlexipress =
-      req.query.source === "flexi" || req.app.locals.useFlexipress;
-
+  app.get("/event:id", async (req, res) => {
     let rawSlug = req.params.id;
+
+    // Clean up prefix characters
     if (rawSlug.startsWith("-")) rawSlug = rawSlug.substring(1);
+    if (rawSlug.startsWith(":")) rawSlug = rawSlug.substring(1);
 
-    // 1. Decode special characters
-    // 2. Make it lowercase (to match 'childrens-choir')
-    // 3. Remove apostrophes (to match 'childrens-choir' vs "children's-choir")
-    const cleanSlug = decodeURIComponent(rawSlug)
-      .toLowerCase()
-      .replace(/'/g, "");
+    // 1. Decode the URL (turns %20 into spaces)
+    const decodedSlug = decodeURIComponent(rawSlug);
 
-    if (useFlexipress) {
-      console.log("FLEXIPRESS LOOKUP SLUG:", cleanSlug);
+    // 2. Prepare the slug for SQL lookup (lowercase, no apostrophes)
+    const cleanSqlSlug = decodedSlug.toLowerCase().replace(/'/g, "");
 
-      axios
+    try {
+      // --- STEP 1: TRY FLEXIPRESS (SQL) ---
+      const flexiRes = await axios
         .get(
-          `https://fpserver.grahamwebworks.com/api/event/org/1/slug/${cleanSlug}`
+          `https://fpserver.grahamwebworks.com/api/event/org/1/slug/${cleanSqlSlug}`
         )
-        .then((response) => {
-          console.log("Flexipress Event Response:", response.data);
-          // If the API returns an array, take the first item.
-          // If it's just an object, use it directly.
-          const sqlEvent = Array.isArray(response.data)
-            ? response.data[0]
-            : response.data;
+        .catch(() => ({ data: null }));
 
-          if (!sqlEvent || Object.keys(sqlEvent).length === 0) {
-            console.log("❌ NOT FOUND. Terminal looking for:", cleanSlug);
-            return res.status(404).send("Event not found.");
-          }
+      const sqlEvent = Array.isArray(flexiRes.data)
+        ? flexiRes.data[0]
+        : flexiRes.data;
 
-          // Log this to see what the RAW database column names actually are
-          console.log("RAW SQL EVENT DATA:", sqlEvent);
+      if (sqlEvent && Object.keys(sqlEvent).length > 0) {
+        const formattedEvent = mapSqlEventToContentful(sqlEvent);
 
-          const formattedEvent = mapSqlEventToContentful(sqlEvent);
+        if (formattedEvent.fields.description) {
+          formattedEvent.fields.description =
+            formattedEvent.fields.description.replace(/RBCC/g, "RB Community");
+        }
 
-          // Apply specific business logic (Replace RBCC)
-          if (formattedEvent.fields.description) {
-            formattedEvent.fields.description =
-              formattedEvent.fields.description.replace(
-                /RBCC/g,
-                "RB Community"
-              );
-          }
-
-          const hbsObject = {
-            events: formattedEvent,
-            active: { events: true },
-            headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
-                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-            title: formattedEvent.fields.title,
-          };
-
-          res.render("event", hbsObject);
-        })
-        .catch((err) => {
-          console.error("Flexipress Single Event Error:", err);
-          res.status(500).send("Error loading event details");
+        return res.render("event", {
+          events: formattedEvent,
+          active: { events: true },
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css"><link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+          title: formattedEvent.fields.title,
         });
-    } else {
-      // --- LEGACY CONTENTFUL LOGIC ---
-      // (We keep your original renderSingleEvent logic inside this block)
-      const renderSingleEvent = (oldDbEvent) => {
-        let dbEvent = oldDbEvent.items[0];
-        if (!dbEvent)
-          return res.status(404).send("Event not found in Contentful");
+      }
 
+      // --- STEP 2: FALLBACK TO CONTENTFUL ---
+      // Try A: Exact match (Supports: "VBS-2026 - Rainforest-Falls")
+      let contentfulRes = await client.getEntries({
+        content_type: "events",
+        "fields.title": decodedSlug,
+      });
+
+      // Try B: Reconstruction (Supports: "Sunday-Worship" -> "Sunday Worship")
+      if (contentfulRes.items.length === 0) {
+        const reconstructedTitle = decodedSlug
+          .replace(/\s-\s/g, "___DASH___")
+          .replace(/-/g, " ")
+          .replace(/___DASH___/g, " - ");
+
+        contentfulRes = await client.getEntries({
+          content_type: "events",
+          "fields.title": reconstructedTitle,
+        });
+      }
+
+      if (contentfulRes.items.length > 0) {
+        let dbEvent = contentfulRes.items[0];
+
+        // Standard Contentful Formatting
         Object.assign(dbEvent.fields, {
           shortMonth: moment(dbEvent.fields.date).format("MMM"),
           dayOfWeek: moment(dbEvent.fields.date).format("ddd"),
           shortDay: moment(dbEvent.fields.date).format("DD"),
+          dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY"),
         });
 
+        // Recurring Logic
         if (dbEvent.fields.repeatsEveryDays > 0) {
-          if (
-            moment(dbEvent.fields.date).isBefore(moment().format("YYYY-MM-DD"))
-          ) {
-            let start = moment(dbEvent.fields.date);
-            let end = moment().format("YYYY-MM-DD");
-            while (start.isBefore(end)) {
-              start.add(dbEvent.fields.repeatsEveryDays, "day");
-            }
-            dbEvent.fields.date = start.format("YYYY-MM-DD");
-            dbEvent.fields.shortMonth = start.format("MMM");
-            dbEvent.fields.shortDay = start.format("DD");
+          let start = moment(dbEvent.fields.date);
+          let today = moment().startOf("day");
+          while (start.isBefore(today)) {
+            start.add(dbEvent.fields.repeatsEveryDays, "day");
           }
-        }
-
-        if (
-          moment(dbEvent.fields.date, "YYYY-MM-DD").isAfter(
-            moment().format("YYYY-MM-DD")
-          )
-        ) {
-          Object.assign(dbEvent.fields, {
-            dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY"),
-          });
+          dbEvent.fields.date = start.format("YYYY-MM-DD");
+          dbEvent.fields.shortMonth = start.format("MMM");
+          dbEvent.fields.shortDay = start.format("DD");
+          dbEvent.fields.dateToCountTo = start.format("MMMM D, YYYY");
         }
 
         if (dbEvent.fields.description) {
@@ -1612,40 +1596,19 @@ module.exports = function (app) {
           ).replace(/RBCC/g, "RB Community");
         }
 
-        const hbsObject = {
+        return res.render("event", {
           events: dbEvent,
           active: { events: true },
-          headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
-                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css"><link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
           title: dbEvent.fields.title,
-        };
-        return res.render("event", hbsObject);
-      };
-
-      // Original Contentful ID/Title logic
-      if (req.params.id[0] === ":") {
-        client
-          .getEntries({
-            content_type: "events",
-            "sys.id[match]": req.params.id.substring(1),
-          })
-          .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
-      } else {
-        let str = decodeURI(
-          req.originalUrl
-            .substring(7)
-            .replace(/-/g, " ")
-            .replace(/\s\s\s/g, "-")
-        );
-        str = str.replace(/\s\s\s/g, " - ");
-        str.indexOf("?") > 0 ? (str = str.substring(0, str.indexOf("?"))) : "";
-        client
-          .getEntries({
-            content_type: "events",
-            "fields.title": str,
-          })
-          .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
+        });
       }
+
+      // --- STEP 3: NOT FOUND ---
+      res.status(404).send("Event not found in SQL or Contentful.");
+    } catch (err) {
+      console.error("CRITICAL EVENT ROUTE ERROR:", err);
+      res.status(500).send("Error loading event details");
     }
   });
 
