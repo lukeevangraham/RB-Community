@@ -1547,60 +1547,38 @@ module.exports = function (app) {
       }
 
       // --- STEP 2: FALLBACK TO CONTENTFUL ---
-      // Try A: Exact match (Supports: "VBS-2026 - Rainforest-Falls")
+
+      // 1. Get the raw string and decode it
+      let rawContentfulString = decodeURIComponent(req.params.id);
+      if (rawContentfulString.startsWith("-"))
+        rawContentfulString = rawContentfulString.substring(1);
+
+      // 2. Attempt A: Exact Match
       let contentfulRes = await client.getEntries({
         content_type: "events",
-        "fields.title": decodedSlug,
+        "fields.title": rawContentfulString,
       });
 
-      // Try B: Reconstruction (Supports: "Sunday-Worship" -> "Sunday Worship")
+      // 3. Attempt B: Flex-Match (Handles "VBS-2026 - Rainforest-Falls" vs "VBS-2026-Rainforest-Falls")
       if (contentfulRes.items.length === 0) {
-        const reconstructedTitle = decodedSlug
-          .replace(/\s-\s/g, "___DASH___")
-          .replace(/-/g, " ")
-          .replace(/___DASH___/g, " - ");
+        // Replace ALL dashes with spaces and then search
+        // This is the most common way Contentful stores titles
+        const searchFriendlyTitle = rawContentfulString.replace(/-/g, " ");
 
         contentfulRes = await client.getEntries({
           content_type: "events",
-          "fields.title": reconstructedTitle,
+          query: searchFriendlyTitle, // Uses Contentful's full-text search instead of exact field match
         });
       }
 
-      if (contentfulRes.items.length > 0) {
-        let dbEvent = contentfulRes.items[0];
-
-        // Standard Contentful Formatting
-        Object.assign(dbEvent.fields, {
-          shortMonth: moment(dbEvent.fields.date).format("MMM"),
-          dayOfWeek: moment(dbEvent.fields.date).format("ddd"),
-          shortDay: moment(dbEvent.fields.date).format("DD"),
-          dateToCountTo: moment(dbEvent.fields.date).format("MMMM D, YYYY"),
-        });
-
-        // Recurring Logic
-        if (dbEvent.fields.repeatsEveryDays > 0) {
-          let start = moment(dbEvent.fields.date);
-          let today = moment().startOf("day");
-          while (start.isBefore(today)) {
-            start.add(dbEvent.fields.repeatsEveryDays, "day");
-          }
-          dbEvent.fields.date = start.format("YYYY-MM-DD");
-          dbEvent.fields.shortMonth = start.format("MMM");
-          dbEvent.fields.shortDay = start.format("DD");
-          dbEvent.fields.dateToCountTo = start.format("MMMM D, YYYY");
-        }
-
-        if (dbEvent.fields.description) {
-          dbEvent.fields.description = marked(
-            dbEvent.fields.description
-          ).replace(/RBCC/g, "RB Community");
-        }
-
-        return res.render("event", {
-          events: dbEvent,
-          active: { events: true },
-          headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css"><link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-          title: dbEvent.fields.title,
+      // 4. Attempt C: The "Last Resort" (Manually cleaning the string)
+      if (contentfulRes.items.length === 0) {
+        // This turns "VBS-2026 - Rainforest-Falls" into "VBS 2026 Rainforest Falls"
+        // and checks if any event title starts with that.
+        const cleanSearch = rawContentfulString.replace(/[^a-zA-Z0-9]/g, " ");
+        contentfulRes = await client.getEntries({
+          content_type: "events",
+          "fields.title[match]": cleanSearch,
         });
       }
 
