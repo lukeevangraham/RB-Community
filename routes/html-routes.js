@@ -859,11 +859,9 @@ module.exports = function (app) {
 
     if (useFlexipress) {
       Promise.all([
-        // [0] Fetch ALL published events
         axios.get(
           `https://fpserver.grahamwebworks.com/api/events/org/1?published=true`
         ),
-        // [1] Fetch SingleHome to identify the ONE Headline event
         axios.get(`https://fpserver.grahamwebworks.com/api/single/home/1`),
       ])
         .then((resultArray) => {
@@ -871,24 +869,23 @@ module.exports = function (app) {
           const homeSettings = resultArray[1].data;
           const headlineId = homeSettings.HeadlineEventId;
 
-          // A. Map all events first
-          // This runs the recurrence logic to find the "next" date for each event
-          let mappedList = sqlEvents.map((event) => {
-            return mapSqlEventToContentful(event, false);
-          });
+          // A. Map all events AND filter out nulls immediately [FIXED]
+          let mappedList = sqlEvents
+            .map((event) => mapSqlEventToContentful(event, false))
+            .filter((event) => event !== null); // This stops the crash in Step B
 
-          // B. NEW: Filter out events that have already passed
+          // B. Filter out events that have already passed (Optional now, but safe)
           const now = moment();
           mappedList = mappedList.filter((event) => {
+            // No need to check for null here because of the filter above
             const eventDate = moment(
               event.fields.dateToCountTo,
               "MMMM D, YYYY HH:mm:ss"
             );
-            // Only keep events if their calculated date is in the future
             return eventDate.isAfter(now);
           });
 
-          // C. SORT the list based on the calculated future dates
+          // C. SORT the list
           mappedList.sort((a, b) => {
             const dateA = moment(
               a.fields.dateToCountTo,
@@ -898,13 +895,13 @@ module.exports = function (app) {
               b.fields.dateToCountTo,
               "MMMM D, YYYY HH:mm:ss"
             );
-            return dateA - dateB; // Ascending (soonest first)
+            return dateA - dateB;
           });
 
-          // D. Identify the Headline Event
-          // We search the raw SQL results for the headline ID
+          // D. Identify the Headline Event [FIXED]
           const headlineEvent = sqlEvents.find((e) => e.id == headlineId);
-          const mappedHeadline = headlineEvent
+          // Map the headline, but ensure we don't return null to the template if it's expired
+          let mappedHeadline = headlineEvent
             ? mapSqlEventToContentful(headlineEvent, true)
             : null;
 
@@ -913,7 +910,7 @@ module.exports = function (app) {
             topEvent: mappedHeadline ? [mappedHeadline] : [],
             active: { events: true },
             headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
-                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+                  <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
             title: `Events`,
           };
 
