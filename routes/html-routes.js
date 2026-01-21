@@ -289,7 +289,7 @@ const prepEventDataForTemplate = (eventData) => {
     // Log the fields so you can see exactly what Contentful IS sending
     console.warn(
       `No date found for: ${eventData.fields.title}. Available fields:`,
-      Object.keys(eventData.fields)
+      Object.keys(eventData.fields),
     );
     return;
   }
@@ -1497,124 +1497,122 @@ module.exports = function (app) {
 
   // Page for individual events
   app.get("/event:id", async (req, res) => {
-  let rawSlug = req.params.id;
+    let rawSlug = req.params.id;
 
-  // Basic prefix cleanup
-  if (rawSlug.startsWith("-")) rawSlug = rawSlug.substring(1);
-  if (rawSlug.startsWith(":")) rawSlug = rawSlug.substring(1);
+    // Basic prefix cleanup
+    if (rawSlug.startsWith("-")) rawSlug = rawSlug.substring(1);
+    if (rawSlug.startsWith(":")) rawSlug = rawSlug.substring(1);
 
-  // 1. Prepare Clean Slug for SQL Lookup ONLY
-  const cleanSqlSlug = decodeURIComponent(rawSlug)
-    .toLowerCase()
-    .replace(/'/g, "");
+    // 1. Prepare Clean Slug for SQL Lookup ONLY
+    const cleanSqlSlug = decodeURIComponent(rawSlug)
+      .toLowerCase()
+      .replace(/'/g, "");
 
-  try {
-    // --- STEP 1: TRY FLEXIPRESS (SQL) ---
-    const flexiRes = await axios
-      .get(
-        `https://fpserver.grahamwebworks.com/api/event/org/1/slug/${cleanSqlSlug}`
-      )
-      .catch(() => ({ data: null }));
+    try {
+      // --- STEP 1: TRY FLEXIPRESS (SQL) ---
+      const flexiRes = await axios
+        .get(
+          `https://fpserver.grahamwebworks.com/api/event/org/1/slug/${cleanSqlSlug}`,
+        )
+        .catch(() => ({ data: null }));
 
-    const sqlEvent = Array.isArray(flexiRes.data)
-      ? flexiRes.data[0]
-      : flexiRes.data;
+      const sqlEvent = Array.isArray(flexiRes.data)
+        ? flexiRes.data[0]
+        : flexiRes.data;
 
-    // If SQL event exists, render it and exit
-    if (sqlEvent && Object.keys(sqlEvent).length > 0) {
-      const formattedEvent = mapSqlEventToContentful(sqlEvent);
+      // If SQL event exists, render it and exit
+      if (sqlEvent && Object.keys(sqlEvent).length > 0) {
+        const formattedEvent = mapSqlEventToContentful(sqlEvent);
 
-      if (formattedEvent.fields.description) {
-        formattedEvent.fields.description = formattedEvent.fields.description.replace(
-          /RBCC/g,
-          "RB Community"
-        );
-      }
+        if (formattedEvent.fields.description) {
+          formattedEvent.fields.description =
+            formattedEvent.fields.description.replace(/RBCC/g, "RB Community");
+        }
 
-      return res.render("event", {
-        events: formattedEvent,
-        active: { events: true },
-        headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
+        return res.render("event", {
+          events: formattedEvent,
+          active: { events: true },
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
                       <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-        title: formattedEvent.fields.title,
-      });
-    }
-
-    // --- STEP 2: STABLE CONTENTFUL FALLBACK (Logic from commit 9dcfb64) ---
-    // If we reach here, SQL found nothing. Run your original working code exactly.
-
-    const renderSingleEvent = (oldDbEvent) => {
-      let dbEvent = oldDbEvent.items[0];
-      if (!dbEvent) return res.status(404).send("Event not found.");
-
-      // Use your stable prep function or inline logic
-      if (typeof prepEventDataForTemplate === "function") {
-        prepEventDataForTemplate(dbEvent);
-      } else {
-        Object.assign(dbEvent.fields, {
-          shortMonth: moment(dbEvent.fields.date).format("MMM"),
-          dayOfWeek: moment(dbEvent.fields.date).format("ddd"),
-          shortDay: moment(dbEvent.fields.date).format("DD"),
+          title: formattedEvent.fields.title,
         });
       }
 
-      if (dbEvent.fields.description) {
-        const desc = dbEvent.fields.description;
+      // --- STEP 2: STABLE CONTENTFUL FALLBACK (Logic from commit 9dcfb64) ---
+      // If we reach here, SQL found nothing. Run your original working code exactly.
 
-        // Check if the string already looks like HTML (contains <p or <div or <strong)
-        const isHtml = /<[a-z][\s\S]*>/i.test(desc);
+      const renderSingleEvent = (oldDbEvent) => {
+        let dbEvent = oldDbEvent.items[0];
+        if (!dbEvent) return res.status(404).send("Event not found.");
 
-        if (isHtml) {
-          // It's already HTML, just swap the names
-          dbEvent.fields.description = desc.replace(/RBCC/g, "RB Community");
+        // Use your stable prep function or inline logic
+        if (typeof prepEventDataForTemplate === "function") {
+          prepEventDataForTemplate(dbEvent);
         } else {
-          // It's Markdown, convert it to HTML first
-          dbEvent.fields.description = marked(desc).replace(
-            /RBCC/g,
-            "RB Community"
-          );
+          Object.assign(dbEvent.fields, {
+            shortMonth: moment(dbEvent.fields.date).format("MMM"),
+            dayOfWeek: moment(dbEvent.fields.date).format("ddd"),
+            shortDay: moment(dbEvent.fields.date).format("DD"),
+          });
         }
-      }
 
-      return res.render("event", {
-        events: dbEvent,
-        active: { events: true },
-        headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
+        if (dbEvent.fields.description) {
+          const desc = dbEvent.fields.description;
+
+          // Check if the string already looks like HTML (contains <p or <div or <strong)
+          const isHtml = /<[a-z][\s\S]*>/i.test(desc);
+
+          if (isHtml) {
+            // It's already HTML, just swap the names
+            dbEvent.fields.description = desc.replace(/RBCC/g, "RB Community");
+          } else {
+            // It's Markdown, convert it to HTML first
+            dbEvent.fields.description = marked(desc).replace(
+              /RBCC/g,
+              "RB Community",
+            );
+          }
+        }
+
+        return res.render("event", {
+          events: dbEvent,
+          active: { events: true },
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
                     <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-        title: dbEvent.fields.title,
-      });
-    };
+          title: dbEvent.fields.title,
+        });
+      };
 
-    // Original ID vs Title Logic (The specific line that makes VBS-2026 work)
-    if (req.params.id[0] === ":") {
-      client
-        .getEntries({
-          content_type: "events",
-          "sys.id[match]": req.params.id.substring(1),
-        })
-        .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
-    } else {
-      let str = decodeURI(
-        req.originalUrl
-          .substring(7)
-          .replace(/-/g, " ")
-          .replace(/\s\s\s/g, "-")
-      );
-      str = str.replace(/\s\s\s/g, " - ");
-      if (str.indexOf("?") > 0) str = str.substring(0, str.indexOf("?"));
+      // Original ID vs Title Logic (The specific line that makes VBS-2026 work)
+      if (req.params.id[0] === ":") {
+        client
+          .getEntries({
+            content_type: "events",
+            "sys.id[match]": req.params.id.substring(1),
+          })
+          .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
+      } else {
+        let str = decodeURI(
+          req.originalUrl
+            .substring(7)
+            .replace(/-/g, " ")
+            .replace(/\s\s\s/g, "-"),
+        );
+        str = str.replace(/\s\s\s/g, " - ");
+        if (str.indexOf("?") > 0) str = str.substring(0, str.indexOf("?"));
 
-      client
-        .getEntries({
-          content_type: "events",
-          "fields.title": str,
-        })
-        .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
+        client
+          .getEntries({
+            content_type: "events",
+            "fields.title": str,
+          })
+          .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
+      }
+    } catch (err) {
+      console.error("Critical Route Error:", err);
+      res.status(500).send("Error loading event details");
     }
-  } catch (err) {
-    console.error("Critical Route Error:", err);
-    res.status(500).send("Error loading event details");
-  }
-});
+  });
 
   app.get("/services", function (req, res) {
     var bloghbsObject = {
@@ -2034,8 +2032,6 @@ module.exports = function (app) {
 
         flexiData.forEach((sqlEvent) => {
           const mapped = mapSqlEventToContentful(sqlEvent, false);
-
-          // --- CRITICAL FIX: Only process if the event isn't null (expired) ---
           if (mapped) {
             mapped.sys = { contentType: { sys: { id: "events" } } };
             contentfulRes.items.push(mapped);
@@ -2054,33 +2050,18 @@ module.exports = function (app) {
         const isSqlEvent = entry.sys.contentType.sys.id === "events";
         const isBlog = entry.sys.contentType.sys.id === "blog";
 
-<<<<<<< HEAD
         if (isSqlEvent) {
-          // If it's a Flexipress event, it's already mapped.
-          // We just need to ensure the top-level properties are there for the template.
-          if (entry.fields.shortMonth && entry.fields.shortDay) {
-=======
-          try {
-            // 2. Try the legacy function
-            prepEventDataForTemplate(entry);
-          } catch (e) {
-            // 3. If it crashes (ReferenceError), we do the work manually
-            console.warn(
-              "Legacy prep failed for SQL event, applying manual format...",
-            );
+          // SQL events from mapSqlEventToContentful are already formatted.
+          // We just assign top-level properties for the search template.
+          entry.title = entry.fields.title;
+          entry.description = entry.fields.description;
 
-            // Standard formatting that search templates usually expect:
-            entry.formattedDate = entry.fields.endDate; // or use moment(entry.fields.endDate).format('LL') if moment is available
-            entry.displayDate = entry.fields.endDate;
->>>>>>> fix-vbs-rendering
-            entry.title = entry.fields.title;
-            entry.description = entry.fields.description;
-          } else {
-            // Only run legacy prep if it's a real Contentful entry
+          // If it's a legacy Contentful event (no id), run the legacy prep
+          if (!entry.id) {
             try {
               prepEventDataForTemplate(entry);
             } catch (e) {
-              console.warn("Legacy prep failed:", e.message);
+              console.warn("Legacy prep failed for event:", e.message);
             }
           }
         }
@@ -2092,7 +2073,7 @@ module.exports = function (app) {
 
       res.render("search", {
         headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
-                      <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
+                    <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
         title: `Search`,
         term: searchTerm,
         results: [contentfulRes],
