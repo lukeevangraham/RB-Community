@@ -148,7 +148,7 @@ function doReq(url, what) {
           });
           resolve(data);
         }
-      }
+      },
     );
   });
 }
@@ -217,7 +217,7 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
     Object.assign(entry.fields, {
       renderedHtml: documentToHtmlString(rawRichTextField, options).replace(
         /RBCC/g,
-        "RB Community"
+        "RB Community",
       ),
       id: requestId,
     });
@@ -236,7 +236,7 @@ const prepBlogsForGroupPage = (untreatedBlogs) => {
   untreatedBlogs.forEach((earlyItem) => {
     if (
       moment(earlyItem.fields.expirationDate).isBefore(
-        moment().format("YYYY-MM-DD")
+        moment().format("YYYY-MM-DD"),
       )
     ) {
     } else {
@@ -411,8 +411,8 @@ const prepBlogDataForTemplate = (blogData) => {
         truncatedString = JSON.stringify(
           blogData.fields.body?.content?.[0]?.content?.[0]?.value.substr(
             0,
-            maxLengthOfTruncatedString
-          )
+            maxLengthOfTruncatedString,
+          ),
         );
 
         // retrim if we are in the middle of a word
@@ -422,8 +422,8 @@ const prepBlogDataForTemplate = (blogData) => {
                 0,
                 Math.min(
                   truncatedString.length,
-                  truncatedString.lastIndexOf(" ")
-                )
+                  truncatedString.lastIndexOf(" "),
+                ),
               )
               .replace(/RBCC/g, "RB Community"))
           : null;
@@ -522,7 +522,7 @@ module.exports = function (app) {
           resultArray[0].items.length
             ? (prepareBlogEntryForSinglePage(
                 resultArray[0].items[0],
-                req.params.id
+                req.params.id,
               ),
               renderSingleBlog(resultArray[0].items[0], res))
             : (prepareBlogEntryForSinglePage(formattedData, req.params.id),
@@ -556,7 +556,7 @@ module.exports = function (app) {
       // [1] DUAL-SOURCE EVENT FETCH
       useFlexipress
         ? axios.get(
-            `https://fpserver.grahamwebworks.com/api/events/org/1?published=true&featured=true`
+            `https://fpserver.grahamwebworks.com/api/events/org/1?published=true&featured=true`,
           )
         : client.getEntries({
             content_type: "events",
@@ -627,7 +627,7 @@ module.exports = function (app) {
           .filter((event) => {
             const eventDate = moment(
               event.fields.dateToCountTo,
-              "MMMM D, YYYY HH:mm:ss"
+              "MMMM D, YYYY HH:mm:ss",
             );
             return eventDate.isAfter(now);
           });
@@ -635,7 +635,7 @@ module.exports = function (app) {
         // 3. Remove the headline from the grid list if it happens to be in both
         if (headlineMapped) {
           spotlightMapped = spotlightMapped.filter(
-            (e) => e.fields.title !== headlineMapped.fields.title
+            (e) => e.fields.title !== headlineMapped.fields.title,
           );
         }
 
@@ -692,7 +692,7 @@ module.exports = function (app) {
       itemsIncludingExpired.forEach((earlyItem) => {
         if (
           moment(earlyItem.fields.expirationDate).isBefore(
-            moment().format("YYYY-MM-DD")
+            moment().format("YYYY-MM-DD"),
           )
         ) {
         } else {
@@ -711,14 +711,14 @@ module.exports = function (app) {
         if (item.fields.body) {
           if (item.strapi) {
             var truncatedString = JSON.stringify(
-              item.fields.body.replace(/<[^>]*>/g, "")
+              item.fields.body.replace(/<[^>]*>/g, ""),
             );
           } else {
             var truncatedString = JSON.stringify(
               item.fields.body.content[0].content[0].value.replace(
                 /^(.{165}[^\s]*).*/,
-                "$1"
-              )
+                "$1",
+              ),
             );
           }
           var truncatedLength = truncatedString.length;
@@ -738,7 +738,7 @@ module.exports = function (app) {
 
       // Filter out deleted videos
       let trimmedYouTubeRecord = youTubeRecord.filter(
-        (record) => record.snippet.title !== "Deleted video"
+        (record) => record.snippet.title !== "Deleted video",
       );
 
       let mostRecentStream = null;
@@ -768,7 +768,7 @@ module.exports = function (app) {
                   startToGetDateInfoFromDescription.length - 1
                 ]
               }, ${yearStarter}`,
-              "MMMM DD, YYYY"
+              "MMMM DD, YYYY",
             );
           }
         } else {
@@ -779,7 +779,7 @@ module.exports = function (app) {
 
       // SORT YOUTUBE RESULTS TO NEWEST IS FIRST
       trimmedYouTubeRecord.sort((left, right) =>
-        moment.utc(right.parsedDate).diff(moment.utc(left.parsedDate))
+        moment.utc(right.parsedDate).diff(moment.utc(left.parsedDate)),
       );
 
       trimmedYouTubeRecord.forEach((stream) => {
@@ -852,7 +852,7 @@ module.exports = function (app) {
     if (useFlexipress) {
       Promise.all([
         axios.get(
-          `https://fpserver.grahamwebworks.com/api/events/org/1?published=true`
+          `https://fpserver.grahamwebworks.com/api/events/org/1?published=true`,
         ),
         axios.get(`https://fpserver.grahamwebworks.com/api/single/home/1`),
       ])
@@ -872,7 +872,7 @@ module.exports = function (app) {
             // No need to check for null here because of the filter above
             const eventDate = moment(
               event.fields.dateToCountTo,
-              "MMMM D, YYYY HH:mm:ss"
+              "MMMM D, YYYY HH:mm:ss",
             );
             return eventDate.isAfter(now);
           });
@@ -881,11 +881,11 @@ module.exports = function (app) {
           mappedList.sort((a, b) => {
             const dateA = moment(
               a.fields.dateToCountTo,
-              "MMMM D, YYYY HH:mm:ss"
+              "MMMM D, YYYY HH:mm:ss",
             );
             const dateB = moment(
               b.fields.dateToCountTo,
-              "MMMM D, YYYY HH:mm:ss"
+              "MMMM D, YYYY HH:mm:ss",
             );
             return dateA - dateB;
           });
@@ -963,7 +963,7 @@ module.exports = function (app) {
     function getStaffMembers() {
       try {
         const response = axios.get(
-          `https://admin.rbcommunity.org/staff-members?_sort=LastName:ASC`
+          `https://admin.rbcommunity.org/staff-members?_sort=LastName:ASC`,
         );
         return response;
       } catch (error) {
@@ -1026,7 +1026,7 @@ module.exports = function (app) {
           // console.log(moment(item.name.split(" ", 1), 'MM-DD-YY').format('MMM'))
           Object.assign(item, {
             shortMonth: moment(item.name.split(" ", 1), "MM-DD-YY").format(
-              "MMM"
+              "MMM",
             ),
           });
           Object.assign(item, {
@@ -1037,7 +1037,7 @@ module.exports = function (app) {
           });
           Object.assign(item, {
             featureDate: moment(item.name.split(" ", 1), "MM-DD-YY").format(
-              "DD MMM YYYY"
+              "DD MMM YYYY",
             ),
           });
         });
@@ -1119,7 +1119,7 @@ module.exports = function (app) {
           limit: 10,
         }),
         axios.get(
-          `https://admin.rbcommunity.org/articles?ministries.name=${req.params.id}&_sort=datePosted&_limit=6`
+          `https://admin.rbcommunity.org/articles?ministries.name=${req.params.id}&_sort=datePosted&_limit=6`,
         ),
       ]).then(function (resultArray) {
         var items = { articles: [] };
@@ -1174,7 +1174,7 @@ module.exports = function (app) {
         itemsIncludingExpired.forEach((earlyItem) => {
           if (
             moment(earlyItem.fields.expirationDate).isBefore(
-              moment().format("YYYY-MM-DD")
+              moment().format("YYYY-MM-DD"),
             )
           ) {
             null;
@@ -1199,8 +1199,8 @@ module.exports = function (app) {
                 var truncatedString = JSON.stringify(
                   item.fields.body.content[0].content[0].value.replace(
                     /^(.{165}[^\s]*).*/,
-                    "$1"
-                  )
+                    "$1",
+                  ),
                 );
                 var truncatedLength = truncatedString.length;
                 truncatedString = truncatedString
@@ -1216,7 +1216,7 @@ module.exports = function (app) {
             if (item.fields.fromStrapi) {
               let truncatedString = item.fields.body.replace(
                 /<\/?[^>]+(>|$)/g,
-                ""
+                "",
               );
               item.fields.excerpt = truncatedString
                 .replace(/\s+/g, " ")
@@ -1292,7 +1292,7 @@ module.exports = function (app) {
                 }
                 Object.assign(item.fields, {
                   dateToCountTo: moment(item.fields.date).format(
-                    "MMMM D, YYYY"
+                    "MMMM D, YYYY",
                   ),
                 });
               }
@@ -1334,7 +1334,7 @@ module.exports = function (app) {
                       youTubeRecord = JSON.parse(body);
 
                       prepMinistryPage();
-                    }
+                    },
                   );
                 } else if (req.params.id === "Adult Education") {
                   request(
@@ -1345,7 +1345,7 @@ module.exports = function (app) {
                       youTubeRecord = JSON.parse(body);
 
                       prepMinistryPage();
-                    }
+                    },
                   );
                 } else if (
                   req.params.id === "Chancel Choir, Ensembles & Orchestra"
@@ -1358,7 +1358,7 @@ module.exports = function (app) {
                       youTubeRecord = JSON.parse(body);
 
                       prepMinistryPage();
-                    }
+                    },
                   );
                 } else {
                   prepMinistryPage();
@@ -1394,7 +1394,7 @@ module.exports = function (app) {
     try {
       // 1. Get Ministry from SQL
       const minRes = await axios.get(
-        `https://fpserver.grahamwebworks.com/api/ministries/org/1/name/${ministryName}`
+        `https://fpserver.grahamwebworks.com/api/ministries/org/1/name/${ministryName}`,
       );
       const ministry = minRes.data;
 
@@ -1443,13 +1443,12 @@ module.exports = function (app) {
               part: "snippet,contentDetails",
               maxResults: "10",
             },
-          })
+          }),
         );
       }
 
-      const [eventsRes, headerRes, blogRes, youtubeRes] = await Promise.all(
-        promises
-      );
+      const [eventsRes, headerRes, blogRes, youtubeRes] =
+        await Promise.all(promises);
 
       // 4. Map SQL events
       const now = moment();
@@ -1457,13 +1456,13 @@ module.exports = function (app) {
         .map((event) => mapSqlEventToContentful(event, false))
         .filter((event) =>
           moment(event.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss").isAfter(
-            now
-          )
+            now,
+          ),
         )
         .sort(
           (a, b) =>
             moment(a.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss") -
-            moment(b.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss")
+            moment(b.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss"),
         );
 
       // 5. Handle the Header (Rich Text)
@@ -1471,7 +1470,7 @@ module.exports = function (app) {
       if (headerItem) {
         // Render Contentful Rich Text to HTML so the template can display it
         headerItem.fields.renderedHtml = documentToHtmlString(
-          headerItem.fields.body
+          headerItem.fields.body,
         );
       }
 
@@ -1498,89 +1497,124 @@ module.exports = function (app) {
 
   // Page for individual events
   app.get("/event:id", async (req, res) => {
-    let rawSlug = req.params.id;
+  let rawSlug = req.params.id;
 
-    // Clean up prefix characters
-    if (rawSlug.startsWith("-")) rawSlug = rawSlug.substring(1);
-    if (rawSlug.startsWith(":")) rawSlug = rawSlug.substring(1);
+  // Basic prefix cleanup
+  if (rawSlug.startsWith("-")) rawSlug = rawSlug.substring(1);
+  if (rawSlug.startsWith(":")) rawSlug = rawSlug.substring(1);
 
-    // 1. Decode the URL (turns %20 into spaces)
-    const decodedSlug = decodeURIComponent(rawSlug);
+  // 1. Prepare Clean Slug for SQL Lookup ONLY
+  const cleanSqlSlug = decodeURIComponent(rawSlug)
+    .toLowerCase()
+    .replace(/'/g, "");
 
-    // 2. Prepare the slug for SQL lookup (lowercase, no apostrophes)
-    const cleanSqlSlug = decodedSlug.toLowerCase().replace(/'/g, "");
+  try {
+    // --- STEP 1: TRY FLEXIPRESS (SQL) ---
+    const flexiRes = await axios
+      .get(
+        `https://fpserver.grahamwebworks.com/api/event/org/1/slug/${cleanSqlSlug}`
+      )
+      .catch(() => ({ data: null }));
 
-    try {
-      // --- STEP 1: TRY FLEXIPRESS (SQL) ---
-      const flexiRes = await axios
-        .get(
-          `https://fpserver.grahamwebworks.com/api/event/org/1/slug/${cleanSqlSlug}`
-        )
-        .catch(() => ({ data: null }));
+    const sqlEvent = Array.isArray(flexiRes.data)
+      ? flexiRes.data[0]
+      : flexiRes.data;
 
-      const sqlEvent = Array.isArray(flexiRes.data)
-        ? flexiRes.data[0]
-        : flexiRes.data;
+    // If SQL event exists, render it and exit
+    if (sqlEvent && Object.keys(sqlEvent).length > 0) {
+      const formattedEvent = mapSqlEventToContentful(sqlEvent);
 
-      if (sqlEvent && Object.keys(sqlEvent).length > 0) {
-        const formattedEvent = mapSqlEventToContentful(sqlEvent);
-
-        if (formattedEvent.fields.description) {
-          formattedEvent.fields.description =
-            formattedEvent.fields.description.replace(/RBCC/g, "RB Community");
-        }
-
-        return res.render("event", {
-          events: formattedEvent,
-          active: { events: true },
-          headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css"><link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-          title: formattedEvent.fields.title,
-        });
+      if (formattedEvent.fields.description) {
+        formattedEvent.fields.description = formattedEvent.fields.description.replace(
+          /RBCC/g,
+          "RB Community"
+        );
       }
 
-      // --- STEP 2: FALLBACK TO CONTENTFUL ---
-
-      // 1. Get the raw string and decode it
-      let rawContentfulString = decodeURIComponent(req.params.id);
-      if (rawContentfulString.startsWith("-"))
-        rawContentfulString = rawContentfulString.substring(1);
-
-      // 2. Attempt A: Exact Match
-      let contentfulRes = await client.getEntries({
-        content_type: "events",
-        "fields.title": rawContentfulString,
+      return res.render("event", {
+        events: formattedEvent,
+        active: { events: true },
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
+                      <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+        title: formattedEvent.fields.title,
       });
-
-      // 3. Attempt B: Flex-Match (Handles "VBS-2026 - Rainforest-Falls" vs "VBS-2026-Rainforest-Falls")
-      if (contentfulRes.items.length === 0) {
-        // Replace ALL dashes with spaces and then search
-        // This is the most common way Contentful stores titles
-        const searchFriendlyTitle = rawContentfulString.replace(/-/g, " ");
-
-        contentfulRes = await client.getEntries({
-          content_type: "events",
-          query: searchFriendlyTitle, // Uses Contentful's full-text search instead of exact field match
-        });
-      }
-
-      // 4. Attempt C: The "Last Resort" (Manually cleaning the string)
-      if (contentfulRes.items.length === 0) {
-        // This turns "VBS-2026 - Rainforest-Falls" into "VBS 2026 Rainforest Falls"
-        // and checks if any event title starts with that.
-        const cleanSearch = rawContentfulString.replace(/[^a-zA-Z0-9]/g, " ");
-        contentfulRes = await client.getEntries({
-          content_type: "events",
-          "fields.title[match]": cleanSearch,
-        });
-      }
-
-      // --- STEP 3: NOT FOUND ---
-      res.status(404).send("Event not found in SQL or Contentful.");
-    } catch (err) {
-      console.error("CRITICAL EVENT ROUTE ERROR:", err);
-      res.status(500).send("Error loading event details");
     }
-  });
+
+    // --- STEP 2: STABLE CONTENTFUL FALLBACK (Logic from commit 9dcfb64) ---
+    // If we reach here, SQL found nothing. Run your original working code exactly.
+
+    const renderSingleEvent = (oldDbEvent) => {
+      let dbEvent = oldDbEvent.items[0];
+      if (!dbEvent) return res.status(404).send("Event not found.");
+
+      // Use your stable prep function or inline logic
+      if (typeof prepEventDataForTemplate === "function") {
+        prepEventDataForTemplate(dbEvent);
+      } else {
+        Object.assign(dbEvent.fields, {
+          shortMonth: moment(dbEvent.fields.date).format("MMM"),
+          dayOfWeek: moment(dbEvent.fields.date).format("ddd"),
+          shortDay: moment(dbEvent.fields.date).format("DD"),
+        });
+      }
+
+      if (dbEvent.fields.description) {
+        const desc = dbEvent.fields.description;
+
+        // Check if the string already looks like HTML (contains <p or <div or <strong)
+        const isHtml = /<[a-z][\s\S]*>/i.test(desc);
+
+        if (isHtml) {
+          // It's already HTML, just swap the names
+          dbEvent.fields.description = desc.replace(/RBCC/g, "RB Community");
+        } else {
+          // It's Markdown, convert it to HTML first
+          dbEvent.fields.description = marked(desc).replace(
+            /RBCC/g,
+            "RB Community"
+          );
+        }
+      }
+
+      return res.render("event", {
+        events: dbEvent,
+        active: { events: true },
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
+                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+        title: dbEvent.fields.title,
+      });
+    };
+
+    // Original ID vs Title Logic (The specific line that makes VBS-2026 work)
+    if (req.params.id[0] === ":") {
+      client
+        .getEntries({
+          content_type: "events",
+          "sys.id[match]": req.params.id.substring(1),
+        })
+        .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
+    } else {
+      let str = decodeURI(
+        req.originalUrl
+          .substring(7)
+          .replace(/-/g, " ")
+          .replace(/\s\s\s/g, "-")
+      );
+      str = str.replace(/\s\s\s/g, " - ");
+      if (str.indexOf("?") > 0) str = str.substring(0, str.indexOf("?"));
+
+      client
+        .getEntries({
+          content_type: "events",
+          "fields.title": str,
+        })
+        .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
+    }
+  } catch (err) {
+    console.error("Critical Route Error:", err);
+    res.status(500).send("Error loading event details");
+  }
+});
 
   app.get("/services", function (req, res) {
     var bloghbsObject = {
@@ -1646,7 +1680,7 @@ module.exports = function (app) {
 
   app.get("/temp", function (req, res) {
     res.redirect(
-      "https://www.shelbygiving.com/App/Form/c05b9e9b-e27d-4617-bd81-c55409037d94"
+      "https://www.shelbygiving.com/App/Form/c05b9e9b-e27d-4617-bd81-c55409037d94",
     );
   });
 
@@ -1735,7 +1769,7 @@ module.exports = function (app) {
           metaTitle: `Job Openings | RB Community Presbyterian Church San Diego`,
           jobs: parsedJobs,
         });
-      }
+      },
     );
   });
 
@@ -1766,7 +1800,7 @@ module.exports = function (app) {
           };
           res.render("404", bloghbsObject);
         }
-      }
+      },
     );
   });
 
@@ -1846,7 +1880,7 @@ module.exports = function (app) {
         // console.log("LOOK HERE: ", response.body);
         // youTubeData = JSON.parse(response.body);
         pieces.items[0].fields.bodyHTML = documentToHtmlString(
-          pieces.items[0].fields.body
+          pieces.items[0].fields.body,
         );
         let hbsObject = {
           active: { events: true },
@@ -1883,7 +1917,7 @@ module.exports = function (app) {
         // console.log("LOOK HERE: ", response.body);
         // youTubeData = JSON.parse(response.body);
         pieces.items[0].fields.bodyHTML = documentToHtmlString(
-          pieces.items[0].fields.body
+          pieces.items[0].fields.body,
         );
         let hbsObject = {
           active: { events: true },
@@ -1908,13 +1942,13 @@ module.exports = function (app) {
 
   app.get("/nominate", async (req, res) => {
     res.redirect(
-      "https://res.cloudinary.com/rb-community-church/raw/upload/v1713975397/Updated_nomination_form_54e4b5bf09.docx"
+      "https://res.cloudinary.com/rb-community-church/raw/upload/v1713975397/Updated_nomination_form_54e4b5bf09.docx",
     );
   });
 
   app.get("/familyemail", async (req, res) => {
     res.redirect(
-      "https://www.shelbygiving.com/App/Form/66e76d8c-967e-4434-a560-2a39ff87a60b"
+      "https://www.shelbygiving.com/App/Form/66e76d8c-967e-4434-a560-2a39ff87a60b",
     );
   });
 
@@ -1925,7 +1959,7 @@ module.exports = function (app) {
   app.get("/volunteer", async (req, res) => {
     Promise.all([
       axios.get(
-        "https://fpserver.grahamwebworks.com/api/volunteer/published/org/1"
+        "https://fpserver.grahamwebworks.com/api/volunteer/published/org/1",
       ),
     ]).then((resultArray) => {
       const hbsObject = {
@@ -1946,7 +1980,7 @@ module.exports = function (app) {
 
     Promise.all([
       axios.get(
-        `https://fpserver.grahamwebworks.com/api/volunteer/published/position/${position}/1`
+        `https://fpserver.grahamwebworks.com/api/volunteer/published/position/${position}/1`,
       ),
     ]).then((resultArray) => {
       const hbsObject = {
@@ -1984,7 +2018,7 @@ module.exports = function (app) {
       if (useFlexipress) {
         try {
           const flexiRes = await axios.get(
-            `https://fpserver.grahamwebworks.com/api/search/1/${searchTerm}`
+            `https://fpserver.grahamwebworks.com/api/search/1/${searchTerm}`,
           );
           flexiData = flexiRes.data;
         } catch (fError) {
@@ -1995,7 +2029,7 @@ module.exports = function (app) {
       if (useFlexipress) {
         // Remove Contentful events to avoid duplicates
         contentfulRes.items = contentfulRes.items.filter(
-          (item) => item.sys.contentType.sys.id !== "events"
+          (item) => item.sys.contentType.sys.id !== "events",
         );
 
         flexiData.forEach((sqlEvent) => {
@@ -2020,10 +2054,25 @@ module.exports = function (app) {
         const isSqlEvent = entry.sys.contentType.sys.id === "events";
         const isBlog = entry.sys.contentType.sys.id === "blog";
 
+<<<<<<< HEAD
         if (isSqlEvent) {
           // If it's a Flexipress event, it's already mapped.
           // We just need to ensure the top-level properties are there for the template.
           if (entry.fields.shortMonth && entry.fields.shortDay) {
+=======
+          try {
+            // 2. Try the legacy function
+            prepEventDataForTemplate(entry);
+          } catch (e) {
+            // 3. If it crashes (ReferenceError), we do the work manually
+            console.warn(
+              "Legacy prep failed for SQL event, applying manual format...",
+            );
+
+            // Standard formatting that search templates usually expect:
+            entry.formattedDate = entry.fields.endDate; // or use moment(entry.fields.endDate).format('LL') if moment is available
+            entry.displayDate = entry.fields.endDate;
+>>>>>>> fix-vbs-rendering
             entry.title = entry.fields.title;
             entry.description = entry.fields.description;
           } else {
