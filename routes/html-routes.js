@@ -879,7 +879,7 @@ module.exports = function (app) {
 
             // 2. Headline Check
             // (Assuming your mapSqlEventToContentful helper preserves the original SQL ID)
-            const isNotHeadline = event.id != headlineId;
+            const isNotHeadline = event.fields.id != headlineId;
 
             return isFuture && isNotHeadline;
           });
