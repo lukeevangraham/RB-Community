@@ -353,6 +353,7 @@ function mapSqlEventToContentful(event, isHeadline = false) {
   }
 
   return {
+    fromSql: true, // This is the flag the search loop looks for
     fields: {
       title: name,
       // Fallback to ID string ensures links never break if slug is empty
@@ -869,12 +870,18 @@ module.exports = function (app) {
           // B. Filter out events that have already passed (Optional now, but safe)
           const now = moment();
           mappedList = mappedList.filter((event) => {
-            // No need to check for null here because of the filter above
+            // 1. Expiry Check
             const eventDate = moment(
               event.fields.dateToCountTo,
               "MMMM D, YYYY HH:mm:ss",
             );
-            return eventDate.isAfter(now);
+            const isFuture = eventDate.isAfter(now);
+
+            // 2. Headline Check
+            // (Assuming your mapSqlEventToContentful helper preserves the original SQL ID)
+            const isNotHeadline = event.id != headlineId;
+
+            return isFuture && isNotHeadline;
           });
 
           // C. SORT the list
@@ -2025,18 +2032,21 @@ module.exports = function (app) {
       }
 
       if (useFlexipress) {
-        // Remove Contentful events to avoid duplicates
-        contentfulRes.items = contentfulRes.items.filter(
-          (item) => item.sys.contentType.sys.id !== "events",
-        );
+        // 1. Only filter Contentful if we actually have SQL results to show
+        if (flexiData && flexiData.length > 0) {
+          contentfulRes.items = contentfulRes.items.filter(
+            (item) => item.sys.contentType.sys.id !== "events",
+          );
 
-        flexiData.forEach((sqlEvent) => {
-          const mapped = mapSqlEventToContentful(sqlEvent, false);
-          if (mapped) {
-            mapped.sys = { contentType: { sys: { id: "events" } } };
-            contentfulRes.items.push(mapped);
-          }
-        });
+          flexiData.forEach((sqlEvent) => {
+            const mapped = mapSqlEventToContentful(sqlEvent, false);
+            if (mapped) {
+              mapped.sys = { contentType: { sys: { id: "events" } } };
+              contentfulRes.items.push(mapped);
+            }
+          });
+        }
+        // 2. If no SQL results, Contentful events (like VBS) stay in the list automatically
       }
 
       strapiRes.data.forEach((article) => {
@@ -2047,23 +2057,24 @@ module.exports = function (app) {
       });
 
       contentfulRes.items.forEach((entry) => {
-        const isSqlEvent = entry.sys.contentType.sys.id === "events";
+        const isEvent = entry.sys.contentType.sys.id === "events";
         const isBlog = entry.sys.contentType.sys.id === "blog";
 
-        if (isSqlEvent) {
-          // SQL events from mapSqlEventToContentful are already formatted.
-          // We just assign top-level properties for the search template.
+        if (isEvent) {
+          // 1. Ensure top-level properties exist for general template compatibility
+          // but keep the 'fields' structure intact for the partials
           entry.title = entry.fields.title;
           entry.description = entry.fields.description;
 
-          // If it's a legacy Contentful event (no id), run the legacy prep
-          if (!entry.id) {
+          // 2. RUN PREP FOR CONTENTFUL ONLY
+          if (!entry.fromSql) {
             try {
               prepEventDataForTemplate(entry);
             } catch (e) {
-              console.warn("Legacy prep failed for event:", e.message);
+              console.warn("Prep failed for Contentful event:", entry.title);
             }
           }
+          // SQL events are already pre-formatted by the mapper, so we do nothing.
         }
 
         if (isBlog) {
