@@ -1829,8 +1829,8 @@ module.exports = function (app) {
 
   app.get("/search:term", async (req, res) => {
     let searchTerm = req.params.term.substring(1);
-    const useFlexipress = true;
 
+    // Strapi Article Query (Keep this for Blog posts)
     const strapiQuery = qs.stringify({
       _where: {
         _or: [
@@ -1842,41 +1842,34 @@ module.exports = function (app) {
     });
 
     try {
-      const [contentfulRes, strapiRes] = await Promise.all([
+      // 1. Parallel Fetch: Contentful (Pages), Strapi (Articles), Flexipress (Events)
+      const [contentfulRes, strapiRes, flexiRes] = await Promise.all([
         client.getEntries({ query: searchTerm }),
         axios.get(`https://admin.rbcommunity.org/articles?${strapiQuery}`),
+        axios
+          .get(
+            `https://fpserver.grahamwebworks.com/api/search/1/${encodeURIComponent(searchTerm)}`,
+          )
+          .catch(() => ({ data: [] })), // Graceful failure for SQL
       ]);
 
-      let flexiData = [];
-      if (useFlexipress) {
-        try {
-          const flexiRes = await axios.get(
-            `https://fpserver.grahamwebworks.com/api/search/1/${searchTerm}`,
-          );
-          flexiData = flexiRes.data;
-        } catch (fError) {
-          console.error("Flexipress API Search Failed:", fError.message);
+      // 2. EXCLUSIVE EVENT FILTER: Remove ALL Contentful events from results
+      // We no longer check if flexiData has length; we trust Flexipress as the source of truth.
+      contentfulRes.items = contentfulRes.items.filter(
+        (item) => item.sys.contentType.sys.id !== "events",
+      );
+
+      // 3. Inject Flexipress Results
+      flexiRes.data.forEach((sqlEvent) => {
+        const mapped = mapSqlEventToContentful(sqlEvent, false);
+        if (mapped) {
+          // Mock the Contentful structure so the search template recognizes it as an event
+          mapped.sys = { contentType: { sys: { id: "events" } } };
+          contentfulRes.items.push(mapped);
         }
-      }
+      });
 
-      if (useFlexipress) {
-        // 1. Only filter Contentful if we actually have SQL results to show
-        if (flexiData && flexiData.length > 0) {
-          contentfulRes.items = contentfulRes.items.filter(
-            (item) => item.sys.contentType.sys.id !== "events",
-          );
-
-          flexiData.forEach((sqlEvent) => {
-            const mapped = mapSqlEventToContentful(sqlEvent, false);
-            if (mapped) {
-              mapped.sys = { contentType: { sys: { id: "events" } } };
-              contentfulRes.items.push(mapped);
-            }
-          });
-        }
-        // 2. If no SQL results, Contentful events (like VBS) stay in the list automatically
-      }
-
+      // 4. Inject Strapi Articles
       strapiRes.data.forEach((article) => {
         contentfulRes.items.push({
           sys: { contentType: { sys: { id: "blog" } } },
@@ -1884,25 +1877,15 @@ module.exports = function (app) {
         });
       });
 
+      // 5. Final Formatting Pass
       contentfulRes.items.forEach((entry) => {
         const isEvent = entry.sys.contentType.sys.id === "events";
         const isBlog = entry.sys.contentType.sys.id === "blog";
 
         if (isEvent) {
-          // 1. Ensure top-level properties exist for general template compatibility
-          // but keep the 'fields' structure intact for the partials
           entry.title = entry.fields.title;
           entry.description = entry.fields.description;
-
-          // 2. RUN PREP FOR CONTENTFUL ONLY
-          if (!entry.fromSql) {
-            try {
-              prepEventDataForTemplate(entry);
-            } catch (e) {
-              console.warn("Prep failed for Contentful event:", entry.title);
-            }
-          }
-          // SQL events are already pre-formatted by the mapper, so we do nothing.
+          // Note: SQL events are pre-formatted by mapper, no prepEventDataForTemplate needed
         }
 
         if (isBlog) {
@@ -1911,15 +1894,15 @@ module.exports = function (app) {
       });
 
       res.render("search", {
-        headContent: `<link rel="stylesheet" type="text/css" href="styles/about.css">
-                    <link rel="stylesheet" type="text/css" href="styles/about_responsive.css">`,
+        headContent: `<link rel="stylesheet" type="text/css" href="/styles/about.css">
+                    <link rel="stylesheet" type="text/css" href="/styles/about_responsive.css">`,
         title: `Search`,
         term: searchTerm,
         results: [contentfulRes],
       });
     } catch (error) {
       console.error("CRITICAL SEARCH ERROR: ", error.message);
-      res.status(500).send("Search Error: Check Server Logs");
+      res.status(500).send("Search Error");
     }
   });
 
