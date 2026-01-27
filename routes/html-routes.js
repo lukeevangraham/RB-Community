@@ -1006,330 +1006,45 @@ module.exports = function (app) {
 
   app.get("/ministry:id", async function (req, res) {
     const ministryName = req.params.id.substring(1);
-    const useFlexipress = req.query.source === "flexi";
 
-    if (!useFlexipress) {
-      req.params.id = req.params.id.substring(1);
-      var firstRecord = null;
-      var secondRecord = null;
-      var thirdRecord = null;
-      let youTubeRecord = null;
-
-      Promise.all([
-        client.getEntries({
-          content_type: "blog",
-          order: "-fields.datePosted",
-          "fields.ministry": req.params.id,
-          limit: 10,
-        }),
-        axios.get(
-          `https://admin.rbcommunity.org/articles?ministries.name=${req.params.id}&_sort=datePosted&_limit=6`,
-        ),
-      ]).then(function (resultArray) {
-        var items = { articles: [] };
-
-        resultArray[1].data.forEach((strapiArticle) => {
-          // FORMATTING THE AUTHOR INFO INTO AN ARRAY TO CONFORM TO CONTENTFUL
-          let authorArray = [];
-          authorArray.push(strapiArticle.author);
-          strapiArticle.author = authorArray;
-
-          // FORMATTING IMAGE
-          let formattedImage = {
-            fields: {
-              title: strapiArticle.image.name,
-              file: {
-                url: strapiArticle.image.url,
-                details: {
-                  size: strapiArticle.image.size,
-                  image: {
-                    width: strapiArticle.image.width,
-                    height: strapiArticle.image.height,
-                  },
-                },
-                fileName: strapiArticle.image.name,
-                contentType: strapiArticle.image.mime,
-              },
-            },
-          };
-
-          strapiArticle.ministry = strapiArticle.ministries;
-          strapiArticle.image = formattedImage;
-          strapiArticle.fromStrapi = true;
-          resultArray[0].items.push({ fields: strapiArticle });
-        });
-
-        let entry = resultArray[0];
-
-        if (entry.total >= 1) {
-          Object.assign(items, {
-            multipleEntries: true,
-          });
-        }
-
-        if (entry.fields) {
-          Object.assign(entry.items[0].fields, {
-            request: req.params.id,
-          });
-        }
-
-        var itemsIncludingExpired = entry.items;
-        // ELIMINATING OLD ENTRIES FROM PAGE
-        itemsIncludingExpired.forEach((earlyItem) => {
-          if (
-            moment(earlyItem.fields.expirationDate).isBefore(
-              moment().format("YYYY-MM-DD"),
-            )
-          ) {
-            null;
-          } else {
-            items.articles.push(earlyItem);
-          }
-        });
-
-        // Converting times for template
-        items.articles.forEach((item) => {
-          // Converting Date info
-          Object.assign(item.fields, {
-            formattedDate: moment(item.fields.datePosted)
-              .format("DD MMM, YYYY")
-              .toUpperCase(),
-          });
-
-          if (item.fields.body) {
-            if (!item.fields.fromStrapi) {
-              if (item.fields.body.content[0].content[0]) {
-                // Creating article excerpt
-                var truncatedString = JSON.stringify(
-                  item.fields.body.content[0].content[0].value.replace(
-                    /^(.{165}[^\s]*).*/,
-                    "$1",
-                  ),
-                );
-                var truncatedLength = truncatedString.length;
-                truncatedString = truncatedString
-                  .substring(1, truncatedLength - 1)
-                  .replace(/RBCC/g, "RB Community");
-
-                Object.assign(item.fields, {
-                  excerpt: truncatedString,
-                });
-              }
-            }
-
-            if (item.fields.fromStrapi) {
-              let truncatedString = item.fields.body.replace(
-                /<\/?[^>]+(>|$)/g,
-                "",
-              );
-              item.fields.excerpt = truncatedString
-                .replace(/\s+/g, " ")
-                .split(/(?=\s)/gi)
-                .slice(0, 23)
-                .join("");
-            }
-          }
-
-          // Render HTML if featured on requested ministry
-          if (item.fields.featureOnMinistryPage) {
-            // console.log(item.fields)
-            const rawRichTextField = item.fields.body;
-            // let renderedHtml = documentToHtmlString(rawRichTextField);
-            Object.assign(item.fields, {
-              renderedHtml: documentToHtmlString(rawRichTextField),
-            });
-          }
-        });
-
-        // console.log("ITEMS: ", items)
-
-        // items[multipleEntries] = entry.multipleEntries
-
-        // SORT ITEMS BY DATE POSTED
-        items.articles.sort(compareItemDatePosted);
-
-        // KEEP IT TO SIX ITEMS AFTER MERGING CONTENTFUL AND STRAPI APIS
-        firstRecord = items;
-
-        client
-          .getEntries({
-            content_type: "events",
-            "fields.endDate[gte]": moment().format(),
-            "fields.ministry": req.params.id,
-            order: "fields.date",
-            limit: req.params.id === "Youth, Music and Theater" ? 9 : 6,
-          })
-          .then(function (dbEvent) {
-            var items = dbEvent.items;
-
-            // Converting times for template
-            items.forEach((item) => {
-              Object.assign(item.fields, {
-                shortMonth: moment(item.fields.date).format("MMM"),
-              });
-              Object.assign(item.fields, {
-                shortDay: moment(item.fields.date).format("DD"),
-              });
-              // if (item.fields.featured) {
-              Object.assign(item.fields, {
-                dateToCountTo: moment(item.fields.date).format("MMMM D, YYYY"),
-              });
-              // CONVERT MARKDOWN TO HTML
-              if (item.fields.description) {
-                item.fields.description = marked(item.fields.description);
-              }
-              // }
-
-              // ITERATING OVER RECURRING EVENTS TO KEEP THEM CURRENT
-              if (item.fields.repeatsEveryDays > 0) {
-                if (moment(item.fields.date).isBefore(moment())) {
-                  let start = moment(item.fields.date);
-                  let end = moment().format("YYYY-MM-DD");
-
-                  while (start.isBefore(end)) {
-                    start.add(item.fields.repeatsEveryDays, "day");
-                  }
-                  // console.log(start.format("MM DD YYYY"));
-                  item.fields.date = start.format("YYYY-MM-DD");
-                  item.fields.shortMonth = start.format("MMM");
-                  item.fields.shortDay = start.format("DD");
-                }
-                Object.assign(item.fields, {
-                  dateToCountTo: moment(item.fields.date).format(
-                    "MMMM D, YYYY",
-                  ),
-                });
-              }
-            });
-
-            // SORT EVENTS BY NEWLY CALCULATED DATE
-            items.sort(compare);
-
-            secondRecord = items;
-
-            client
-              .getEntries({
-                content_type: "blog",
-                "fields.ministry": req.params.id,
-                "fields.featureOnMinistryPage": true,
-                limit: 1,
-              })
-              .then(function (entry) {
-                var item = entry.items[0];
-                if (item) {
-                  const rawRichTextField = item.fields.body;
-                  // let renderedHtml = documentToHtmlString(rawRichTextField);
-                  Object.assign(item.fields, {
-                    renderedHtml: documentToHtmlString(rawRichTextField),
-                  });
-                }
-
-                thirdRecord = item;
-
-                if (
-                  req.params.id === "Children" ||
-                  req.params.id == "Family Ministries"
-                ) {
-                  request(
-                    newYouTubeOptions("PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ"),
-                    function (error, response, body) {
-                      if (error) throw new Error(error);
-
-                      youTubeRecord = JSON.parse(body);
-
-                      prepMinistryPage();
-                    },
-                  );
-                } else if (req.params.id === "Adult Education") {
-                  request(
-                    newYouTubeOptions("PLZ13IHPbJRZ6Iz2cphwea8AzUqUqFiPUw"),
-                    function (error, response, body) {
-                      if (error) throw new Error(error);
-
-                      youTubeRecord = JSON.parse(body);
-
-                      prepMinistryPage();
-                    },
-                  );
-                } else if (
-                  req.params.id === "Chancel Choir, Ensembles & Orchestra"
-                ) {
-                  request(
-                    newYouTubeOptions("PLZ13IHPbJRZ6B3OcxF4pXk6uKwrEKTz-t"),
-                    function (error, response, body) {
-                      if (error) throw new Error(error);
-
-                      youTubeRecord = JSON.parse(body);
-
-                      prepMinistryPage();
-                    },
-                  );
-                } else {
-                  prepMinistryPage();
-                }
-
-                // console.log("SECOND RECORD: ", secondRecord);
-
-                // console.log("LOOK HERE", entry)
-
-                function prepMinistryPage() {
-                  var bloghbsObject = {
-                    blogpost: firstRecord,
-                    request: req.params.id,
-                    events: secondRecord,
-                    header: thirdRecord,
-                    active: { ministries: true },
-                    headContent: `<link rel="stylesheet" type="text/css" href="styles/ministry.css">
-              <link rel="stylesheet" type="text/css" href="styles/ministry_responsive.css">`,
-                    title: req.params.id,
-                    youTubeVideos: youTubeRecord,
-                  };
-                  // console.log("hbsObject:  ", bloghbsObject.blogpost);
-                  res.render("ministry", bloghbsObject);
-                }
-              });
-          });
-      });
-
-      return;
-    }
-
-    // FLEXIPRESS LOGIC (Hybrid Mode)
     try {
-      // 1. Get Ministry from SQL
+      // 1. Get Ministry Metadata from SQL
+      // We need the ID to filter events correctly
       const minRes = await axios.get(
-        `https://fpserver.grahamwebworks.com/api/ministries/org/1/name/${ministryName}`,
+        `https://fpserver.grahamwebworks.com/api/ministries/org/1/name/${encodeURIComponent(ministryName)}`,
       );
       const ministry = minRes.data;
 
       if (!ministry) {
         console.warn(`Ministry not found in SQL: ${ministryName}`);
-        return res.redirect("/ministries");
+        return res.redirect("/events");
       }
 
-      // 2. Setup YouTube Playlist ID
+      // 2. Setup YouTube Playlist Logic
       let playlistId = null;
-      if (ministryName === "Children" || ministryName === "Family Ministries") {
-        playlistId = "PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ";
-      } else if (ministryName === "Adult Education") {
-        playlistId = "PLZ13IHPbJRZ6Iz2cphwea8AzUqUqFiPUw";
-      } else if (ministryName === "Chancel Choir, Ensembles & Orchestra") {
-        playlistId = "PLZ13IHPbJRZ6B3OcxF4pXk6uKwrEKTz-t";
-      }
+      const youtubeMap = {
+        Children: "PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ",
+        "Family Ministries": "PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ",
+        "Adult Education": "PLZ13IHPbJRZ6Iz2cphwea8AzUqUqFiPUw",
+        "Chancel Choir, Ensembles & Orchestra":
+          "PLZ13IHPbJRZ6B3OcxF4pXk6uKwrEKTz-t",
+      };
+      playlistId = youtubeMap[ministryName];
 
-      // 3. Parallel fetch: FP Events, Legacy Header, Legacy News, and YouTube
+      // 3. Parallel Fetch: SQL Events, Legacy Contentful Blog/Header, and YouTube
       const promises = [
+        // SQL Events for this specific ministry
         axios.get(`https://fpserver.grahamwebworks.com/api/events/org/1`, {
           params: { published: true, ministryId: ministry.id },
         }),
-        // Fetch the Legacy "Header" Article
+        // Legacy "Header" Article (Contentful)
         client.getEntries({
           content_type: "blog",
           "fields.ministry": ministryName,
           "fields.featureOnMinistryPage": true,
           limit: 1,
         }),
-        // Fetch Legacy News
+        // Legacy News/Articles (Contentful/Strapi transition)
         client.getEntries({
           content_type: "blog",
           "fields.ministry": ministryName,
@@ -1354,7 +1069,7 @@ module.exports = function (app) {
       const [eventsRes, headerRes, blogRes, youtubeRes] =
         await Promise.all(promises);
 
-      // 4. Map SQL events
+      // 4. Process SQL Events
       const now = moment();
       const formattedEvents = eventsRes.data
         .map((event) => mapSqlEventToContentful(event, false))
@@ -1369,16 +1084,15 @@ module.exports = function (app) {
             moment(b.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss"),
         );
 
-      // 5. Handle the Header (Rich Text)
+      // 5. Process Legacy Header
       const headerItem = headerRes.items[0];
-      if (headerItem) {
-        // Render Contentful Rich Text to HTML so the template can display it
+      if (headerItem && headerItem.fields.body) {
         headerItem.fields.renderedHtml = documentToHtmlString(
           headerItem.fields.body,
         );
       }
 
-      // 6. Render
+      // 6. Final Render
       res.render("ministry", {
         blogpost: {
           articles: blogRes.items,
@@ -1386,16 +1100,16 @@ module.exports = function (app) {
         },
         request: ministryName,
         events: formattedEvents,
-        header: headerItem || null, // Fallback to null if no legacy header found
+        header: headerItem || null,
         active: { ministries: true },
         title: ministry.name,
         youTubeVideos: youtubeRes ? youtubeRes.data : null,
         headContent: `<link rel="stylesheet" type="text/css" href="/styles/ministry.css">
-                      <link rel="stylesheet" type="text/css" href="/styles/ministry_responsive.css">`,
+                    <link rel="stylesheet" type="text/css" href="/styles/ministry_responsive.css">`,
       });
     } catch (error) {
-      console.error("Flexipress Hybrid Ministry Error:", error);
-      res.status(500).send("Error loading ministry data.");
+      console.error("Flexipress Ministry Page Error:", error);
+      res.status(500).send("Error loading ministry page.");
     }
   });
 
