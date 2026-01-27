@@ -797,45 +797,37 @@ module.exports = function (app) {
   // })
 
   app.get("/events", function (req, res) {
-    const useFlexipress =
-      req.query.source === "flexi" || req.app.locals.useFlexipress;
+    // 1. Fetch Events and Home Settings in parallel
+    Promise.all([
+      axios.get(
+        `https://fpserver.grahamwebworks.com/api/events/org/1?published=true`,
+      ),
+      axios.get(`https://fpserver.grahamwebworks.com/api/single/home/1`),
+    ])
+      .then((resultArray) => {
+        const sqlEvents = resultArray[0].data;
+        const homeSettings = resultArray[1].data;
+        const headlineId = homeSettings.HeadlineEventId;
 
-    if (useFlexipress) {
-      Promise.all([
-        axios.get(
-          `https://fpserver.grahamwebworks.com/api/events/org/1?published=true`,
-        ),
-        axios.get(`https://fpserver.grahamwebworks.com/api/single/home/1`),
-      ])
-        .then((resultArray) => {
-          const sqlEvents = resultArray[0].data;
-          const homeSettings = resultArray[1].data;
-          const headlineId = homeSettings.HeadlineEventId;
+        // 2. Map and Clean the List
+        let mappedList = sqlEvents
+          .map((event) => mapSqlEventToContentful(event, false))
+          .filter((event) => event !== null);
 
-          // A. Map all events AND filter out nulls immediately [FIXED]
-          let mappedList = sqlEvents
-            .map((event) => mapSqlEventToContentful(event, false))
-            .filter((event) => event !== null); // This stops the crash in Step B
-
-          // B. Filter out events that have already passed (Optional now, but safe)
-          const now = moment();
-          mappedList = mappedList.filter((event) => {
-            // 1. Expiry Check
+        // 3. Filter and Sort
+        const now = moment();
+        mappedList = mappedList
+          .filter((event) => {
             const eventDate = moment(
               event.fields.dateToCountTo,
               "MMMM D, YYYY HH:mm:ss",
             );
             const isFuture = eventDate.isAfter(now);
-
-            // 2. Headline Check
-            // (Assuming your mapSqlEventToContentful helper preserves the original SQL ID)
             const isNotHeadline = event.fields.id != headlineId;
 
             return isFuture && isNotHeadline;
-          });
-
-          // C. SORT the list
-          mappedList.sort((a, b) => {
+          })
+          .sort((a, b) => {
             const dateA = moment(
               a.fields.dateToCountTo,
               "MMMM D, YYYY HH:mm:ss",
@@ -847,73 +839,28 @@ module.exports = function (app) {
             return dateA - dateB;
           });
 
-          // D. Identify the Headline Event [FIXED]
-          const headlineEvent = sqlEvents.find((e) => e.id == headlineId);
-          // Map the headline, but ensure we don't return null to the template if it's expired
-          let mappedHeadline = headlineEvent
-            ? mapSqlEventToContentful(headlineEvent, true)
-            : null;
+        // 4. Identify and Map the Headline (Top Event)
+        const headlineEvent = sqlEvents.find((e) => e.id == headlineId);
+        let mappedHeadline = headlineEvent
+          ? mapSqlEventToContentful(headlineEvent, true)
+          : null;
 
-          var hbsObject = {
-            events: mappedList,
-            topEvent: mappedHeadline ? [mappedHeadline] : [],
-            active: { events: true },
-            headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
-                  <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-            title: `Events`,
-          };
+        // 5. Render
+        const hbsObject = {
+          events: mappedList,
+          topEvent: mappedHeadline ? [mappedHeadline] : [],
+          active: { events: true },
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
+                      <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
+          title: `Events`,
+        };
 
-          res.render("events", hbsObject);
-        })
-        .catch((err) => {
-          console.error("Flexipress /events Error:", err);
-          res.status(500).send("Error loading events listing");
-        });
-    } else {
-      // [Legacy Contentful Code - Keep exactly as you had it]
-      client
-        .getEntries({
-          content_type: "events",
-          "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
-          order: "fields.date",
-        })
-        .then(function (dbEvent) {
-          // client
-          //   .getEntries({
-          //     content_type: "events",
-          //     "fields.endDate[gte]": moment().format("YYYY-MM-DD"),
-          //     order: "fields.date",
-          //   })
-          //   .then(function (dbEvent) {
-          var items = dbEvent.items;
-          var topItem = [];
-
-          // Converting times for template
-          items.forEach((item) => {
-            if (item.fields.featured) {
-              topItem.push(item);
-            }
-
-            prepEventDataForTemplate(item);
-          });
-
-          // SORT EVENTS BY NEWLY CALCULATED DATE
-          items.sort(compare);
-
-          // console.log("LOOK HERE: ", topItem)
-
-          var hbsObject = {
-            events: dbEvent.items,
-            topEvent: topItem,
-            active: { events: true },
-            headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
-                    <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-            title: `Events`,
-          };
-
-          return res.render("events", hbsObject);
-        });
-    }
+        res.render("events", hbsObject);
+      })
+      .catch((err) => {
+        console.error("Flexipress /events Error:", err);
+        res.status(500).send("Error loading events listing");
+      });
   });
 
   app.get("/about", async function (req, res) {
