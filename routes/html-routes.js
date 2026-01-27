@@ -1403,117 +1403,48 @@ module.exports = function (app) {
   app.get("/event:id", async (req, res) => {
     let rawSlug = req.params.id;
 
-    // Basic prefix cleanup
+    // 1. Standardize the slug (removing prefixes and decoding)
     if (rawSlug.startsWith("-")) rawSlug = rawSlug.substring(1);
     if (rawSlug.startsWith(":")) rawSlug = rawSlug.substring(1);
 
-    // 1. Prepare Clean Slug for SQL Lookup ONLY
     const cleanSqlSlug = decodeURIComponent(rawSlug)
       .toLowerCase()
       .replace(/'/g, "");
 
     try {
-      // --- STEP 1: TRY FLEXIPRESS (SQL) ---
-      const flexiRes = await axios
-        .get(
-          `https://fpserver.grahamwebworks.com/api/event/org/1/slug/${cleanSqlSlug}`,
-        )
-        .catch(() => ({ data: null }));
+      // 2. FETCH FROM FLEXIPRESS (SQL) ONLY
+      const flexiRes = await axios.get(
+        `https://fpserver.grahamwebworks.com/api/event/org/1/slug/${cleanSqlSlug}`,
+      );
 
       const sqlEvent = Array.isArray(flexiRes.data)
         ? flexiRes.data[0]
         : flexiRes.data;
 
-      // If SQL event exists, render it and exit
-      if (sqlEvent && Object.keys(sqlEvent).length > 0) {
-        const formattedEvent = mapSqlEventToContentful(sqlEvent);
-
-        if (formattedEvent.fields.description) {
-          formattedEvent.fields.description =
-            formattedEvent.fields.description.replace(/RBCC/g, "RB Community");
-        }
-
-        return res.render("event", {
-          events: formattedEvent,
-          active: { events: true },
-          headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
-                      <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-          title: formattedEvent.fields.title,
-        });
+      if (!sqlEvent || Object.keys(sqlEvent).length === 0) {
+        return res.status(404).send("Event not found in Flexipress.");
       }
 
-      // --- STEP 2: STABLE CONTENTFUL FALLBACK (Logic from commit 9dcfb64) ---
-      // If we reach here, SQL found nothing. Run your original working code exactly.
+      // 3. Map for Handlebars
+      const formattedEvent = mapSqlEventToContentful(sqlEvent);
 
-      const renderSingleEvent = (oldDbEvent) => {
-        let dbEvent = oldDbEvent.items[0];
-        if (!dbEvent) return res.status(404).send("Event not found.");
+      // 4. Content Cleanup
+      if (formattedEvent.fields.description) {
+        // Ensure the description is processed (assuming map handles Markdown->HTML)
+        formattedEvent.fields.description =
+          formattedEvent.fields.description.replace(/RBCC/g, "RB Community");
+      }
 
-        // Use your stable prep function or inline logic
-        if (typeof prepEventDataForTemplate === "function") {
-          prepEventDataForTemplate(dbEvent);
-        } else {
-          Object.assign(dbEvent.fields, {
-            shortMonth: moment(dbEvent.fields.date).format("MMM"),
-            dayOfWeek: moment(dbEvent.fields.date).format("ddd"),
-            shortDay: moment(dbEvent.fields.date).format("DD"),
-          });
-        }
-
-        if (dbEvent.fields.description) {
-          const desc = dbEvent.fields.description;
-
-          // Check if the string already looks like HTML (contains <p or <div or <strong)
-          const isHtml = /<[a-z][\s\S]*>/i.test(desc);
-
-          if (isHtml) {
-            // It's already HTML, just swap the names
-            dbEvent.fields.description = desc.replace(/RBCC/g, "RB Community");
-          } else {
-            // It's Markdown, convert it to HTML first
-            dbEvent.fields.description = marked(desc).replace(
-              /RBCC/g,
-              "RB Community",
-            );
-          }
-        }
-
-        return res.render("event", {
-          events: dbEvent,
-          active: { events: true },
-          headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
+      // 5. RENDER
+      res.render("event", {
+        events: formattedEvent, // Template expects 'events' even for single
+        active: { events: true },
+        headContent: `<link rel="stylesheet" type="text/css" href="styles/events.css">
                     <link rel="stylesheet" type="text/css" href="styles/events_responsive.css">`,
-          title: dbEvent.fields.title,
-        });
-      };
-
-      // Original ID vs Title Logic (The specific line that makes VBS-2026 work)
-      if (req.params.id[0] === ":") {
-        client
-          .getEntries({
-            content_type: "events",
-            "sys.id[match]": req.params.id.substring(1),
-          })
-          .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
-      } else {
-        let str = decodeURI(
-          req.originalUrl
-            .substring(7)
-            .replace(/-/g, " ")
-            .replace(/\s\s\s/g, "-"),
-        );
-        str = str.replace(/\s\s\s/g, " - ");
-        if (str.indexOf("?") > 0) str = str.substring(0, str.indexOf("?"));
-
-        client
-          .getEntries({
-            content_type: "events",
-            "fields.title": str,
-          })
-          .then((oldDbEvent) => renderSingleEvent(oldDbEvent));
-      }
+        title: formattedEvent.fields.title,
+      });
     } catch (err) {
-      console.error("Critical Route Error:", err);
+      console.error("Flexipress Event Detail Error:", err);
       res.status(500).send("Error loading event details");
     }
   });
