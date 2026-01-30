@@ -5,14 +5,17 @@ module.exports = {
     return moment(date).format(format);
   },
   changeSpacesToDashes: function (str) {
-    str = str.replace(/-/g, "---");
-    str = str.replace(/\s+/g, "-");
-    str = str.replace(/-----/g, " - ");
-    // str = str.replace(/---/g, " - ")
-    return str;
+    if (!str) return "";
+    return str
+      .toLowerCase() // 1. Lowercase for consistency
+      .replace(/#/g, "") // 2. Explicitly remove hashtags
+      .replace(/[^a-z0-9\s-]/g, "") // 3. Remove all other non-alphanumeric chars
+      .trim() // 4. Remove leading/trailing whitespace
+      .replace(/\s+/g, "-") // 5. Convert spaces to dashes
+      .replace(/-+/g, "-"); // 6. Collapse multiple dashes (e.g., " -- " to "-")
   },
   changeDashesToSpaces: function (str) {
-    str = str.replace(/-/g, " ");
+    return str ? str.replace(/-/g, " ") : "";
   },
   isDefined: function (value) {
     return value !== undefined;
