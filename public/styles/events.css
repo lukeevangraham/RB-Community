@@ -812,6 +812,8 @@ section {
 }
 .events_item_image img {
   max-width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 .events_item_content {
   margin-top: 30px;
@@ -861,7 +863,7 @@ section {
 }
 
 .invisible {
-	display: none;
+  display: none;
 }
 
 /*********************************
