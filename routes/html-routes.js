@@ -1079,19 +1079,29 @@ module.exports = function (app) {
         await Promise.all(promises);
 
       // 4. Process SQL Events
-      const now = moment();
+      const now = moment(); // Declared once here
       const formattedEvents = eventsRes.data
         .map((event) => mapSqlEventToContentful(event, false))
-        .filter((event) =>
-          moment(event.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss").isAfter(
-            now,
-          ),
-        )
-        .sort(
-          (a, b) =>
+        .filter((event) => {
+          // Safety check: skip if data is missing
+          if (!event?.fields?.dateToCountTo) return false;
+
+          // Parse the date once
+          const eventDate = moment(
+            event.fields.dateToCountTo,
+            "MMMM D, YYYY HH:mm:ss",
+          );
+
+          // ONLY allow events that are in the future
+          return eventDate.isAfter(now);
+        })
+        .sort((a, b) => {
+          // Sort ascending (soonest first)
+          return (
             moment(a.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss") -
-            moment(b.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss"),
-        );
+            moment(b.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss")
+          );
+        });
 
       // 5. Process Legacy Header
       const headerItem = headerRes.items[0];
