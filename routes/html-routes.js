@@ -628,6 +628,12 @@ module.exports = function (app) {
             "MMMM D, YYYY HH:mm:ss",
           );
           return eventDate.isAfter(now);
+        })
+
+        .sort((a, b) => {
+          const dateA = moment(a.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss");
+          const dateB = moment(b.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss");
+          return dateA - dateB; // Ascending: Soonest first
         });
 
       // 3. Remove the headline from the grid list if it happens to be in both
