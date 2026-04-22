@@ -1023,20 +1023,17 @@ module.exports = function (app) {
     const ministryName = req.params.id.substring(1);
 
     try {
-      // 1. Get Ministry Metadata from SQL
-      // We need the ID to filter events correctly
+      // 1. Get Ministry Metadata from SQL (This now includes our Rich Text Description!)
       const minRes = await axios.get(
         `https://fpserver.grahamwebworks.com/api/ministries/org/1/name/${encodeURIComponent(ministryName)}`,
       );
       const ministry = minRes.data;
 
       if (!ministry) {
-        console.warn(`Ministry not found in SQL: ${ministryName}`);
         return res.redirect("/events");
       }
 
-      // 2. Setup YouTube Playlist Logic
-      let playlistId = null;
+      // 2. Setup YouTube Playlist Logic (Keep as is)
       const youtubeMap = {
         Children: "PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ",
         "Family Ministries": "PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ",
@@ -1044,22 +1041,14 @@ module.exports = function (app) {
         "Chancel Choir, Ensembles & Orchestra":
           "PLZ13IHPbJRZ6B3OcxF4pXk6uKwrEKTz-t",
       };
-      playlistId = youtubeMap[ministryName];
+      const playlistId = youtubeMap[ministryName];
 
-      // 3. Parallel Fetch: SQL Events, Legacy Contentful Blog/Header, and YouTube
+      // 3. Parallel Fetch (REMOVED headerRes call)
       const promises = [
-        // SQL Events for this specific ministry
         axios.get(`https://fpserver.grahamwebworks.com/api/events/org/1`, {
           params: { published: true, ministryId: ministry.id },
         }),
-        // Legacy "Header" Article (Contentful)
-        client.getEntries({
-          content_type: "blog",
-          "fields.ministry": ministryName,
-          "fields.featureOnMinistryPage": true,
-          limit: 1,
-        }),
-        // Legacy News/Articles (Contentful/Strapi transition)
+        // We still need Contentful for the News/Blog list for now
         client.getEntries({
           content_type: "blog",
           "fields.ministry": ministryName,
@@ -1081,43 +1070,28 @@ module.exports = function (app) {
         );
       }
 
-      const [eventsRes, headerRes, blogRes, youtubeRes] =
-        await Promise.all(promises);
+      // Note: we removed headerRes from the destructuring
+      const [eventsRes, blogRes, youtubeRes] = await Promise.all(promises);
 
-      // 4. Process SQL Events
-      const now = moment(); // Declared once here
+      // 4. Process SQL Events (Keep your moment.js logic as is)
+      const now = moment();
       const formattedEvents = eventsRes.data
         .map((event) => mapSqlEventToContentful(event, false))
         .filter((event) => {
-          // Safety check: skip if data is missing
           if (!event?.fields?.dateToCountTo) return false;
-
-          // Parse the date once
           const eventDate = moment(
             event.fields.dateToCountTo,
             "MMMM D, YYYY HH:mm:ss",
           );
-
-          // ONLY allow events that are in the future
           return eventDate.isAfter(now);
         })
-        .sort((a, b) => {
-          // Sort ascending (soonest first)
-          return (
+        .sort(
+          (a, b) =>
             moment(a.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss") -
-            moment(b.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss")
-          );
-        });
-
-      // 5. Process Legacy Header
-      const headerItem = headerRes.items[0];
-      if (headerItem && headerItem.fields.body) {
-        headerItem.fields.renderedHtml = documentToHtmlString(
-          headerItem.fields.body,
+            moment(b.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss"),
         );
-      }
 
-      // 6. Final Render
+      // 5. Final Render (SPOOFING the header object using SQL data)
       res.render("ministry", {
         blogpost: {
           articles: blogRes.items,
@@ -1125,7 +1099,15 @@ module.exports = function (app) {
         },
         request: ministryName,
         events: formattedEvents,
-        header: headerItem || null,
+
+        // --- THIS IS THE KEY CHANGE ---
+        // We build the object structure the HBS partial expects manually
+        header: {
+          fields: {
+            renderedHtml: ministry.description, // Pure HTML from your new SQL field
+          },
+        },
+
         active: { ministries: true },
         title: ministry.name,
         youTubeVideos: youtubeRes ? youtubeRes.data : null,
