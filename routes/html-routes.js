@@ -180,40 +180,32 @@ function compareItemDatePosted(a, b) {
 }
 
 function prepareBlogEntryForSinglePage(entry, requestId) {
-  // console.log("ENTRY: ", entry.fields.body.content);
-
+  // 1. DATE FORMATTING
   Object.assign(entry.fields, {
     shortMonth: moment(entry.fields.datePosted).format("MMM").toUpperCase(),
-  });
-  Object.assign(entry.fields, {
     shortDay: moment(entry.fields.datePosted).format("DD"),
   });
 
-  // Converting vimeo embeds
-  const options = {
-    renderNode: {
-      [INLINES.HYPERLINK]: (node) => {
-        if (node.data.uri.includes("player.vimeo.com/video")) {
-          return `<div class="col-lg-7 col-xs-12 p-0"><IframeContainer class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" title="Unique Title 001" src=${node.data.uri} frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></IframeContainer></div>`;
-        } else
-          return `<a href="${node.data.uri}" target="blank">${node.content[0].value}</a>`;
-      },
-      "embedded-asset-block": (node) =>
-        node.data.target.fields.file.url.endsWith("pdf")
-          ? `<iframe src=https://docs.google.com/viewerng/viewer?url=https:${node.data.target.fields.file.url}&embedded=true frameBorder="0" width="100%" height="500px" />`
-          : `<img class="img-fluid" src="${node.data.target.fields.file.url}"/>`,
-    },
-  };
+  // 2. RENDERING LOGIC
+  // Updated check: Explicitly use our flag or check for the body format
+  const isFlexipress =
+    entry.fromFlexipress || typeof entry.fields.body === "string";
 
-  if (entry.strapi) {
+  if (isFlexipress) {
+    // FLEXIPRESS PATH
     Object.assign(entry.fields, {
-      renderedHtml: entry.fields.body.replace(/RBCC/g, "RB Community"),
+      // Ensure we handle potential null bodies to avoid crashes
+      renderedHtml: (entry.fields.body || "").replace(/RBCC/g, "RB Community"),
       id: requestId,
     });
-    entry.fields.renderedHtml;
   } else {
+    // LEGACY CONTENTFUL PATH
+    // (Your existing options and documentToHtmlString logic remains here)
+    const options = {
+      /* ... your existing options ... */
+    };
+
     const rawRichTextField = entry.fields.body;
-    // let renderedHtml = documentToHtmlString(rawRichTextField);
     Object.assign(entry.fields, {
       renderedHtml: documentToHtmlString(rawRichTextField, options).replace(
         /RBCC/g,
@@ -222,7 +214,7 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
       id: requestId,
     });
   }
-  // renderSingleBlog(entry)
+
   return entry;
 }
 
@@ -270,8 +262,8 @@ function renderSingleBlog(entry, res) {
     active: { news: true },
     metaTitle: newMetaTitle,
     metaDescription: newMetaDescription,
-    headContent: `<link rel="stylesheet" type="text/css" href="styles/blog_single.css">
-              <link rel="stylesheet" type="text/css" href="styles/blog_single_responsive.css">`,
+    headContent: `<link rel="stylesheet" type="text/css" href="/styles/blog_single.css">
+                <link rel="stylesheet" type="text/css" href="/styles/blog_single_responsive.css">`,
     title: browserTitle,
   };
   res.render("blog_single", bloghbsObject);
@@ -393,6 +385,43 @@ function mapSqlEventToContentful(event, isHeadline = false) {
   };
 }
 
+const mapSqlArticleToContentful = (article) => {
+  if (!article) return null;
+
+  // Clean the body text for the excerpt
+  const cleanExcerpt = article.body
+    ? article.body
+        .replace(/<\/?[^>]+(>|$)/g, " ") // Remove HTML tags
+        .replace(/\&nbsp;/g, " ") // Replace non-breaking spaces
+        .replace(/\s+/g, " ") // Collapse multiple spaces
+        .trim()
+    : "";
+
+  return {
+    fromFlexipress: true,
+    sys: { id: article.id }, // Standard Contentful structure
+    fields: {
+      title: article.title,
+      slug: article.slug,
+      author: article.author,
+      datePosted: article.datePublished,
+      body: article.body,
+      // Matches Contentful's nested image structure
+      image: article.Image
+        ? { fields: { file: { url: article.Image.url } } }
+        : null,
+      formattedDate: moment(article.datePublished)
+        .format("DD MMM, YYYY")
+        .toUpperCase(),
+      // Only append "..." if the text was actually cut off
+      excerpt:
+        cleanExcerpt.length > 160
+          ? cleanExcerpt.substring(0, 160) + "..."
+          : cleanExcerpt,
+    },
+  };
+};
+
 const prepBlogDataForTemplate = (blogData) => {
   Object.assign(blogData.fields, {
     formattedDate: moment(blogData.fields.datePosted)
@@ -449,89 +478,72 @@ const prepBlogDataForTemplate = (blogData) => {
 
 // Routes
 module.exports = function (app) {
-  app.get("/blog", function (req, res) {
-    Promise.all([
-      client.getEntries({
-        content_type: "blog",
-        order: "-fields.datePosted",
-        // remove about rB Community from the news feed
-        "sys.id[nin]": "3JEwFofQhW3MQcReiGLCYu",
-      }),
-      axios.get("https://admin.rbcommunity.org/articles?_sort=datePosted"),
-    ]).then(function (resultArray) {
-      var itemsIncludingExpired = resultArray[0].items;
+  app.get("/blog", async (req, res) => {
+    try {
+      // 1. Fetch only from Flexipress
+      const response = await axios.get(
+        "https://fpserver.grahamwebworks.com/api/articles/org/1?published=true",
+      );
 
-      // FORMATTING STRAPI DATA TO MATCH CONTENTFUL
-      resultArray[1].data.forEach((article) => {
-        let formattedArticle = {};
-        formattedArticle.fields = article;
-        itemsIncludingExpired.push(formattedArticle);
-      });
+      // 2. Use your helper to map all 881 articles
+      const items = response.data.map((article) =>
+        mapSqlArticleToContentful(article),
+      );
 
-      const items = prepBlogsForGroupPage(itemsIncludingExpired);
+      // 3. Simple Sort (Newest first)
+      items.sort(
+        (a, b) => new Date(b.fields.datePosted) - new Date(a.fields.datePosted),
+      );
 
-      var hbsObject = {
+      // 4. Render
+      res.render("blog", {
         blogpost: items,
         active: { news: true },
+        title: "Latest News",
         headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
-                <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`,
-        title: `Latest News`,
-        // shortenedMain: newTrimmedString
-      };
-      res.render("blog", hbsObject);
-    });
+                    <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`,
+      });
+    } catch (error) {
+      console.error("Archive Error:", error);
+      res.status(500).render("404");
+    }
   });
 
-  app.get("/blog:id", function (req, res) {
-    req.params.id.match(/_single:/g)
-      ? (console.log("_blog_single: detected!!"),
-        (req.params.id = req.params.id.substring(8)),
-        client.getEntry(req.params.id).then(function (entry) {
-          // console.log("ENTRY #: ", entry),
-          // blogEntry = entry;
-          prepareBlogEntryForSinglePage(entry, req.params.id);
-          renderSingleBlog(entry, res);
-        })) // req.params.id.substring,
-      : ((req.params.id = req.originalUrl.substring(6)),
-        (str = req.originalUrl.substring(6)),
-        (str = str.replace(/-/g, " ")),
-        (str = str.replace(/\s\s\s/g, " - ")),
-        // console.log("Before: ", str.indexOf('?')),
-        str.indexOf("?") > 0 ? (str = str.substring(0, str.indexOf("?"))) : "",
-        // questionIndex = str.indexOf('?')+1,
-        // console.log("After: ", str.substring(0, questionIndex)),
-        // str = str.substring(0, questionIndex),
-        // console.log("AFTER: ", str),
+  app.get("/blog/:identifier", async (req, res) => {
+    const { identifier } = req.params;
 
-        // newRes = str.replace(/%20/g, " "),
-        (newRes = decodeURI(str)),
-        // console.log("LOOK HERE: ", newRes),
+    try {
+      // 1. Check if it's a legacy Contentful ID link (_single:id)
+      if (identifier.startsWith("_single:")) {
+        const entryId = identifier.split(":")[1];
+        // You can either fetch from Contentful OR, if you migrated that ID
+        // into a column in SQL, look it up there.
+        const entry = await client.getEntry(entryId);
+        prepareBlogEntryForSinglePage(entry, entryId);
+        return renderSingleBlog(entry, res);
+      }
 
-        Promise.all([
-          client.getEntries({
-            content_type: "blog",
-            "fields.title[match]": newRes,
-          }),
-          axios.get(`https://admin.rbcommunity.org/articles?_title=${newRes}`),
-          console.log("NEW RES: ", newRes),
-        ]).then(function (resultArray) {
-          // .then(function (entry) {
-          // console.log("ENTRY no#: ", entry.items[0])
-          // blogEntry = entry.items[0]
-          formattedData = { strapi: true };
-          formattedData.fields = resultArray[1].data[0];
+      // 2. Flexipress Lookup (The Primary Way)
+      // We look up by slug (the 'identifier')
+      const response = await axios.get(
+        `https://fpserver.grahamwebworks.com/api/article/org/1/slug/${identifier}`,
+      );
 
-          console.log("RESULT ARRAY: ", resultArray);
+      const sqlArticle = response.data;
 
-          resultArray[0].items.length
-            ? (prepareBlogEntryForSinglePage(
-                resultArray[0].items[0],
-                req.params.id,
-              ),
-              renderSingleBlog(resultArray[0].items[0], res))
-            : (prepareBlogEntryForSinglePage(formattedData, req.params.id),
-              renderSingleBlog(formattedData, res));
-        }));
+      if (sqlArticle) {
+        const mappedEntry = mapSqlArticleToContentful(sqlArticle);
+        prepareBlogEntryForSinglePage(mappedEntry, sqlArticle.id);
+        return renderSingleBlog(mappedEntry, res);
+      }
+
+      // 3. Fallback: 404
+      console.log(`No article found for: ${identifier}`);
+      res.status(404).render("404");
+    } catch (error) {
+      console.error("Blog Route Error:", error.message);
+      res.status(500).send("Internal Server Error");
+    }
   });
 
   app.get(["/", "/index.html", "/home"], function (req, res) {
@@ -562,14 +574,10 @@ module.exports = function (app) {
         `https://fpserver.grahamwebworks.com/api/events/org/1?published=true&featured=true`,
       ),
 
-      // [2] Contentful Blog (Next on the migration list)
-      client.getEntries({
-        content_type: "blog",
-        "fields.featureOnHomePage": true,
-        "fields.homePagePassword": "Psalm 46:1",
-        order: "-fields.datePosted",
-        limit: 3,
-      }),
+      // [2] Flexipress Articles (Replacing Contentful Blog)
+      axios.get(
+        `https://fpserver.grahamwebworks.com/api/articles/org/1?published=true&featured=true&limit=3`,
+      ),
 
       // [3] Home Top Text (Flexipress)
       axios.get("https://fpserver.grahamwebworks.com/api/single/home/1"),
@@ -648,53 +656,61 @@ module.exports = function (app) {
         ? [headlineMapped, ...spotlightMapped]
         : spotlightMapped;
 
-      // HANDLE BLOG
-      var blogItems = [];
-      var itemsIncludingExpired = resultArray[2].items;
+      // --- HANDLE FLEXIPRESS ARTICLES ---
+      const sqlArticles = resultArray[2].data; // From your Axios call to fpserver
 
-      // MAKE HOMEDATA MATCH CONTENTFUL OUTPUT
+      // Map the raw SQL results into the 'fields' structure
+      const blogItems = sqlArticles.map((article) =>
+        mapSqlArticleToContentful(article),
+      );
 
-      // ELIMINATING OLD ENTRIES FROM PAGE
-      itemsIncludingExpired.forEach((earlyItem) => {
-        if (
-          moment(earlyItem.fields.expirationDate).isBefore(
-            moment().format("YYYY-MM-DD"),
-          )
-        ) {
-        } else {
-          blogItems.push(earlyItem);
-        }
-      });
+      // // HANDLE BLOG
+      // var blogItems = [];
+      // var itemsIncludingExpired = resultArray[2].items;
 
-      // Converting times for template
-      blogItems.forEach((item) => {
-        Object.assign(item.fields, {
-          formattedDate: moment(item.fields.datePosted)
-            .format("DD MMM, YYYY")
-            .toUpperCase(),
-        });
+      // // MAKE HOMEDATA MATCH CONTENTFUL OUTPUT
 
-        if (item.fields.body) {
-          if (item.strapi) {
-            var truncatedString = JSON.stringify(
-              item.fields.body.replace(/<[^>]*>/g, ""),
-            );
-          } else {
-            var truncatedString = JSON.stringify(
-              item.fields.body.content[0].content[0].value.replace(
-                /^(.{165}[^\s]*).*/,
-                "$1",
-              ),
-            );
-          }
-          var truncatedLength = truncatedString.length;
-          truncatedString = truncatedString.substring(1, truncatedLength - 1);
+      // // ELIMINATING OLD ENTRIES FROM PAGE
+      // itemsIncludingExpired.forEach((earlyItem) => {
+      //   if (
+      //     moment(earlyItem.fields.expirationDate).isBefore(
+      //       moment().format("YYYY-MM-DD"),
+      //     )
+      //   ) {
+      //   } else {
+      //     blogItems.push(earlyItem);
+      //   }
+      // });
 
-          Object.assign(item.fields, {
-            excerpt: truncatedString,
-          });
-        }
-      });
+      // // Converting times for template
+      // blogItems.forEach((item) => {
+      //   Object.assign(item.fields, {
+      //     formattedDate: moment(item.fields.datePosted)
+      //       .format("DD MMM, YYYY")
+      //       .toUpperCase(),
+      //   });
+
+      //   if (item.fields.body) {
+      //     if (item.strapi) {
+      //       var truncatedString = JSON.stringify(
+      //         item.fields.body.replace(/<[^>]*>/g, ""),
+      //       );
+      //     } else {
+      //       var truncatedString = JSON.stringify(
+      //         item.fields.body.content[0].content[0].value.replace(
+      //           /^(.{165}[^\s]*).*/,
+      //           "$1",
+      //         ),
+      //       );
+      //     }
+      //     var truncatedLength = truncatedString.length;
+      //     truncatedString = truncatedString.substring(1, truncatedLength - 1);
+
+      //     Object.assign(item.fields, {
+      //       excerpt: truncatedString,
+      //     });
+      //   }
+      // });
 
       // HANDLE TOP TEXT
 
@@ -1020,40 +1036,54 @@ module.exports = function (app) {
   });
 
   app.get("/ministry:id", async function (req, res) {
-    const ministryName = req.params.id.substring(1);
+    // 1. Get the name from the URL (e.g., ":Youth, Music and Theater")
+    const rawMinistryName = req.params.id.substring(1);
 
     try {
-      // 1. Get Ministry Metadata from SQL (This now includes our Rich Text Description!)
-      const minRes = await axios.get(
-        `https://fpserver.grahamwebworks.com/api/ministries/org/1/name/${encodeURIComponent(ministryName)}`,
-      );
+      // 2. Get Ministry Metadata from SQL
+      // We try the FULL raw name first to handle names with commas
+      let minRes;
+      try {
+        minRes = await axios.get(
+          `https://fpserver.grahamwebworks.com/api/ministries/org/1/name/${encodeURIComponent(rawMinistryName)}`,
+        );
+      } catch (e) {
+        // If full name fails (404), then try splitting by comma as a fallback
+        const fallbackName = rawMinistryName.split(",")[0].trim();
+        minRes = await axios.get(
+          `https://fpserver.grahamwebworks.com/api/ministries/org/1/name/${encodeURIComponent(fallbackName)}`,
+        );
+      }
+
       const ministry = minRes.data;
 
       if (!ministry) {
         return res.redirect("/events");
       }
 
-      // 2. Setup YouTube Playlist Logic (Keep as is)
+      // Use the name found in DB for consistent lookups below
+      const activeName = ministry.name;
+
+      // 3. Setup YouTube Playlist Logic
       const youtubeMap = {
         Children: "PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ",
         "Family Ministries": "PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ",
         "Adult Education": "PLZ13IHPbJRZ6Iz2cphwea8AzUqUqFiPUw",
         "Chancel Choir, Ensembles & Orchestra":
           "PLZ13IHPbJRZ6B3OcxF4pXk6uKwrEKTz-t",
+        // "Youth, Music and Theater": "YOUR_PLAYLIST_ID_HERE", // Add if you have one
       };
-      const playlistId = youtubeMap[ministryName];
+      const playlistId = youtubeMap[activeName];
 
-      // 3. Parallel Fetch (REMOVED headerRes call)
+      // 4. Parallel Fetch
       const promises = [
+        // Events use ID
         axios.get(`https://fpserver.grahamwebworks.com/api/events/org/1`, {
           params: { published: true, ministryId: ministry.id },
         }),
-        // We still need Contentful for the News/Blog list for now
-        client.getEntries({
-          content_type: "blog",
-          "fields.ministry": ministryName,
-          order: "-fields.datePosted",
-          limit: 6,
+        // Fetch News using the validated name from our DB
+        axios.get(`https://fpserver.grahamwebworks.com/api/articles/org/1`, {
+          params: { published: true, ministry: activeName },
         }),
       ];
 
@@ -1070,10 +1100,12 @@ module.exports = function (app) {
         );
       }
 
-      // Note: we removed headerRes from the destructuring
-      const [eventsRes, blogRes, youtubeRes] = await Promise.all(promises);
+      const results = await Promise.all(promises);
+      const eventsRes = results[0];
+      const blogRes = results[1];
+      const youtubeRes = playlistId ? results[2] : null;
 
-      // 4. Process SQL Events (Keep your moment.js logic as is)
+      // 5. Process SQL Events
       const now = moment();
       const formattedEvents = eventsRes.data
         .map((event) => mapSqlEventToContentful(event, false))
@@ -1091,23 +1123,24 @@ module.exports = function (app) {
             moment(b.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss"),
         );
 
-      // 5. Final Render (SPOOFING the header object using SQL data)
+      // 6. Map SQL articles
+      const ministryArticles = (blogRes.data || []).map((article) =>
+        mapSqlArticleToContentful(article),
+      );
+
+      // 7. Final Render
       res.render("ministry", {
         blogpost: {
-          articles: blogRes.items,
-          multipleEntries: blogRes.items.length > 0,
+          articles: ministryArticles,
+          multipleEntries: ministryArticles.length > 0,
         },
-        request: ministryName,
+        request: rawMinistryName,
         events: formattedEvents,
-
-        // --- THIS IS THE KEY CHANGE ---
-        // We build the object structure the HBS partial expects manually
         header: {
           fields: {
-            renderedHtml: ministry.description, // Pure HTML from your new SQL field
+            renderedHtml: ministry.description,
           },
         },
-
         active: { ministries: true },
         title: ministry.name,
         youTubeVideos: youtubeRes ? youtubeRes.data : null,

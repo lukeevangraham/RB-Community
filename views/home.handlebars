@@ -374,7 +374,7 @@
               <a target="blank" href="{{this.link}}" target="blank"><img
                   class="card-img-top"
                   target="blank"
-                  src="{{this.pictures.sizes.0.link}}"
+                  src="{{this.pictures.sizes.[0].link}}"
                   alt=""
                   aria-label="Watch sermon video"
                 /></a>
@@ -647,37 +647,25 @@
           <!-- News Post -->
           <div class="col-lg-4 news_post_col" data-aos="fade-down">
             <div class="news_post">
-              {{#if this.strapi}}
-                <div class="news_image"><a
-                    href="./blog-{{changeSpacesToDashes this.fields.title}}"
-                  ><img
-                      data-src="{{fields.image.url}}"
-                      class="lazyload"
-                      alt=""
-                    /></a></div>
 
-              {{else}}
-                <div class="news_image"><a
-                    href="./blog-{{changeSpacesToDashes this.fields.title}}"
-                    aria-label="{{this.fields.title}}"
-                  ><img
-                      data-src="{{fields.image.fields.file.url}}"
-                      class="lazyload"
-                      alt=""
-                    /></a></div>
+              <div class="news_image"><a
+                  href="./blog/{{fields.slug}}"
+                  aria-label="{{this.fields.title}}"
+                ><img
+                    data-src="{{fields.image.fields.file.url}}"
+                    class="lazyload"
+                    alt=""
+                  /></a></div>
 
-              {{/if}}
               <div class="news_post_content">
                 <div class="news_post_title">
-                  <a
-                    href="./blog-{{changeSpacesToDashes this.fields.title}}"
-                  >{{fields.title}}</a>
+                  <a href="./blog/{{this.fields.slug}}">{{fields.title}}</a>
                 </div>
                 <div class="news_post_meta">
                   <ul>
                     <li><i class="fa fa-user" aria-hidden="true"></i><a
                         href="#"
-                      >{{#each fields.author}}{{this}}{{/each}}</a></li>
+                      >{{fields.author}}</a></li>
                     <li><i class="fa fa-calendar-o" aria-hidden="true"></i><a
                         href="#"
                       >{{fields.formattedDate}}</a>
@@ -688,7 +676,7 @@
                 </div>
                 <div class="news_post_text">
                   {{#if fields.excerpt}}
-                    <p>{{this.fields.excerpt}}...</p>
+                    <p>{{this.fields.excerpt}}</p>
                   {{/if}}
                 </div>
               </div>

@@ -48,36 +48,46 @@
             <div class="news_post">
               {{#if this.fields.image.fields}}
                 <div class="news_image"><a
-                    href="./blog-{{changeSpacesToDashes this.fields.title}}"
+                    href="./blog/{{this.fields.slug}}"
                   ><img
                       data-src="{{this.fields.image.fields.file.url}}"
                       class="lazyload"
                       alt={{this.fields.image.fields.title}}
                     /></a></div>
               {{else}}
-                <div class="news_image"><a
-                    href="./blog-{{changeSpacesToDashes this.fields.title}}"
-                  ><img
-                      srcset="{{getCloudinaryResize
-                        this.fields.image.url
-                        this.fields.image.width
-                      }}, {{getCloudinaryResize
-                        this.fields.image.url
-                        500
-                      }}, {{getCloudinaryResize
-                        this.fields.image.url
-                        720
-                      }}, {{getCloudinaryResize this.fields.image.url 1200}}"
-                      sizes="(max-width: 600px) 510px, (max-width: 1199px) 450px, 360px"
-                      data-src="{{this.fields.image.url}}"
-                      class="lazyload"
-                      alt="{{this.fields.image.alternativeText}}"
-                    /></a></div>
+                <div class="news_image">
+                  <a
+                    href="/blog/{{this.fields.slug}}"
+                    aria-label="{{this.fields.title}}"
+                  >
+                    {{#if this.fields.image.url}}
+                      <img
+                        srcset="{{getCloudinaryResize
+                          this.fields.image.url
+                          360
+                        }}, 
+                  {{getCloudinaryResize this.fields.image.url 500}}, 
+                  {{getCloudinaryResize this.fields.image.url 720}}, 
+                  {{getCloudinaryResize this.fields.image.url 1200}}"
+                        sizes="(max-width: 600px) 510px, (max-width: 1199px) 450px, 360px"
+                        data-src="{{this.fields.image.url}}"
+                        class="lazyload"
+                        alt="{{this.fields.title}}"
+                      />
+                    {{else}}
+                      <img
+                        data-src="/images/default-news.jpg"
+                        class="lazyload"
+                        alt="{{this.fields.title}}"
+                      />
+                    {{/if}}
+                  </a>
+                </div>
               {{/if}}
               <div class="news_post_content">
                 <div class="news_post_title">
                   <a
-                    href="./blog-{{changeSpacesToDashes this.fields.title}}"
+                    href="./blog/{{this.fields.slug}}"
                   >{{this.fields.title}}</a>
                 </div>
                 <div class="news_post_meta">
