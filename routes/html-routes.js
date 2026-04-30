@@ -480,28 +480,33 @@ const prepBlogDataForTemplate = (blogData) => {
 module.exports = function (app) {
   app.get("/blog", async (req, res) => {
     try {
-      // 1. Fetch only from Flexipress
+      // 1. Fetch from Flexipress with an explicit limit
+      // We pass 'limit=100' to match the Contentful experience
+      // and let the backend's 'DESC' order handle the sorting.
       const response = await axios.get(
-        "https://fpserver.grahamwebworks.com/api/articles/org/1?published=true",
+        "https://fpserver.grahamwebworks.com/api/articles/org/1",
+        {
+          params: {
+            published: true,
+            limit: 100,
+          },
+        },
       );
 
-      // 2. Use your helper to map all 881 articles
+      // 2. Map the 100 most recent articles
       const items = response.data.map((article) =>
         mapSqlArticleToContentful(article),
       );
 
-      // 3. Simple Sort (Newest first)
-      items.sort(
-        (a, b) => new Date(b.fields.datePosted) - new Date(a.fields.datePosted),
-      );
-
-      // 4. Render
+      // 3. Render
+      // Note: We removed the manual items.sort() because the
+      // fetchOrgArticleList helper on your server already does 'ORDER BY datePublished DESC'
       res.render("blog", {
         blogpost: items,
         active: { news: true },
         title: "Latest News",
         headContent: `<link rel="stylesheet" type="text/css" href="styles/blog.css">
-                    <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`,
+                  <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">`,
       });
     } catch (error) {
       console.error("Archive Error:", error);
