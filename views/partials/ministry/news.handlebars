@@ -22,7 +22,7 @@
       <div class="col-xl-4 col-lg-6 news_post_col">
         <div class="news_post">
           <div class="news_image"><a
-              href="./blog-{{changeSpacesToDashes this.fields.title}}"
+              href="./blog/{{this.fields.slug}}"
             ><img
                 src="{{this.fields.image.fields.file.url}}"
                 alt=""
@@ -30,7 +30,7 @@
           <div class="news_post_content">
             <div class="news_post_title">
               <a
-                href="./blog-{{changeSpacesToDashes this.fields.title}}"
+                href="./blog/{{this.fields.slug}}"
               >{{this.fields.title}}</a>
             </div>
             <div class="news_post_meta">
