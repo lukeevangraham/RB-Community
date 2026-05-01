@@ -397,6 +397,11 @@ const mapSqlArticleToContentful = (article) => {
         .trim()
     : "";
 
+  // Dynamic check for the attachment type
+  const isPdf = article.attachmentUrl
+    ? article.attachmentUrl.toLowerCase().endsWith(".pdf")
+    : false;
+
   return {
     fromFlexipress: true,
     sys: { id: article.id }, // Standard Contentful structure
@@ -406,18 +411,29 @@ const mapSqlArticleToContentful = (article) => {
       author: article.author,
       datePosted: article.datePublished,
       body: article.body,
+      embedCode: article.embedCode,
+
+      // NEW ATTACHMENT FIELDS
+      attachmentUrl: article.attachmentUrl,
+      isPdf: isPdf,
+
       // Matches Contentful's nested image structure
       image: article.Image
         ? { fields: { file: { url: article.Image.url } } }
         : null,
+
       formattedDate: moment(article.datePublished)
         .format("DD MMM, YYYY")
         .toUpperCase(),
+
       // Only append "..." if the text was actually cut off
       excerpt:
         cleanExcerpt.length > 160
           ? cleanExcerpt.substring(0, 160) + "..."
           : cleanExcerpt,
+
+      // Ensure ministries are passed through if needed for the UI
+      ministry: article.Ministries ? article.Ministries.map((m) => m.name) : [],
     },
   };
 };

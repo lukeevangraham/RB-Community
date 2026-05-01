@@ -68,6 +68,37 @@
 						{{#if embedCode}}
 						{{{embedCode}}}
 						{{/if}}
+
+
+{{!-- ATTACHMENT VIEWER SECTION --}}
+{{#if this.attachmentUrl}}
+<div class="blog_post_attachment" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px;">
+    <h4 style="margin-bottom: 20px; font-family: 'Ubuntu', sans-serif;">Featured Resource</h4>
+
+    {{#if this.isPdf}}
+        {{!-- Google PDF Viewer Embed --}}
+        <div class="pdf_container" style="position: relative; overflow: hidden; width: 100%; padding-top: 129%;"> <iframe 
+                src="https://docs.google.com/viewer?url={{this.attachmentUrl}}&embedded=true" 
+                style="position: absolute; top: 0; left: 0; bottom: 0; right: 0; width: 100%; height: 100%; border: none;" 
+                frameborder="0">
+            </iframe>
+        </div>
+        <div style="margin-top: 10px;">
+            <a href="{{this.attachmentUrl}}" target="_blank" style="font-size: 0.9rem; color: #666;">
+                <i class="fa fa-download"></i> Problem viewing? Download the PDF here.
+            </a>
+        </div>
+
+    {{else}}
+        {{!-- Inline Image Display --}}
+        <div class="attachment_image">
+            <img src="{{this.attachmentUrl}}" alt="Featured Flyer" style="max-width: 100%; height: auto; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        </div>
+    {{/if}}
+</div>
+{{/if}}
+
+
 					</div>
 					<div class="social_and_tags d-flex flex-lg-row flex-column align-items-start justify-content-start">
 						<div class="blog_social">
