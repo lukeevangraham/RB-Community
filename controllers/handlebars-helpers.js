@@ -35,6 +35,12 @@ module.exports = {
         return true;
       case "High School":
         return true;
+      default:
+        break;
+    }
+  },
+  isTheater: (value) => {
+    switch (value) {
       case "Youth, Music and Theater":
         return true;
       default:
