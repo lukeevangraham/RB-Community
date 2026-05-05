@@ -180,28 +180,33 @@ function compareItemDatePosted(a, b) {
 }
 
 function prepareBlogEntryForSinglePage(entry, requestId) {
-  // Determine if we are working with a flattened object or nested Contentful object
-  const target = entry.fields ? entry.fields : entry;
-  const bodySource = entry.fields ? entry.fields.body : entry.body;
-  const dateSource = entry.fields ? entry.fields.datePosted : entry.datePosted;
+  // 1. Identify the Target (Where we write data) and the Source (Where we read data)
+  // If entry.fields exists, we use it (Legacy). Otherwise, we use the entry itself (New).
+  const isFlat = !entry.fields;
+  const target = isFlat ? entry : entry.fields;
 
-  // 1. DATE FORMATTING (Writing to the target)
+  // Identify where the raw data is hiding
+  const bodySource = isFlat ? entry.body : entry.fields.body;
+  const dateSource = isFlat ? entry.datePosted : entry.fields.datePosted;
+
+  // 2. DATE FORMATTING
+  // This creates 'shortMonth' and 'shortDay' directly on the target
   Object.assign(target, {
     shortMonth: moment(dateSource).format("MMM").toUpperCase(),
     shortDay: moment(dateSource).format("DD"),
   });
 
-  // 2. RENDERING LOGIC
+  // 3. RENDERING LOGIC
   const isFlexipress = entry.fromFlexipress || typeof bodySource === "string";
 
   if (isFlexipress) {
-    // FLEXIPRESS PATH
+    // Path for your new SQL articles
     Object.assign(target, {
       renderedHtml: (bodySource || "").replace(/RBCC/g, "RB Community"),
       id: requestId,
     });
   } else {
-    // LEGACY CONTENTFUL PATH
+    // Path for legacy Contentful articles
     const options = {
       /* ... your existing options ... */
     };
@@ -214,13 +219,6 @@ function prepareBlogEntryForSinglePage(entry, requestId) {
       ),
       id: requestId,
     });
-  }
-
-  // CRITICAL: If we are flat, make sure these are on the top level too
-  if (!entry.fields) {
-    entry.renderedHtml = target.renderedHtml;
-    entry.shortMonth = target.shortMonth;
-    entry.shortDay = target.shortDay;
   }
 
   return entry;
