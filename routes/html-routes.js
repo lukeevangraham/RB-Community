@@ -180,39 +180,47 @@ function compareItemDatePosted(a, b) {
 }
 
 function prepareBlogEntryForSinglePage(entry, requestId) {
-  // 1. DATE FORMATTING
-  Object.assign(entry.fields, {
-    shortMonth: moment(entry.fields.datePosted).format("MMM").toUpperCase(),
-    shortDay: moment(entry.fields.datePosted).format("DD"),
+  // Determine if we are working with a flattened object or nested Contentful object
+  const target = entry.fields ? entry.fields : entry;
+  const bodySource = entry.fields ? entry.fields.body : entry.body;
+  const dateSource = entry.fields ? entry.fields.datePosted : entry.datePosted;
+
+  // 1. DATE FORMATTING (Writing to the target)
+  Object.assign(target, {
+    shortMonth: moment(dateSource).format("MMM").toUpperCase(),
+    shortDay: moment(dateSource).format("DD"),
   });
 
   // 2. RENDERING LOGIC
-  // Updated check: Explicitly use our flag or check for the body format
-  const isFlexipress =
-    entry.fromFlexipress || typeof entry.fields.body === "string";
+  const isFlexipress = entry.fromFlexipress || typeof bodySource === "string";
 
   if (isFlexipress) {
     // FLEXIPRESS PATH
-    Object.assign(entry.fields, {
-      // Ensure we handle potential null bodies to avoid crashes
-      renderedHtml: (entry.fields.body || "").replace(/RBCC/g, "RB Community"),
+    Object.assign(target, {
+      renderedHtml: (bodySource || "").replace(/RBCC/g, "RB Community"),
       id: requestId,
     });
   } else {
     // LEGACY CONTENTFUL PATH
-    // (Your existing options and documentToHtmlString logic remains here)
     const options = {
       /* ... your existing options ... */
     };
+    const rawRichTextField = bodySource;
 
-    const rawRichTextField = entry.fields.body;
-    Object.assign(entry.fields, {
+    Object.assign(target, {
       renderedHtml: documentToHtmlString(rawRichTextField, options).replace(
         /RBCC/g,
         "RB Community",
       ),
       id: requestId,
     });
+  }
+
+  // CRITICAL: If we are flat, make sure these are on the top level too
+  if (!entry.fields) {
+    entry.renderedHtml = target.renderedHtml;
+    entry.shortMonth = target.shortMonth;
+    entry.shortDay = target.shortDay;
   }
 
   return entry;
@@ -546,23 +554,21 @@ module.exports = function (app) {
       const sqlArticle = response.data;
 
       if (sqlArticle) {
-        // --- ADD THIS LOGIC HERE ---
-        // Determine if the attachment is a PDF so Handlebars knows which tag to use
-        if (sqlArticle.attachmentUrl) {
-          sqlArticle.isPdf = sqlArticle.attachmentUrl
-            .toLowerCase()
-            .endsWith(".pdf");
-        }
-        // ---------------------------
-
+        // 1. Map to Contentful-style structure
         const mappedEntry = mapSqlArticleToContentful(sqlArticle);
 
-        // Also ensure isPdf carries over to mappedEntry if mapSqlArticleToContentful wipes it
-        mappedEntry.isPdf = sqlArticle.isPdf;
-        mappedEntry.attachmentUrl = sqlArticle.attachmentUrl;
+        // 2. Flatten the data: Merge 'fields' properties into the top level
+        // This makes 'title', 'body', 'isPdf', etc. accessible to Handlebars directly
+        const flattenedEntry = {
+          ...mappedEntry, // Keep top-level props like 'fromFlexipress'
+          ...mappedEntry.fields, // Spread everything from fields (title, body, isPdf, etc.)
+        };
 
-        prepareBlogEntryForSinglePage(mappedEntry, sqlArticle.id);
-        return renderSingleBlog(mappedEntry, res);
+        // 3. Run your existing prep logic (which likely expects a flat-ish object)
+        prepareBlogEntryForSinglePage(flattenedEntry, sqlArticle.id);
+
+        // 4. Render (ensure renderSingleBlog wraps it in an array)
+        return renderSingleBlog(flattenedEntry, res);
       }
 
       // 3. Fallback: 404
