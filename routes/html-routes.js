@@ -245,20 +245,13 @@ const prepBlogsForGroupPage = (untreatedBlogs) => {
 };
 
 function renderSingleBlog(entry, res) {
-  let newMetaDescription;
-  entry.fields.metaDescription
-    ? (newMetaDescription = entry.fields.metaDescription)
-    : (newMetaDescription = "");
-  let newMetaTitle;
-  entry.fields.metaTitle
-    ? (newMetaTitle = entry.fields.metaTitle)
-    : (newMetaTitle = entry.fields.title);
-  let browserTitle;
-  entry.fields.metaTitle
-    ? (browserTitle = entry.fields.metaTitle)
-    : (browserTitle = entry.fields.title);
+  let newMetaDescription = entry.fields.metaDescription || "";
+  let newMetaTitle = entry.fields.metaTitle || entry.fields.title;
+  let browserTitle = entry.fields.metaTitle || entry.fields.title;
+
   var bloghbsObject = {
-    article: entry,
+    // Wrap entry in an array so {{#each article}} in Handlebars works
+    article: [entry],
     active: { news: true },
     metaTitle: newMetaTitle,
     metaDescription: newMetaDescription,
@@ -266,6 +259,7 @@ function renderSingleBlog(entry, res) {
                 <link rel="stylesheet" type="text/css" href="/styles/blog_single_responsive.css">`,
     title: browserTitle,
   };
+
   res.render("blog_single", bloghbsObject);
 }
 
@@ -545,7 +539,6 @@ module.exports = function (app) {
       }
 
       // 2. Flexipress Lookup (The Primary Way)
-      // We look up by slug (the 'identifier')
       const response = await axios.get(
         `https://fpserver.grahamwebworks.com/api/article/org/1/slug/${identifier}`,
       );
@@ -553,7 +546,21 @@ module.exports = function (app) {
       const sqlArticle = response.data;
 
       if (sqlArticle) {
+        // --- ADD THIS LOGIC HERE ---
+        // Determine if the attachment is a PDF so Handlebars knows which tag to use
+        if (sqlArticle.attachmentUrl) {
+          sqlArticle.isPdf = sqlArticle.attachmentUrl
+            .toLowerCase()
+            .endsWith(".pdf");
+        }
+        // ---------------------------
+
         const mappedEntry = mapSqlArticleToContentful(sqlArticle);
+
+        // Also ensure isPdf carries over to mappedEntry if mapSqlArticleToContentful wipes it
+        mappedEntry.isPdf = sqlArticle.isPdf;
+        mappedEntry.attachmentUrl = sqlArticle.attachmentUrl;
+
         prepareBlogEntryForSinglePage(mappedEntry, sqlArticle.id);
         return renderSingleBlog(mappedEntry, res);
       }
