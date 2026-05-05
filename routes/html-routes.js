@@ -180,45 +180,40 @@ function compareItemDatePosted(a, b) {
 }
 
 function prepareBlogEntryForSinglePage(entry, requestId) {
-  // 1. Identify the Target (Where we write data) and the Source (Where we read data)
-  // If entry.fields exists, we use it (Legacy). Otherwise, we use the entry itself (New).
+  // 1. Determine Source (Where is the raw data?)
+  // If it's Flexipress, data is at the top level. If Contentful, it's in .fields
   const isFlat = !entry.fields;
-  const target = isFlat ? entry : entry.fields;
 
-  // Identify where the raw data is hiding
-  const bodySource = isFlat ? entry.body : entry.fields.body;
-  const dateSource = isFlat ? entry.datePosted : entry.fields.datePosted;
+  // Use 'entry' as the target to write our new properties (shortMonth, renderedHtml, etc)
+  const target = entry;
+
+  // Safely find the body and date
+  const rawBody = isFlat ? entry.body : entry.fields?.body;
+  const rawDate = isFlat ? entry.datePosted : entry.fields?.datePosted;
 
   // 2. DATE FORMATTING
-  // This creates 'shortMonth' and 'shortDay' directly on the target
-  Object.assign(target, {
-    shortMonth: moment(dateSource).format("MMM").toUpperCase(),
-    shortDay: moment(dateSource).format("DD"),
-  });
+  if (rawDate) {
+    target.shortMonth = moment(rawDate).format("MMM").toUpperCase();
+    target.shortDay = moment(rawDate).format("DD");
+  }
 
   // 3. RENDERING LOGIC
-  const isFlexipress = entry.fromFlexipress || typeof bodySource === "string";
+  const isFlexipress = entry.fromFlexipress || typeof rawBody === "string";
 
   if (isFlexipress) {
-    // Path for your new SQL articles
-    Object.assign(target, {
-      renderedHtml: (bodySource || "").replace(/RBCC/g, "RB Community"),
-      id: requestId,
-    });
+    // Write renderedHtml directly to the root so {{this.renderedHtml}} finds it
+    target.renderedHtml = (rawBody || "").replace(/RBCC/g, "RB Community");
+    target.id = requestId;
   } else {
-    // Path for legacy Contentful articles
+    // Legacy Contentful Path
     const options = {
-      /* ... your existing options ... */
+      /* your existing options */
     };
-    const rawRichTextField = bodySource;
-
-    Object.assign(target, {
-      renderedHtml: documentToHtmlString(rawRichTextField, options).replace(
-        /RBCC/g,
-        "RB Community",
-      ),
-      id: requestId,
-    });
+    target.renderedHtml = documentToHtmlString(rawBody, options).replace(
+      /RBCC/g,
+      "RB Community",
+    );
+    target.id = requestId;
   }
 
   return entry;
