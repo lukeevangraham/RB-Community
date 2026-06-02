@@ -6,6 +6,7 @@
   .List {
     padding: 52px 0 89px 0;
     display: flex;
+    flex-wrap: wrap;
     gap: 1rem;
     width: 100%;
     justify-content: space-evenly;
