@@ -1,13 +1,10 @@
 <a href="/volunteer-{{toSlug this.position}}">
-
   <div class="Card">
-
     <div class="VolunteerImage">
       {{#if this.Image.url}}
         <img
           src="{{this.Image.url}}"
           alt="Image of {{this.position}}"
-          {{!-- srcset="{{this.Image.url}} {{this.Image.width}}w" --}}
           srcset="{{getCloudinaryResize
             this.Image.url
             this.Image.width
@@ -17,16 +14,17 @@
           }}, {{getCloudinaryResize this.Image.url 1200}}"
           sizes="(max-width: 600px) 545px, (max-width: 1199px) 360px, 360px"
         />
-
       {{else}}
         <img
           src="/images/events.jpg"
           alt="RB Community Volunteer Fallback"
           style="width: 100%; height: 100%; object-fit: cover; object-position: center;"
         />
-
       {{/if}}
     </div>
-    <div class="Title">{{this.position}}</div>
+
+    <div class="Title">
+      <span class="TitleText">{{this.position}}</span>
+    </div>
   </div>
 </a>

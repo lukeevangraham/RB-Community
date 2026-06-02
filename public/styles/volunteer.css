@@ -12,14 +12,14 @@
 
     a {
       flex: 0 1 31%;
+      text-decoration: none;
+
       .Card {
         position: relative;
-        /* height: fit-content; */
 
         .VolunteerImage {
           position: relative;
           width: 100%;
-          /* height: 200px; */
           aspect-ratio: 16 / 9;
 
           img {
@@ -30,16 +30,37 @@
           }
         }
 
+        /* The structural layout container (Kept naked & un-styled) */
         .Title {
+          position: absolute;
+          bottom: 8px;
+          left: 8px;
+          max-width: 90%;
+          background: transparent !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          box-shadow: none !important;
+        }
+
+        /* The actual typography element (Shrink-wraps line by line) */
+        .Title .TitleText {
           font-size: 18px;
           color: #181818;
           text-transform: uppercase;
           font-weight: 700;
-          position: absolute;
-          bottom: 8px;
-          left: 8px;
-          background-color: #ffffffb6;
-          padding: 0.05rem 1rem;
+          display: inline;
+
+          /* 1. Tweak opacity down slightly (from b6 to a0) so text contrast stays sharp */
+          background-color: rgba(255, 255, 255, 0.65) !important;
+
+          /* 2. Tighten vertical padding (0.15rem -> 0.08rem) to reduce layout bleeding */
+          padding: 0.08rem 0.5rem;
+
+          /* 3. Open up line-height slightly so the text lines don't mash their paddings together */
+          line-height: 1.65;
+
+          box-decoration-break: clone;
+          -webkit-box-decoration-break: clone;
         }
       }
     }
@@ -47,7 +68,6 @@
 }
 
 .VolunteerSingle {
-  /* background-color: orangered; */
   padding: 89px 0;
 
   .SingleImage {
@@ -67,6 +87,16 @@
     .label {
       font-weight: 700;
     }
+
+    /* Target the element context normally */
+    .frequency-text {
+      display: inline-block; /* Helps inline fragments handle typographic transformations cleanly */
+    }
+
+    /* Target just the very first character of the string to capitalize it */
+    .frequency-text::first-letter {
+      text-transform: uppercase;
+    }
   }
 
   .description {
@@ -74,6 +104,7 @@
     max-width: 550px;
     margin: auto;
     color: #181818;
+
     & > * {
       color: #181818;
     }
@@ -96,12 +127,12 @@
     form {
       margin-top: 50px;
 
-      /* // Rule 1: Apply margin to all groups except the absolute last element wrapper */
+      /* Rule 1: Apply margin to all groups except the absolute last element wrapper */
       .formGroup:not(:last-of-type) {
         margin-bottom: 1.5rem;
       }
 
-      /* // Rule 2: Compress and completely erase the Honeypot layout wrapper */
+      /* Rule 2: Compress and completely erase the Honeypot layout wrapper */
       .formGroup.el-trap {
         position: absolute !important;
         width: 0 !important;
@@ -121,7 +152,7 @@
         border: solid 1px #ccc;
         width: 100%;
         display: block;
-        transition: all 0.3s; /*// Fixed syntax typo: changed 'transform' to 'transition'
+        transition: all 0.3s;
 
         &:focus {
           outline: none;
@@ -133,7 +164,7 @@
           }
         }
 
-        /* // Animated Input Floating Label Control */
+        /* Animated Input Floating Label Control */
         &:placeholder-shown + label {
           opacity: 0;
           visibility: hidden;
@@ -150,7 +181,7 @@
         transition: all 0.3s;
       }
 
-      /* // Rule 3: Protect Textarea label from adjacent selector bugs */
+      /* Rule 3: Protect Textarea label from adjacent selector bugs */
       textarea {
         padding: 0.25rem 0.5rem;
         width: 100%;
@@ -165,7 +196,7 @@
         }
       }
 
-      /* // Ensure Textarea's static preceding label stays visible  */
+      /* Ensure Textarea's static preceding label stays visible */
       .formGroup:has(textarea) label {
         opacity: 1 !important;
         visibility: visible !important;
