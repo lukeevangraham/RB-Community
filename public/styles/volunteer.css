@@ -96,8 +96,22 @@
     form {
       margin-top: 50px;
 
-      .formGroup:not(:last-child) {
+      /* // Rule 1: Apply margin to all groups except the absolute last element wrapper */
+      .formGroup:not(:last-of-type) {
         margin-bottom: 1.5rem;
+      }
+
+      /* // Rule 2: Compress and completely erase the Honeypot layout wrapper */
+      .formGroup.el-trap {
+        position: absolute !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        z-index: -1 !important;
       }
 
       input {
@@ -107,7 +121,7 @@
         border: solid 1px #ccc;
         width: 100%;
         display: block;
-        transform: all 0.3s;
+        transition: all 0.3s; /*// Fixed syntax typo: changed 'transform' to 'transition'
 
         &:focus {
           outline: none;
@@ -119,6 +133,7 @@
           }
         }
 
+        /* // Animated Input Floating Label Control */
         &:placeholder-shown + label {
           opacity: 0;
           visibility: hidden;
@@ -135,15 +150,26 @@
         transition: all 0.3s;
       }
 
+      /* // Rule 3: Protect Textarea label from adjacent selector bugs */
       textarea {
         padding: 0.25rem 0.5rem;
         width: 100%;
+        font-family: inherit;
+        color: inherit;
+        border: solid 1px #ccc;
 
         &:focus {
           outline: none;
           box-shadow: 0 0 2rem #18181816;
           border-bottom: 3px solid #327091;
         }
+      }
+
+      /* // Ensure Textarea's static preceding label stays visible  */
+      .formGroup:has(textarea) label {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
       }
 
       button {
@@ -158,7 +184,7 @@
         border: none;
         outline: none;
         border-radius: 3px;
-        /* margin-top: 24px; */
+        margin-top: 1rem;
       }
     }
   }

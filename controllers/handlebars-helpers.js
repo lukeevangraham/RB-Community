@@ -17,6 +17,15 @@ module.exports = {
   changeDashesToSpaces: function (str) {
     return str ? str.replace(/-/g, " ") : "";
   },
+  toSlug: function (str) {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .replace(/&/g, "and") // Optional: converting "&" to "and" makes URLs super clean for SEO
+      .replace(/[^a-z0-9\s-]/g, "") // Strip out parentheses () and other punctuation safely
+      .replace(/\s+/g, "-") // Collapse multiple spaces into a single dash
+      .trim();
+  },
   isDefined: function (value) {
     return value !== undefined;
   },

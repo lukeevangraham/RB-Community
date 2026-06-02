@@ -1588,24 +1588,72 @@ module.exports = function (app) {
   });
 
   app.get("/volunteer:id", (req, res) => {
-    let position = req.params.id.substring(1);
+    // 1. Grab the slug from the URL parameter (removes the leading dash)
+    let slug = req.params.id.substring(1).toLowerCase().trim();
 
-    position = position.replace(/-/g, " ");
+    // 2. MAP THE SEO SLUGS TO THEIR EXACT DATABASE NAMES
+    // This acts as a translator between your clean URLs and your database names.
+    const slugToTitleMap = {
+      "administration-and-finance-committee-member":
+        "Administration & Finance Committee Member",
+      "adult-and-senior-ministries-committee-member":
+        "Adult & Senior Ministries Committee Member",
+      "communications-and-technology-committee-member":
+        "Communications & Technology Committee Member",
+      "facilities-committee-member-volunteer":
+        "Facilities Committee Member / Volunteer",
+      "family-ministries-committee-member":
+        "Family Ministries Committee Member",
+      "hospitality-committee-volunteer-member":
+        "Hospitality Committee Volunteer / Member",
+      "preschool-committee-board-member": "Preschool Committee Board Member",
+      "stewardship-committee-member": "Stewardship Committee Member",
+      "arabic-ministry": "Arabic Ministry",
+      "human-resources-hr": "Human Resources (HR)",
+      missions: "Missions",
+      "officer-nominating": "Officer Nominating",
+      "worship-and-arts": "Worship & Arts",
+    };
+
+    // 3. Look up the database-friendly title using the incoming slug
+    let position = slugToTitleMap[slug];
+
+    // Fallback fallback mechanism: if it's not in the map, try a basic formatting guess
+    if (!position) {
+      position = slug.replace(/-/g, " ");
+    }
+
+    // 4. URL Encode the clean database string safely for the axios call
+    const encodedPosition = encodeURIComponent(position);
 
     Promise.all([
       axios.get(
-        `https://fpserver.grahamwebworks.com/api/volunteer/published/position/${position}/1`,
+        `https://fpserver.grahamwebworks.com/api/volunteer/published/position/${encodedPosition}/1`,
       ),
-    ]).then((resultArray) => {
-      const hbsObject = {
-        headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
-  <link rel="stylesheet" type="text/css" href="styles/volunteer.css">
-                        <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">
-                        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
-        opening: resultArray[0].data,
-      };
-      res.render("volunteer", hbsObject);
-    });
+    ])
+      .then((resultArray) => {
+        // If the API returns nothing, bounce them to a 404 instead of rendering blank data
+        if (!resultArray[0].data) {
+          return res.status(404).render("not-found", {
+            message: "Volunteer opportunity not found.",
+          });
+        }
+
+        const hbsObject = {
+          headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
+<link rel="stylesheet" type="text/css" href="styles/volunteer.css">
+                      <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">
+                      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
+          opening: resultArray[0].data,
+        };
+        res.render("volunteer", hbsObject);
+      })
+      .catch((err) => {
+        console.error("SEO Route Mapping Error:", err.message);
+        res
+          .status(404)
+          .render("not-found", { message: "Volunteer opportunity not found." });
+      });
   });
 
   app.get("/search:term", async (req, res) => {

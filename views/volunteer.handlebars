@@ -29,12 +29,14 @@
     <div class="row">
       <div class="col">
 
-        <img
-          src="{{this.opening.Image.url}}"
-          alt=""
-          srcset=""
-          class="SingleImage"
-        />
+        {{#if this.opening.Image.url}}
+          <img
+            src="{{this.opening.Image.url}}"
+            alt=""
+            srcset=""
+            class="SingleImage"
+          />
+        {{/if}}
 
         <div class="section_title_container text-center">
           <div class="section_title mb-4">
@@ -79,7 +81,7 @@
               <input
                 type="email"
                 placeholder="Email address"
-                require
+                required
                 id="email"
               />
               <label for="email">Email address</label>
@@ -93,6 +95,17 @@
                 rows="10"
                 placeholder="Message (optional)"
               ></textarea>
+            </div>
+            <div class="formGroup el-trap">
+              <input
+                type="text"
+                placeholder="Your Website"
+                id="website"
+                name="website"
+                tabindex="-1"
+                autocomplete="off"
+              />
+              <label for="website">Your Website</label>
             </div>
             <button type="submit">Submit</button>
           </form>
