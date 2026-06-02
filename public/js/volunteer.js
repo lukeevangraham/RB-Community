@@ -1,29 +1,25 @@
 async function handleVolunteerSubmission(e, positionId) {
-  // Grab the hidden bot input field
-  const botTrapValue = document.getElementById("website").value;
+  // 1. Grab the hidden bot input field safely
+  const botTrap = document.getElementById("website");
+  const botTrapValue = botTrap ? botTrap.value : "";
 
   // If there's data inside it, flag it as a spam script
   if (botTrapValue.trim().length > 0) {
     console.warn("Spam execution intercepted.");
 
-    // Safety check: if 'e' is the form element (passed via 'this' in HTML inline action)
     if (e && typeof e.reset === "function") {
       e.reset();
     } else {
       document.querySelector("#volunteerForm").reset();
     }
 
-    // Show a message to change the inner HTML so the bot stops attempting to submit
     document.querySelector("#volunteerForm").innerHTML =
       "<h3>Your message was delivered</h3>";
-
     return false;
   }
 
   const formElement = document.querySelector("#volunteerForm");
   const values = formElement.elements;
-
-  console.log("VALUES: ", values);
 
   try {
     const response = await fetch(
@@ -45,9 +41,10 @@ async function handleVolunteerSubmission(e, positionId) {
     const result = await response.json();
     console.log("RESULT: ", result);
 
+    // Replace inner HTML safely
     formElement.innerHTML = "<h3>Your message was delivered</h3>";
   } catch (error) {
     console.error("Submission failed:", error);
-    // Optional: add human error message feedback handling here if server drops
+    alert("There was an error delivering your message. Please try again.");
   }
 }

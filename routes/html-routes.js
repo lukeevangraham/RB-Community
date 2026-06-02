@@ -1632,20 +1632,27 @@ module.exports = function (app) {
       ),
     ])
       .then((resultArray) => {
-        // If the API returns nothing, bounce them to a 404 instead of rendering blank data
-        if (!resultArray[0].data) {
+        // 1. Extract the raw database object
+        const positionData = resultArray[0].data;
+
+        if (!positionData) {
           return res.status(404).render("not-found", {
             message: "Volunteer opportunity not found.",
           });
         }
+
+        // 2. SANITIZE: Delete the email address so it's physically impossible
+        // for the rendering engine to accidentally expose it to the public HTML layer
+        delete positionData.primaryContactEmail;
 
         const hbsObject = {
           headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
 <link rel="stylesheet" type="text/css" href="styles/volunteer.css">
                       <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">
                       <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
-          opening: resultArray[0].data,
+          opening: positionData, // This is now 100% clean and safe
         };
+
         res.render("volunteer", hbsObject);
       })
       .catch((err) => {
