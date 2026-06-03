@@ -221,3 +221,63 @@
     }
   }
 }
+
+/*****************************************
+* VOLUNTEER RESPONSIVE OVERRIDES
+* Integrated from events_responsive rules
+*****************************************/
+
+@media only screen and (max-width: 1199px) {
+  /* Prevent clipping on medium desktop screens */
+  .Volunteer .List {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@media only screen and (max-width: 991px) {
+  /* Force grid containers into a single vertical stack */
+  .Volunteer .List {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  /* Emulate .events_item width rules for a uniform dashboard flow */
+  .Volunteer .List a {
+    width: 100%;
+    max-width: 690px;
+    margin-bottom: 30px; /* Space cards out vertically */
+  }
+
+  .Volunteer .List a .Card {
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  /* Scale card widths down smoothly alongside smaller viewport parameters */
+  .Volunteer .List a {
+    max-width: 510px;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  /* Full fluid screen width for true mobile phones */
+  .Volunteer .List {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .Volunteer .List a {
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
+
+  /* Slightly scale down titles for tight mobile screens if needed */
+  .Volunteer .List a .Card .Title .TitleText {
+    font-size: 16px;
+    padding: 0.05rem 0.4rem;
+  }
+}
