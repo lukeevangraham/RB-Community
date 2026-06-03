@@ -1054,10 +1054,68 @@ section {
   z-index: -1;
 }
 
-
 #oneColumn {
   columns: 1 !important;
   -webkit-columns: 1 !important;
   -moz-columns: 1 !important;
   margin-top: 15px !important;
+}
+
+/* Ministries Page Callout Banner */
+.volunteer-hero-callout {
+  background-color: #f4f7f9; /* Soft, inviting background tint */
+  border-left: 5px solid #327091; /* Exact Brand Blue */
+  padding: 25px 35px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.callout-text-content h3 {
+  color: #1a202c;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.callout-text-content p {
+  color: #4a5568;
+  font-size: 15px;
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+/* The High-Contrast Call to Action Button */
+.btn-volunteer-callout {
+  display: inline-block;
+  background-color: #327091; /* Exact Brand Blue */
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 12px 24px;
+  border-radius: 4px;
+  text-decoration: none !important;
+  white-space: nowrap;
+  transition: all 0.2s ease-in-out;
+  margin-top: 15px; /* Spacing for stacked mobile views */
+}
+
+@media (min-width: 768px) {
+  .btn-volunteer-callout {
+    margin-top: 0; /* Clear mobile margin when sitting side-by-side on desktop */
+    margin-left: 20px;
+  }
+}
+
+.btn-volunteer-callout:hover {
+  background-color: #24526b; /* Matched Darker Blue for hover */
+  box-shadow: 0 4px 12px rgba(50, 112, 145, 0.2);
+}
+
+.btn-volunteer-callout .arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.btn-volunteer-callout:hover .arrow {
+  transform: translateX(4px); /* Subtle interactive movement */
 }
