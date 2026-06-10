@@ -327,35 +327,6 @@ $(document).ready(function () {
       }, 1400);
     });
   }
-
-  // 6. Leaflet
-
-  function initLeafletMap() {
-    var mymap = L.map("mapid").setView([33.02, -117.061], 13);
-
-    L.tileLayer(
-      "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}",
-      {
-        attribution:
-          'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: "mapbox.streets",
-        accessToken: process.env.LEAFLET_TOKEN,
-      },
-    ).addTo(mymap);
-
-    var marker = L.marker([33.02, -117.061]).addTo(mymap);
-
-    marker
-      .bindPopup(
-        "<b>RB Community Church</b><br>17010 Pomerado Rd.<br>San Diego, CA 92128",
-      )
-      .openPopup();
-
-    mymap.scrollWheelZoom.disable();
-
-    mapid = mymap;
-  }
 });
 
 async function handleContactSubmission(e) {
