@@ -8,6 +8,7 @@ module.exports = {
     if (!str) return "";
     return str
       .toLowerCase() // 1. Lowercase for consistency
+      .replace(/\//g, "-") // ⭐ NEW: Convert forward slashes to dashes (e.g., "1/2" to "1-2")
       .replace(/#/g, "") // 2. Explicitly remove hashtags
       .replace(/[^a-z0-9\s-]/g, "") // 3. Remove all other non-alphanumeric chars
       .trim() // 4. Remove leading/trailing whitespace
@@ -21,9 +22,11 @@ module.exports = {
     if (!str) return "";
     return str
       .toLowerCase()
+      .replace(/\//g, "-") // ⭐ NEW: Convert forward slashes to dashes safely
       .replace(/&/g, "and") // Optional: converting "&" to "and" makes URLs super clean for SEO
       .replace(/[^a-z0-9\s-]/g, "") // Strip out parentheses () and other punctuation safely
       .replace(/\s+/g, "-") // Collapse multiple spaces into a single dash
+      .replace(/-+/g, "-") // Collapse multiple dashes
       .trim();
   },
   isDefined: function (value) {
@@ -59,19 +62,4 @@ module.exports = {
   getCloudinaryResize: (url, width) => {
     return `${url.replace("/upload/", `/upload/ar_2.34,w_${width},c_fill/`)} ${width}w`;
   },
-  // function(name, options) {
-  //     if(!this._sections) this._section = {};
-  //     this._sections[name] = options.fn(this);
-  //     return null
-  // }
-  //   showChat: function (showWeekday, showStart, showEnd) {
-  //     console.log("current date: ", moment().format("ddd"));
-  //     console.log("show start: ", moment(showStart, ["h:mm A"]).format("HH:mm"));
-  //     console.log("show end: ", showEnd);
-  //     console.log("show weekday: ", showWeekday);
-  //     return moment().format("dddd") === showWeekday &&
-  //       moment().isBetween(moment(showStart, "h:mm A"), moment(showEnd, "h:mm A"))
-  //       ? true
-  //       : false;
-  //   },
 };

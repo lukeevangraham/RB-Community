@@ -342,14 +342,14 @@ $(document).ready(function () {
         id: "mapbox.streets",
         accessToken:
           "pk.eyJ1IjoiZGVsaXJpb3U1OCIsImEiOiJjazBraXp1MXgwbHNlM2ZvNGJsOW0xNzZsIn0.IRf4OdH3qM8cVwcZoVTHAA",
-      }
+      },
     ).addTo(mymap);
 
     var marker = L.marker([33.02, -117.061]).addTo(mymap);
 
     marker
       .bindPopup(
-        "<b>RB Community Church</b><br>17010 Pomerado Rd.<br>San Diego, CA 92128"
+        "<b>RB Community Church</b><br>17010 Pomerado Rd.<br>San Diego, CA 92128",
       )
       .openPopup();
 
@@ -360,10 +360,10 @@ $(document).ready(function () {
 });
 
 async function handleContactSubmission(e) {
-
   // e.preventDefault();
   const values = document.querySelector("#contactForm").elements;
 
+  // Your existing frontend shadow-ban logic
   if (
     values.email.value === "jeannewassef63@gmail.com" ||
     values.email.value === "jeannewassef@hotmail.com" ||
@@ -373,23 +373,28 @@ async function handleContactSubmission(e) {
   ) {
     document.querySelector("#contactForm").innerHTML =
       "<h3>Your message was delivered</h3>";
-  } else {
-    const response = await fetch("/api/contact", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: values.name.value,
-        email: values.email.value,
-        message: values.message.value,
-      }),
-    });
-
-    const content = await response.json();
-
-    document.querySelector("#contactForm").innerHTML =
-      "<h3>Your message was delivered</h3>";
+    return; // Stop processing further
   }
+
+  // Capture client-side browser/device environment details
+  const clientUserAgent = navigator.userAgent;
+
+  const response = await fetch("/api/contact", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: values.name.value,
+      email: values.email.value,
+      message: values.message.value,
+      userAgent: clientUserAgent, // Passing device data to backend
+    }),
+  });
+
+  const content = await response.json();
+
+  document.querySelector("#contactForm").innerHTML =
+    "<h3>Your message was delivered</h3>";
 }

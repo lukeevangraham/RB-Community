@@ -1587,12 +1587,15 @@ module.exports = function (app) {
     });
   });
 
-  app.get("/volunteer:id", (req, res) => {
-    // 1. Grab the slug from the URL parameter (removes the leading dash)
-    let slug = req.params.id.substring(1).toLowerCase().trim();
+  // ⭐ THE ONLY VOLUNTEER ROUTE YOU NEED
+  app.get(/^\/volunteer-(.+)$/, (req, res) => {
+    // 1. Capture everything after /volunteer-
+    let slug = req.params[0].toLowerCase().trim();
 
-    // 2. MAP THE SEO SLUGS TO THEIR EXACT DATABASE NAMES
-    // This acts as a translator between your clean URLs and your database names.
+    // 2. Safely wipe any dangling trailing dashes from the end of the slug
+    slug = slug.replace(/-+$/g, "");
+
+    // 3. MAP THE SEO SLUGS TO THEIR EXACT DATABASE NAMES
     const slugToTitleMap = {
       "administration-and-finance-committee-member":
         "Administration & Finance Committee Member",
@@ -1615,42 +1618,39 @@ module.exports = function (app) {
       "worship-and-arts": "Worship & Arts",
     };
 
-    // 3. Look up the database-friendly title using the incoming slug
+    // 4. Match against explicit titles or fall back to replacing remaining dashes with spaces
     let position = slugToTitleMap[slug];
-
-    // Fallback fallback mechanism: if it's not in the map, try a basic formatting guess
     if (!position) {
       position = slug.replace(/-/g, " ");
     }
 
-    // 4. URL Encode the clean database string safely for the axios call
+    // 5. URL Encode the parameter so it securely travels across the Axios HTTP call
     const encodedPosition = encodeURIComponent(position);
 
-    Promise.all([
-      axios.get(
+    axios
+      .get(
         `https://fpserver.grahamwebworks.com/api/volunteer/published/position/${encodedPosition}/1`,
-      ),
-    ])
-      .then((resultArray) => {
-        // 1. Extract the raw database object
-        const positionData = resultArray[0].data;
+      )
+      .then((response) => {
+        const positionData = response.data;
 
-        if (!positionData) {
-          return res.status(404).render("not-found", {
+        if (!positionData || Object.keys(positionData).length === 0) {
+          return res.status(404).render("404", {
             message: "Volunteer opportunity not found.",
           });
         }
 
-        // 2. SANITIZE: Delete the email address so it's physically impossible
-        // for the rendering engine to accidentally expose it to the public HTML layer
+        // Wipe sensitive values
         delete positionData.primaryContactEmail;
 
+        // 6. Build the layout object, adding leading slashes to asset paths so routing stays safe!
         const hbsObject = {
-          headContent: `<link rel="stylesheet" type="text/css" href="styles/ministries.css">
-<link rel="stylesheet" type="text/css" href="styles/volunteer.css">
-                      <link rel="stylesheet" type="text/css" href="styles/ministries_responsive.css">
-                      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
-          opening: positionData, // This is now 100% clean and safe
+          headContent: `<link rel="stylesheet" type="text/css" href="/styles/ministries.css">
+                        <link rel="stylesheet" type="text/css" href="/styles/volunteer.css">
+                        <link rel="stylesheet" type="text/css" href="/styles/ministries_responsive.css">
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>`,
+          opening: positionData,
+          title: positionData.position || "Volunteer Opportunity", // Standardizes layout header elements
         };
 
         res.render("volunteer", hbsObject);
@@ -1659,7 +1659,7 @@ module.exports = function (app) {
         console.error("SEO Route Mapping Error:", err.message);
         res
           .status(404)
-          .render("not-found", { message: "Volunteer opportunity not found." });
+          .render("404", { message: "Volunteer opportunity not found." });
       });
   });
 

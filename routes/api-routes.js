@@ -30,7 +30,29 @@ module.exports = function (app) {
   });
 
   app.post("/api/contact", (req, res) => {
-    // main(req.body, "info@rbcpc.org").then(res.json("Message sent"));
+    // 1. Extract IP address safely (handling potential reverse proxies)
+    const rawIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    // Clean up IPv6 loopback or formatting if necessary (e.g., "::ffff:127.0.0.1")
+    const clientIp =
+      typeof rawIp === "string" ? rawIp.split(",")[0].trim() : rawIp;
+
+    // 2. Extract User Agent passed from client (fallback if not provided in request body)
+    const userAgent =
+      req.body.userAgent || req.headers["user-agent"] || "Unknown Device";
+
+    // 3. Create a clean ISO timestamp
+    const timestamp = new Date().toISOString();
+
+    // 4. Construct the updated email body with the security metadata footer
+    const emailText =
+      `${req.body.name}, (${req.body.email}) sent you a message from RBCOMMUNITY.ORG saying: \n\n` +
+      `${req.body.message}\n\n` +
+      `--------------------------------------------------\n` +
+      `🔒 SECURITY METADATA (INVESTIGATIVE LOG)\n` +
+      `--------------------------------------------------\n` +
+      `Timestamp: ${timestamp}\n` +
+      `Source IP: ${clientIp}\n` +
+      `User Agent: ${userAgent}\n`;
 
     let data = JSON.stringify({
       recipients: [{ address: "info@rbcpc.org" }],
@@ -40,7 +62,7 @@ module.exports = function (app) {
           name: "RBCOMMUNITY.ORG",
         },
         subject: "An email via RBCOMMUNITY.ORG",
-        text: `${req.body.name}, (${req.body.email}) sent you a message from RBCOMMUNITY.ORG saying: \n\n  ${req.body.message}`, // plain text body
+        text: emailText, // Updated plain text body containing metadata
       },
     });
 
@@ -63,6 +85,8 @@ module.exports = function (app) {
       })
       .catch((error) => {
         console.log("Error: ", error);
+        res.status(500).json({ status: 500, message: "Internal server error" });
       });
   });
+  // Note: Ensure curly brace syntax aligns with your outer enclosure context
 };
