@@ -1,5 +1,24 @@
 @media only screen and (max-width: 575px) {
-    .results {
-        padding: 0 15px;
-    }
+  .results {
+    padding: 0 15px;
+  }
+}
+
+/* Unselected buttons: transparent background with text matching the theme color */
+.filter_buttons .button {
+  background: transparent !important;
+  border: 2px solid #327091;
+  box-sizing: border-box;
+}
+.filter_buttons .button a {
+  color: #327091 !important;
+  line-height: 42px; /* Adjusted slightly to offset the 2px border height */
+}
+
+/* Selected button: matching your native theme style rules flawlessly */
+.filter_buttons .button.active-filter {
+  background: #327091 !important;
+}
+.filter_buttons .button.active-filter a {
+  color: #ffffff !important;
 }

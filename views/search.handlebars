@@ -4,19 +4,12 @@
 <link rel="stylesheet" type="text/css" href="styles/blog_responsive.css">
 <link rel="stylesheet" type="text/css" href="styles/search.css">
 
-<!-- Home -->
-
 <div class="home">
-  <div
-    class="home_background"
-    style="background-image:url(images/events.jpg)"
-  ></div>
+  <div class="home_background" style="background-image:url(images/events.jpg)"></div>
   <div class="home_content">
     <div class="container">
       <div class="row">
-        <div
-          class="col d-flex flex-row align-items-center justify-content-start"
-        >
+        <div class="col d-flex flex-row align-items-center justify-content-start">
           <div class="home_title">Search</div>
           <div class="breadcrumbs ml-auto">
             <ul>
@@ -30,76 +23,122 @@
   </div>
 </div>
 
-<div class="about events_items" >
+<div class="about events_items">
+  <div class="container">
+    <h2 class="mb-4">Search: {{term}}</h2>
 
-        <h2 class="mb-4">Search: {{term}}</h2>
+<div class="filter_buttons mb-5 d-flex flex-wrap" style="gap: 15px;">
+      <div class="button filter-btn active-filter" data-filter="all"><a href="javascript:void(0);">All Results</a></div>
+      <div class="button filter-btn" data-filter="event"><a href="javascript:void(0);">Events</a></div>
+      <div class="button filter-btn" data-filter="news"><a href="javascript:void(0);">News & Blogs</a></div>
+      <div class="button filter-btn" data-filter="ministry"><a href="javascript:void(0);">Ministries</a></div>
+    </div>
 
+    <div id="results" class="row justify-content-around results">
 
-        <div id="results" class="row justify-content-around results">
+      {{#each results.0.items}}
 
-        {{#each results.0.items}}
-
-          {{! IF WE HAVE AN EVENT }}
-          {{#if this.fields.eventImage}}
-
-            {{! IS ENDDATE CURRENT OR FUTURE? }}
-            {{#if (isEventCurrentOrFuture this.fields.endDate)}}
-
+        {{! --- 1. EVENTS --- }}
+        {{#if this.fields.eventImage}}
+          {{! IS ENDDATE CURRENT OR FUTURE? }}
+          {{#if (isEventCurrentOrFuture this.fields.endDate)}}
+            <div class="filter-wrapper-card" data-filter-type="event">
               {{> events/event-block this }}
-
-            {{/if}}
-
+            </div>
           {{/if}}
+        {{/if}}
 
-          {{! IF WE HAVE A NEWS ARTICLE }}
-          {{#if (isBlog this.sys.contentType.sys.id)}}
+        {{! --- 2. NEWS OR MINISTRIES --- }}
+        {{#if (isBlog this.sys.contentType.sys.id)}}
 
           {{!-- if it's a header for a ministry page --}}
-            {{#if this.fields.featureOnMinistryPage}}
-            
-            <div class="events_item">
-            <a href="/ministry:{{this.fields.ministry.[0]}}">
-              <div style="background-color: #327091;
-              color: #eee;
-              font-size: 2rem;
-              text-align:center;
-              padding: 3rem 1rem;
-              ">{{this.fields.ministry.[0]}}</div>
-              <div class="py-3" style="color: #7c7c7c !important">{{this.fields.excerpt}}...</div>
-              </a>
+          {{#if this.fields.featureOnMinistryPage}}
+            <div class="filter-wrapper-card" data-filter-type="ministry">
+              <div class="events_item" style="margin-bottom: 30px;">
+                <a href="/ministry:{{this.fields.ministry.[0]}}">
+                  <div style="background-color: #327091; color: #eee; font-size: 2rem; text-align:center; padding: 3rem 1rem;">
+                    {{this.fields.ministry.[0]}}
+                  </div>
+                  <div class="py-3" style="color: #7c7c7c !important">{{this.fields.excerpt}}...</div>
+                </a>
               </div>
+            </div>
 
-{{!-- OTHERWISE RENDER BLOG SUMMARY CARD --}}
-            {{else}}
-
+          {{!-- OTHERWISE RENDER BLOG SUMMARY CARD --}}
+          {{else}}
             {{! IS expirationDate CURRENT OR FUTURE? }}
             {{#if (isBlogCurrent this.fields.expirationDate)}}
-
-            {{> blog/blog-block this }}
-
+              <div class="filter-wrapper-card" data-filter-type="news">
+                {{> blog/blog-block this }}
+              </div>
             {{/if}}
-
-
-            {{/if}}
-
           {{/if}}
 
-        {{/each}}
+        {{/if}}
 
-        </div>
+      {{/each}}
 
+    </div>
+  </div>
 </div>
 
 <script src="/js/jquery-3.2.1.min.js"></script>
 <script src="js/about.js"></script>
 
 <script>
+$(document).ready(function() {
+  const $resultsContainer = $("#results");
 
-if (document.querySelector("#results").innerHTML.trim() === "") {
-  document.querySelector("#results").innerHTML = `<h3 style="text-align: center">No results found.  Bummer. <br /> You might want to search for something else.</h3>`
-}
-  
+  // 1. Initial Empty Content Filter Verification Check
+  if ($resultsContainer.text().trim() === "") {
+    $resultsContainer.html(`<h3 style="text-align: center; width: 100%; padding: 3rem 0;">No results found. Bummer. <br /> You might want to search for something else.</h3>`);
+    $(".filter_buttons").hide();
+  }
 
+  // 2. Map structural anchors inside partial cells
+  $(".filter-wrapper-card").each(function() {
+    const targetType = $(this).attr("data-filter-type");
+    const $innerChild = $(this).children().first();
+    if ($innerChild.hasClass("events_item") || $innerChild.hasClass("news_post_col") || $innerChild.is("div")) {
+      $innerChild.attr("data-section-type", targetType);
+      $innerChild.unwrap();
+    }
+  });
 
+  // 3. Tab Click Interaction Filter Handler
+  $(".filter-btn").on("click", function() {
+    const filterValue = $(this).data("filter");
+
+    // Toggle Tab Active Classes
+    $(".filter-btn").removeClass("btn-primary active-filter").addClass("btn-outline-primary");
+    $(this).removeClass("btn-outline-primary").addClass("btn-primary active-filter");
+
+    $("#empty-filter-fallback").remove();
+
+    const $gridItems = $resultsContainer.find("[data-section-type]");
+
+    if (filterValue === "all") {
+      $gridItems.fadeIn(150, function() {
+        // 🌟 FORCE RECALCULATION: Tell about.js to update the footer positioning
+        window.dispatchEvent(new Event('resize'));
+      });
+    } else {
+      $gridItems.hide();
+      
+      const $matchingSelection = $gridItems.filter(`[data-section-type="${filterValue}"]`);
+      
+      if ($matchingSelection.length > 0) {
+        $matchingSelection.fadeIn(150, function() {
+          // 🌟 FORCE RECALCULATION: Tell about.js to update the footer positioning
+          window.dispatchEvent(new Event('resize'));
+        });
+      } else {
+        $resultsContainer.append(`<div id="empty-filter-fallback" class="col-12 text-center py-5 w-100"><h3 style="text-align: center; margin-top: 2rem;">No matching ${filterValue} items found for this search.</h3></div>`);
+        // Force resize even on empty screens to reset footer alignment
+        window.dispatchEvent(new Event('resize'));
+      }
+    }
+  });
+});
 
 </script>
