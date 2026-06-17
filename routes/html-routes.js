@@ -1666,75 +1666,131 @@ module.exports = function (app) {
   app.get("/search:term", async (req, res) => {
     let searchTerm = req.params.term.substring(1);
 
-    // Strapi Article Query (Keep this for Blog posts)
-    const strapiQuery = qs.stringify({
-      _where: {
-        _or: [
-          [{ author_contains: searchTerm }],
-          [{ title_contains: searchTerm }],
-          [{ body_contains: searchTerm }],
-        ],
-      },
-    });
-
     try {
-      // 1. Parallel Fetch: Contentful (Pages), Strapi (Articles), Flexipress (Events)
-      const [contentfulRes, strapiRes, flexiRes] = await Promise.all([
-        client.getEntries({ query: searchTerm }),
-        axios.get(`https://admin.rbcommunity.org/articles?${strapiQuery}`),
-        axios
-          .get(
-            `https://fpserver.grahamwebworks.com/api/search/1/${encodeURIComponent(searchTerm)}`,
-          )
-          .catch(() => ({ data: [] })), // Graceful failure for SQL
-      ]);
+      // 1. Parallel Fetch: Update the events route target string
+      const [flexiEventsRes, flexiNewsRes, flexiMinistryRes] =
+        await Promise.all([
+          axios
+            .get(
+              `https://fpserver.grahamwebworks.com/api/events/search/1/${encodeURIComponent(searchTerm)}`,
+            ) // ⭐ Added /events/
+            .catch(() => ({ data: [] })),
+          axios
+            .get(
+              `https://fpserver.grahamwebworks.com/api/news/search/1/${encodeURIComponent(searchTerm)}`,
+            )
+            .catch(() => ({ data: [] })),
+          axios
+            .get(
+              `https://fpserver.grahamwebworks.com/api/ministries/search/1/${encodeURIComponent(searchTerm)}`,
+            )
+            .catch(() => ({ data: [] })),
+        ]);
 
-      // 2. EXCLUSIVE EVENT FILTER: Remove ALL Contentful events from results
-      // We no longer check if flexiData has length; we trust Flexipress as the source of truth.
-      contentfulRes.items = contentfulRes.items.filter(
-        (item) => item.sys.contentType.sys.id !== "events",
-      );
+      const searchResults = [];
 
-      // 3. Inject Flexipress Results
-      flexiRes.data.forEach((sqlEvent) => {
-        const mapped = mapSqlEventToContentful(sqlEvent, false);
-        if (mapped) {
-          // Mock the Contentful structure so the search template recognizes it as an event
-          mapped.sys = { contentType: { sys: { id: "events" } } };
-          contentfulRes.items.push(mapped);
-        }
-      });
+      // 2. Inject Events
+      if (flexiEventsRes.data && Array.isArray(flexiEventsRes.data)) {
+        flexiEventsRes.data.forEach((sqlEvent) => {
+          // Pass true or false depending on your map helper requirements
+          const mapped = mapSqlEventToContentful(sqlEvent, false);
+          if (mapped) {
+            mapped.sys = { contentType: { sys: { id: "events" } } };
 
-      // 4. Inject Strapi Articles
-      strapiRes.data.forEach((article) => {
-        contentfulRes.items.push({
-          sys: { contentType: { sys: { id: "blog" } } },
-          fields: article,
+            // ⭐ SAFETY FOR FOR EACH CONDITIONAL WALL:
+            // If the event layout checks this.fields.eventImage, make sure it exists!
+            if (!mapped.fields.eventImage && sqlEvent.Image) {
+              mapped.fields.eventImage = {
+                fields: { file: { url: sqlEvent.Image.url } },
+              };
+            }
+            // Ensure an endDate exists so the isEventCurrentOrFuture helper doesn't discard it
+            if (!mapped.fields.endDate) {
+              mapped.fields.endDate = new Date(
+                new Date().setHours(new Date().getHours() + 24),
+              );
+            }
+
+            searchResults.push(mapped);
+          }
         });
-      });
+      }
 
-      // 5. Final Formatting Pass
-      contentfulRes.items.forEach((entry) => {
-        const isEvent = entry.sys.contentType.sys.id === "events";
-        const isBlog = entry.sys.contentType.sys.id === "blog";
+      if (flexiNewsRes.data && Array.isArray(flexiNewsRes.data)) {
+        flexiNewsRes.data.forEach((newsArticle) => {
+          // 📅 Format date string to match layout requirements
+          const rawDate = newsArticle.datePublished || newsArticle.createdAt;
+          const dateString = rawDate
+            ? new Date(rawDate).toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })
+            : "Recent Update";
 
-        if (isEvent) {
-          entry.title = entry.fields.title;
-          entry.description = entry.fields.description;
-          // Note: SQL events are pre-formatted by mapper, no prepEventDataForTemplate needed
-        }
+          // 🧼 Option A: Strip out raw HTML formatting tags for a beautiful plain text snippet
+          const rawBody = newsArticle.metaDescription || newsArticle.body || "";
+          const cleanText = rawBody.replace(/<\/?[^>]+(>|$)/g, ""); // Removes all HTML nodes
+          const bodyExcerpt =
+            cleanText.length > 150 ? cleanText.substring(0, 150) : cleanText;
 
-        if (isBlog) {
-          prepBlogDataForTemplate(entry);
-        }
-      });
+          searchResults.push({
+            sys: { contentType: { sys: { id: "blog" } } }, // Triggers template's (isBlog) check
+            fields: {
+              title: newsArticle.title,
+              slug: newsArticle.slug,
+              excerpt: bodyExcerpt, // ⭐ Passes the beautiful, tag-free text string here
+              expirationDate: "2099-12-31", // Keeps it valid through layout wall helpers
 
+              // 🕒 1. Map to formattedDate
+              formattedDate: dateString,
+
+              // ✍️ 2. Map author field into an Array container to satisfy the {{#each}} loop
+              author: newsArticle.author
+                ? [newsArticle.author]
+                : ["Community Contributor"],
+
+              // 🖼️ 3. Map image string directly down the standard object fallback route
+              image: newsArticle.Image
+                ? { url: newsArticle.Image.url }
+                : { url: "/images/blog_default.jpg" },
+            },
+          });
+        });
+      }
+
+      // 4. Inject Ministry Pages
+      if (flexiMinistryRes.data && Array.isArray(flexiMinistryRes.data)) {
+        flexiMinistryRes.data.forEach((ministry) => {
+          // 🧼 Strip out HTML formatting tags for a clean plain text summary
+          const rawDescription = ministry.description || "";
+          const cleanDescription = rawDescription.replace(
+            /<\/?[^>]+(>|$)/g,
+            "",
+          ); // Removes all HTML nodes
+          const ministryExcerpt =
+            cleanDescription.length > 120
+              ? cleanDescription.substring(0, 120)
+              : cleanDescription;
+
+          searchResults.push({
+            sys: { contentType: { sys: { id: "blog" } } },
+            fields: {
+              featureOnMinistryPage: true, // Triggers custom color block branch
+              ministry: [ministry.name], // Encapsulated array so ministry.[0] resolves correctly
+              excerpt: ministryExcerpt, // ⭐ Passes the clean, tag-free description snippet here
+            },
+          });
+        });
+      }
+
+      // 5. Render cleanly
       res.render("search", {
         headContent: `<link rel="stylesheet" type="text/css" href="/styles/about.css">
                     <link rel="stylesheet" type="text/css" href="/styles/about_responsive.css">`,
         title: `Search`,
         term: searchTerm,
-        results: [contentfulRes],
+        results: [{ items: searchResults }],
       });
     } catch (error) {
       console.error("CRITICAL SEARCH ERROR: ", error.message);
