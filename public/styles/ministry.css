@@ -1447,17 +1447,19 @@ section {
 /* Target the link specifically */
 .ministryTop a {
   transition: all 0.2s ease; /* Smooth transition for the color flip */
+  color: #327091 !important;
+  border-bottom: 1px solid #327091; /* Optional: underline effect */
 }
 
 /* When the link itself is hovered */
 .ministryTop a:hover {
-  color: #ffffff !important; /* Force text to white */
+  /* color: #ffffff !important; Force text to white */
 }
 
 /* If your blue background is on an LI or a DIV, and you want the link inside to turn white: */
 .ministryTop li:hover a,
 .ministryTop div:hover a {
-  color: #ffffff !important;
+  /* color: #ffffff !important; */
 }
 
 #oneColumn {
