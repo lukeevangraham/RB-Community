@@ -16,6 +16,7 @@
 <div class="row news_row">
 
   {{#each blogpost.articles}}
+
     {{#unless fields.featureOnMinistryPage}}
 
       <!-- News Post -->
@@ -37,7 +38,7 @@
               <ul>
                 <li><i class="fa fa-user" aria-hidden="true"></i><a
                     href="#"
-                  >{{#each fields.author}}{{this}}{{/each}}</a></li>
+                  >{{this.fields.author}}</a></li>
                 <li><i class="fa fa-calendar-o" aria-hidden="true"></i><a
                     href="#"
                   >{{this.fields.formattedDate}}</a></li>
