@@ -1110,7 +1110,7 @@ module.exports = function (app) {
         }),
         // Fetch News using the validated name from our DB
         axios.get(`https://fpserver.grahamwebworks.com/api/articles/org/1`, {
-          params: { published: true, ministry: activeName },
+          params: { published: true, ministry: activeName, limit: 3 },
         }),
       ];
 
