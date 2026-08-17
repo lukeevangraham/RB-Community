@@ -598,7 +598,7 @@ module.exports = function (app) {
 
       // [1] DUAL-SOURCE EVENT FETCH
       axios.get(
-        `https://fpserver.grahamwebworks.com/api/events/org/1?published=true&featured=true`,
+        `https://fpserver.grahamwebworks.com/api/events/org/1?published=true`,
       ),
 
       // [2] Flexipress Articles (Replacing Contentful Blog)
@@ -634,51 +634,94 @@ module.exports = function (app) {
 
       // 2. EVENT HANDLING (FLEXIPRESS ONLY)
       const homeData = resultArray[3].data; // SingleHome record
-      const sqlEvents = resultArray[1].data; // List of featured events from SQL
+      const allSqlEvents = resultArray[1].data; // All published events from SQL
+      const now = moment();
 
-      // 1. Map the Headline Event (Hero)
-      // Look in sqlEvents first, then fall back to the nested HeadlineEvent inside homeData
+      // Helper to check if a MAPPED event is in the future
+      const isFutureEvent = (event) => {
+        if (!event || !event.fields || !event.fields.dateToCountTo)
+          return false;
+        const eventDate = moment(
+          event.fields.dateToCountTo,
+          "MMMM D, YYYY HH:mm:ss",
+        );
+        return eventDate.isAfter(now);
+      };
+
+      // 1. Map & verify Headline Event (Hero)
       const headlineEventRaw =
-        sqlEvents.find((e) => e.id === homeData.HeadlineEventId) ||
+        allSqlEvents.find((e) => e.id === homeData.HeadlineEventId) ||
         homeData.HeadlineEvent;
 
       let headlineMapped = headlineEventRaw
-        ? mapSqlEventToContentful(headlineEventRaw, true) // Force headline = true
+        ? mapSqlEventToContentful(headlineEventRaw, true)
         : null;
 
-      // 2. Map the Spotlight Events (Grid)
-      const now = moment();
-      let spotlightMapped = sqlEvents
+      // Ensure headline mapped event hasn't expired
+      if (headlineMapped && !isFutureEvent(headlineMapped)) {
+        headlineMapped = null;
+      }
+
+      // 2. Separate into Featured Events vs. Regular Backup Pool
+      const featuredSqlEvents = allSqlEvents.filter((e) => e.isFeaturedOnHome);
+      const regularSqlEvents = allSqlEvents.filter((e) => !e.isFeaturedOnHome);
+
+      // 3. Map & Filter Future Featured/Spotlight Events
+      let spotlightMapped = featuredSqlEvents
         .map((event) => mapSqlEventToContentful(event, false))
-        .filter((event) => {
-          // FIX: Check if event exists and has fields before proceeding
-          if (!event || !event.fields) {
-            console.warn("Skipping a null or malformed event during mapping.");
-            return false;
-          }
-
-          // Now it's safe to read event.fields
-          const eventDate = moment(
-            event.fields.dateToCountTo,
-            "MMMM D, YYYY HH:mm:ss",
-          );
-          return eventDate.isAfter(now);
-        })
-
+        .filter(isFutureEvent)
         .sort((a, b) => {
           const dateA = moment(a.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss");
           const dateB = moment(b.fields.dateToCountTo, "MMMM D, YYYY HH:mm:ss");
-          return dateA - dateB; // Ascending: Soonest first
+          return dateA - dateB; // Soonest first
         });
 
-      // 3. Remove the headline from the grid list if it happens to be in both
+      // Remove Headline from Spotlight list if present
       if (headlineMapped) {
         spotlightMapped = spotlightMapped.filter(
           (e) => e.fields.title !== headlineMapped.fields.title,
         );
       }
 
-      // 4. Combine them
+      // 4. BACKFILL: If fewer than 3 spotlight events remain, pull random future events from the regular pool
+      const TARGET_SPOTLIGHT_COUNT = 3;
+
+      if (spotlightMapped.length < TARGET_SPOTLIGHT_COUNT) {
+        const neededCount = TARGET_SPOTLIGHT_COUNT - spotlightMapped.length;
+
+        // Get available non-featured future events
+        let availablePool = regularSqlEvents
+          .map((event) => mapSqlEventToContentful(event, false))
+          .filter(isFutureEvent)
+          .filter((e) => {
+            // Exclude headline event & any already selected spotlight events
+            const isHeadline =
+              headlineMapped && e.fields.title === headlineMapped.fields.title;
+            const isAlreadyInSpotlight = spotlightMapped.some(
+              (s) => s.fields.title === e.fields.title,
+            );
+            return !isHeadline && !isAlreadyInSpotlight;
+          });
+
+        // Fisher-Yates Shuffle to randomize the pool
+        for (let i = availablePool.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [availablePool[i], availablePool[j]] = [
+            availablePool[j],
+            availablePool[i],
+          ];
+        }
+
+        // Take as many as needed to fill the empty spots
+        const fillerEvents = availablePool.slice(0, neededCount);
+
+        // console.log("FILLER EVENTS: ", fillerEvents);
+
+        // Append fillers to spotlight list
+        spotlightMapped = [...spotlightMapped, ...fillerEvents];
+      }
+
+      // 5. Combine Headline + Spotlight Events
       let formattedEvents = headlineMapped
         ? [headlineMapped, ...spotlightMapped]
         : spotlightMapped;
@@ -808,19 +851,19 @@ module.exports = function (app) {
         }
       });
 
-      // 1. RE-MERGE INTO ONE ARRAY
-      let finalEventsForHbs = [];
+      // // 1. RE-MERGE INTO ONE ARRAY
+      // let finalEventsForHbs = [];
 
-      if (useFlexipress) {
-        // DON'T re-filter here.
-        // We already built 'formattedEvents' correctly above.
-        finalEventsForHbs = formattedEvents;
-      } else {
-        // Legacy Contentful path
-        finalEventsForHbs = formattedEvents;
-      }
+      // if (useFlexipress) {
+      //   // DON'T re-filter here.
+      //   // We already built 'formattedEvents' correctly above.
+      //   finalEventsForHbs = formattedEvents;
+      // } else {
+      //   // Legacy Contentful path
+      //   finalEventsForHbs = formattedEvents;
+      // }
 
-      // console.log("FINAL EVENTS FOR HBS: ", finalEventsForHbs);
+      const finalEventsForHbs = formattedEvents;
 
       // 2. RENDER
       var hbsObject = {
