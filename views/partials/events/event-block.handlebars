@@ -1,16 +1,17 @@
 <div class="events_item">
   <div class="events_item_image">
     {{#if this.fields.slug}}
-      {{! SQL / New Contentful Events }}
-      <a href="/event-{{this.fields.slug}}">
+      <a href="/event-{{this.fields.slug}}" aria-label="{{this.fields.title}}">
         <img
           src="{{this.fields.eventImage.fields.file.url}}"
           alt="{{this.fields.title}}"
         />
       </a>
     {{else}}
-      {{! Legacy Contentful Events fallback }}
-      <a href="/event-{{changeSpacesToDashes this.fields.title}}">
+      <a
+        href="/event-{{changeSpacesToDashes this.fields.title}}"
+        aria-label="{{this.fields.title}}"
+      >
         <img
           src="{{this.fields.eventImage.fields.file.url}}"
           alt="{{this.fields.title}}"
@@ -20,13 +21,15 @@
   </div>
 
   <div
-    class="events_item_content d-flex flex-row align-items-start justfy-content-start"
+    class="events_item_content d-flex flex-row align-items-start justify-content-start"
   >
     <div class="event_date">
       <div class="d-flex flex-column align-items-center justify-content-center">
         <div class="event_month">{{this.fields.shortMonth}}</div>
         <div class="event_day">{{this.fields.shortDay}}</div>
-        <div class="event_day_of_week">{{this.fields.dayOfWeek}}</div>
+        {{#if this.fields.dayOfWeek}}
+          <div class="event_day_of_week">{{this.fields.dayOfWeek}}</div>
+        {{/if}}
       </div>
     </div>
     <div class="event_content">
@@ -41,11 +44,17 @@
       </div>
       <ul class="event_row">
         <li>
-          <div class="event_icon"><img src="images/calendar.png" alt="" /></div>
+          <div class="event_icon"><img
+              src="images/calendar.png"
+              alt="Calendar"
+            /></div>
           <span>{{this.fields.time}}</span>
         </li>
         <li>
-          <div class="event_icon"><img src="images/location.png" alt="" /></div>
+          <div class="event_icon"><img
+              src="images/location.png"
+              alt="Location"
+            /></div>
           <span>{{this.fields.location}}</span>
         </li>
       </ul>
