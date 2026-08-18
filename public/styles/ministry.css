@@ -1134,6 +1134,15 @@ section {
 8. Events
 *********************************/
 
+.event_day_of_week {
+  font-size: 15px;
+  font-weight: 100;
+  color: #ffffff;
+  /* text-transform: uppercase; */
+  line-height: 0.75;
+  margin-top: 4px;
+}
+
 .events {
   width: 100%;
   /* background: #f7f7f7; */
@@ -1158,6 +1167,8 @@ section {
 
 .events_item_image img {
   max-width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 
 .events_item_content {
@@ -1305,7 +1316,7 @@ section {
   color: #ffffff;
   text-transform: uppercase;
   line-height: 0.75;
-  margin-top: 11px;
+  margin-top: 1px;
 }
 
 .event_content {
