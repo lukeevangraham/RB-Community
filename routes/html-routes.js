@@ -1136,11 +1136,11 @@ module.exports = function (app) {
 
       // 3. Setup YouTube Playlist Logic
       const youtubeMap = {
-        Children: "PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ",
-        "Family Ministries": "PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ",
-        "Adult Education": "PLZ13IHPbJRZ6Iz2cphwea8AzUqUqFiPUw",
-        "Chancel Choir, Ensembles & Orchestra":
-          "PLZ13IHPbJRZ6B3OcxF4pXk6uKwrEKTz-t",
+        // Children: "PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ",
+        // "Family Ministries": "PLZ13IHPbJRZ4TFjw77zRxtiou_HvEhVcQ",
+        // "Adult Education": "PLZ13IHPbJRZ6Iz2cphwea8AzUqUqFiPUw",
+        // "Chancel Choir, Ensembles & Orchestra":
+        //   "PLZ13IHPbJRZ6B3OcxF4pXk6uKwrEKTz-t",
         // "Youth, Music and Theater": "YOUR_PLAYLIST_ID_HERE", // Add if you have one
       };
       const playlistId = youtubeMap[activeName];
