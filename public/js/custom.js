@@ -14,7 +14,7 @@
 
 ******************************/
 
-$(document).ready(function() {
+$(document).ready(function () {
   "use strict";
 
   /* 
@@ -30,11 +30,11 @@ $(document).ready(function() {
 
   setHeader();
 
-  $(window).on("resize", function() {
+  $(window).on("resize", function () {
     setHeader();
   });
 
-  $(document).on("scroll", function() {
+  $(document).on("scroll", function () {
     setHeader();
   });
 
@@ -66,7 +66,7 @@ $(document).ready(function() {
 
   function initHeaderSearch() {
     if ($(".search_button").length) {
-      $(".search_button").on("click", function() {
+      $(".search_button").on("click", function () {
         document.querySelector(".search_input").focus();
         if ($(".header_search_container").length) {
           $(".header_search_container").toggleClass("active");
@@ -84,7 +84,7 @@ $(document).ready(function() {
   function initMenu() {
     if (hamb.length) {
       if (menu.length) {
-        hamb.on("click", function() {
+        hamb.on("click", function () {
           if (menuActive) {
             closeMenu();
           } else {
@@ -92,7 +92,7 @@ $(document).ready(function() {
           }
         });
 
-        $(".menu_close").on("click", function() {
+        $(".menu_close").on("click", function () {
           if (menuActive) {
             closeMenu();
           } else {
@@ -127,11 +127,12 @@ $(document).ready(function() {
 
       // console.log("TYPE OF: ", typeof dateToCountTo)
       // console.log("DATE: ", dateToCountTo)
-      
+
       // Uncomment line below and replace date
       // the last number on the line below is the time of target beyond midnight
-      var target_date = new Date(dateToCountTo).getTime() + 34200000;
-      console.log("Count to", target_date)
+      // var target_date = new Date(dateToCountTo).getTime() + 34200000;
+      var target_date = new Date(dateToCountTo).getTime();
+      console.log("Count to", target_date);
 
       // comment lines below
       // var date = new Date();
@@ -147,7 +148,7 @@ $(document).ready(function() {
       var m = $("#minute");
       var s = $("#second");
 
-      setInterval(function() {
+      setInterval(function () {
         // find the amount of "seconds" between now and target
         var current_date = new Date().getTime();
         var seconds_left = (target_date - current_date) / 1000;
@@ -166,11 +167,11 @@ $(document).ready(function() {
         days = parseInt(seconds_left / 86400);
         seconds_left = seconds_left % 86400;
 
-        hours = parseInt((seconds_left / 3600));
+        hours = parseInt(seconds_left / 3600);
         seconds_left = seconds_left % 3600;
 
-        minutes = parseInt((seconds_left / 60));
-		seconds = parseInt((seconds_left % 60));
+        minutes = parseInt(seconds_left / 60);
+        seconds = parseInt(seconds_left % 60);
 
         // display result
         d.text(days);
@@ -197,10 +198,8 @@ $(document).ready(function() {
       $(".colorbox").colorbox({
         rel: "colorbox",
         photo: true,
-        maxWidth: "90%"
+        maxWidth: "90%",
       });
     }
   }
-
-
 });
