@@ -61,15 +61,6 @@ div {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-ul {
-  list-style: none;
-  margin-bottom: 0px;
-}
-
-.event_text ul {
-  list-style: unset;
-  margin-left: 1rem;
-}
 p {
   font-family: "Assistant", sans-serif;
   font-size: 16px;
@@ -786,10 +777,39 @@ section {
   padding-left: 30px;
   padding-right: 30px;
   margin-top: 25px;
+  font-size: 16px;
 }
 
 .event_text p {
   margin-bottom: 0;
+}
+
+.event_text * {
+  color: #7c7c7c !important;
+  background-color: transparent !important;
+}
+/* Fix Quill list indentation */
+.event_text ol,
+.event_text ul {
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Override Quill's <ol> wrapper to render real bullets for bullet lists */
+.event_text ol li[data-list="bullet"] {
+  list-style-type: disc;
+}
+
+/* Ensure ordered lists remain numbered */
+.event_text ol li[data-list="ordered"] {
+  list-style-type: decimal;
+}
+
+/* Neat spacing for list items */
+.event_text li {
+  margin-bottom: 0.25rem;
+  padding-left: 0.25rem;
 }
 
 /*********************************
