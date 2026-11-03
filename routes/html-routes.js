@@ -1511,6 +1511,12 @@ module.exports = function (app) {
     res.redirect("/ministry:Youth,%20Music%20and%20Theater");
   });
 
+  app.get("/givetotheater", (req, res) => {
+    res.redirect(
+      "https://rbcpchurch.shelbynextchms.com/external/form/6ac4689e-744c-4488-9b59-b706c3892f03",
+    );
+  });
+
   app.get("/nativity", (req, res) => {
     res.redirect("/blog-nativity");
   });
