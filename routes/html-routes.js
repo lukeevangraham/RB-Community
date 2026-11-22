@@ -320,16 +320,16 @@ function mapSqlEventToContentful(event, isHeadline = false) {
   const name = event.name || "Untitled Event";
   let eventDate = moment(event.startDate);
   const finalExpiry = event.endDate ? moment(event.endDate) : null;
-  const today = moment().startOf("day");
+  const now = moment(); // Use exact current timestamp instead of .startOf("day")
 
   // 1. Check if the entire series is already over
-  if (finalExpiry && finalExpiry.isBefore(today)) {
+  if (finalExpiry && finalExpiry.isBefore(now)) {
     return null; // This event is officially dead
   }
 
-  // 2. Handle Recurring Logic (only if series isn't over)
+  // 2. Handle Recurring Logic: advance until the occurrence is strictly in the future
   if (event.repeatsEveryXDays > 0) {
-    while (eventDate.isBefore(today)) {
+    while (eventDate.isSameOrBefore(now)) {
       eventDate.add(event.repeatsEveryXDays, "days");
     }
   }
@@ -340,13 +340,11 @@ function mapSqlEventToContentful(event, isHeadline = false) {
   }
 
   return {
-    fromSql: true, // This is the flag the search loop looks for
+    fromSql: true,
     fields: {
       title: name,
-      // Fallback to ID string ensures links never break if slug is empty
       slug: event.slug || event.id.toString(),
       id: event.id,
-
       featured: isHeadline,
       featuredOnHome: event.isFeaturedOnHome,
       description: event.description || "",
@@ -356,19 +354,16 @@ function mapSqlEventToContentful(event, isHeadline = false) {
       shortDay: eventDate.format("DD"),
       dayOfWeek: eventDate.format("ddd"),
       dateToCountTo: eventDate.format("MMMM D, YYYY HH:mm:ss"),
-
-      // Safety check: Don't format null dates
       endDate: event.endDate
         ? moment(event.endDate).format("YYYY-MM-DD")
         : null,
-
       eventImage: {
         fields: {
           file: {
             url:
               event.Image && event.Image.url
                 ? event.Image.url
-                : "/images/events.jpg", // Added leading slash for route safety
+                : "/images/events.jpg",
           },
         },
       },
@@ -647,6 +642,8 @@ module.exports = function (app) {
         );
         return eventDate.isAfter(now);
       };
+
+      // console.log("here: ", homeData);
 
       // 1. Map & verify Headline Event (Hero)
       const headlineEventRaw =
